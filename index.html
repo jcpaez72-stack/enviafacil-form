@@ -212,7 +212,12 @@
     btn.addEventListener("click", async function(){
       if (!validate()) return;
       btn.disabled = true; btn.textContent = "Enviando…";
+      // El callback de Jelou NO tiene CORS → no se puede POST directo desde el navegador.
+      // Enviamos los datos a nuestro proxy (que sí trae CORS) y él reenvía a Jelou server-to-server.
+      var PROXY = "https://enviafacil-callback.fn.jelou.ai";
       var payload = {
+        executionId: executionId,
+        callback: callback,
         tipo: qs.get("tipo") || "remitente",
         cedula: val("cedula"), nombre: val("nombre"), correo: val("correo"), celular: val("celular"),
         calle_principal: val("calle"), numero_casa: val("numero"), calle_secundaria: val("calle2"),
@@ -220,10 +225,10 @@
         lat: lat, lon: lon
       };
       try {
-        if (callback) {
-          var sep = callback.indexOf("?") >= 0 ? "&" : "?";
-          var url = callback + (executionId && callback.indexOf("executionId") < 0 ? sep + "executionId=" + encodeURIComponent(executionId) : "");
-          await fetch(url, { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(payload) });
+        var resp = await fetch(PROXY, { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(payload) });
+        var out = {}; try { out = await resp.json(); } catch(e){}
+        if (!resp.ok || out.ok === false) {
+          throw new Error("proxy " + (out.status || resp.status));
         }
         document.getElementById("f").style.display = "none";
         document.querySelector(".barra").style.display = "none";
