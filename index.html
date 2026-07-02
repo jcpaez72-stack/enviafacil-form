@@ -101,9 +101,25 @@
 
 <script>
   (function(){
+    // Endpoint de callback universal de Jelou (el executionId enruta la ejecución).
+    var DEFAULT_CALLBACK = "https://gateway.jelou.ai/workflows/v1/webview/callback";
+
     var qs = new URLSearchParams(location.search);
     var executionId = qs.get("executionId") || "";
-    var callback = qs.get("callback") || "";
+    var callback = qs.get("callback") || DEFAULT_CALLBACK;
+
+    // Tolerancia: si Jelou concatenó el executionId con "?" sobre una URL que ya
+    // tenía query (?tipo=...&callback=...), el parámetro puede quedar "pegado" a otro
+    // valor. Lo rescatamos con una búsqueda directa sobre el string completo.
+    if (!executionId) {
+      var m = location.href.match(/[?&]executionId=([^&#]+)/);
+      if (m) executionId = decodeURIComponent(m[1]);
+    }
+    // Si el callback vino con un executionId pegado, lo separamos.
+    if (callback.indexOf("executionId=") >= 0) {
+      var cm = callback.match(/^(.*?)[?&]executionId=([^&#]+)(.*)$/);
+      if (cm) { if (!executionId) executionId = decodeURIComponent(cm[2]); callback = cm[1]; }
+    }
     if (qs.get("direccion")) document.getElementById("calle").value = qs.get("direccion");
 
     function setErr(id, show){
