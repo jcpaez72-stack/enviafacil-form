@@ -112,10 +112,30 @@
     }
     function val(id){ return (document.getElementById(id).value || "").trim(); }
 
+    // ---- Validación real cédula/RUC Ecuador (módulo 10 + [RUC-FIX]) ----
+    var COEF_CED = [2,1,2,1,2,1,2,1,2];
+    function normId(raw){ var s=String(raw||"").replace(/\D/g,""); if(s.length===9||s.length===12) s="0"+s; return s; }
+    function dvCedMod10(d9){ var suma=0; for(var i=0;i<9;i++){ var p=Number(d9[i])*COEF_CED[i]; if(p>9)p-=9; suma+=p; } return (10 - suma%10)%10; }
+    function provOk(cod){ return (cod>=1&&cod<=24)||cod===30; }
+    function cedulaValida(c){
+      var s=normId(c); if(!/^\d{10}$/.test(s)) return false;
+      if(!provOk(parseInt(s.slice(0,2),10))) return false;
+      return Number(s[9])===dvCedMod10(s.slice(0,9));
+    }
+    function rucValido(c){
+      var s=normId(c); if(!/^\d{13}$/.test(s)) return false;
+      if(!provOk(parseInt(s.slice(0,2),10))) return false;
+      var t=Number(s[2]);
+      if(t>=0&&t<=5) return cedulaValida(s.slice(0,10)) && s.slice(10,13)==="001"; // persona natural
+      if(t===6) return s.slice(9,13)==="0001";   // pública  [RUC-FIX] sin módulo 11
+      if(t===9) return s.slice(10,13)==="001";    // privada  [RUC-FIX] sin módulo 11
+      return false;
+    }
+    function identValida(c){ var s=normId(c); if(s.length===10) return cedulaValida(s); if(s.length===13) return rucValido(s); return false; }
+
     function validate(){
       var ok = true;
-      var ced = val("cedula");
-      var cedOk = /^\d{10}$/.test(ced) || /^\d{13}$/.test(ced);
+      var cedOk = identValida(val("cedula"));
       setErr("cedula", !cedOk); ok = ok && cedOk;
       var nom = val("nombre").length >= 3; setErr("nombre", !nom); ok = ok && nom;
       var corOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(val("correo")); setErr("correo", !corOk); ok = ok && corOk;
