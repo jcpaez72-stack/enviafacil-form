@@ -35,8 +35,8 @@
 </head>
 <body>
   <div class="head">
-    <h1>📦 Datos del remitente</h1>
-    <p>Completa la información de quien <b>envía</b> el paquete.</p>
+    <h1 id="h_titulo">📦 Datos del remitente</h1>
+    <p id="h_sub">Completa la información de quien <b>envía</b> el paquete.</p>
   </div>
 
   <form id="f" novalidate>
@@ -64,7 +64,7 @@
       </div>
     </div>
 
-    <div class="seccion">Dirección de recolección</div>
+    <div class="seccion" id="s_dir">Dirección de recolección</div>
     <div class="grp">
       <label>Calle principal <span class="req">*</span></label>
       <input id="calle" placeholder="Av. / Calle principal" />
@@ -82,7 +82,7 @@
       </div>
     </div>
     <div class="grp">
-      <label>Referencia de recolección <span class="req">*</span></label>
+      <label id="l_ref">Referencia de recolección <span class="req">*</span></label>
       <input id="referencia" placeholder="Punto de referencia para el retiro" />
       <div class="hint">Ej: casa esquinera, portón verde, junto a la farmacia…</div>
       <div class="errmsg" id="e_referencia">La referencia es obligatoria.</div>
@@ -121,6 +121,17 @@
       if (cm) { if (!executionId) executionId = decodeURIComponent(cm[2]); callback = cm[1]; }
     }
     if (qs.get("direccion")) document.getElementById("calle").value = qs.get("direccion");
+
+    // Adaptar textos según remitente / destinatario
+    var tipo = (qs.get("tipo") || "remitente").toLowerCase();
+    if (tipo === "destinatario") {
+      document.title = "Datos del destinatario · EnvíaFácil";
+      document.getElementById("h_titulo").textContent = "📍 Datos del destinatario";
+      document.getElementById("h_sub").innerHTML = "Completa la información de quien <b>recibe</b> el paquete.";
+      document.getElementById("s_dir").textContent = "Dirección de entrega";
+      document.getElementById("l_ref").innerHTML = 'Referencia de entrega <span class="req">*</span>';
+      document.getElementById("referencia").placeholder = "Punto de referencia para la entrega";
+    }
 
     function setErr(id, show){
       document.getElementById(id).classList.toggle("invalid", show);
