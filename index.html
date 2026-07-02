@@ -120,7 +120,34 @@
       var cm = callback.match(/^(.*?)[?&]executionId=([^&#]+)(.*)$/);
       if (cm) { if (!executionId) executionId = decodeURIComponent(cm[2]); callback = cm[1]; }
     }
-    if (qs.get("direccion")) document.getElementById("calle").value = qs.get("direccion");
+    // ---- PREFILL: rellenar con lo que Jelou ya sabe (pin/ubicación o datos previos) ----
+    // Acepta varios alias de parámetro para cada campo.
+    function pf(fieldId, keys){
+      for (var i=0;i<keys.length;i++){
+        var v = qs.get(keys[i]);
+        if (v){ document.getElementById(fieldId).value = v; return; }
+      }
+    }
+    pf("cedula",     ["cedula","ruc","identificacion"]);
+    pf("nombre",     ["nombre","nombres","nombre_completo"]);
+    pf("correo",     ["correo","email"]);
+    pf("celular",    ["celular","telefono","phone"]);
+    pf("calle",      ["calle_principal","calle","direccion","calle1"]);
+    pf("numero",     ["numero_casa","numero","ncalle"]);
+    pf("calle2",     ["calle_secundaria","calle2"]);
+    pf("referencia", ["referencia","referencia_recoleccion","referencia_entrega"]);
+
+    // Ubicación (pin): si viene lat/lon, la mostramos y la guardamos para el payload.
+    var lat = qs.get("lat") || qs.get("latitud") || "";
+    var lon = qs.get("lon") || qs.get("lng") || qs.get("longitud") || "";
+    if (lat && lon) {
+      var aviso = document.createElement("div");
+      aviso.style.cssText = "margin:0 0 12px;padding:10px 12px;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:10px;font-size:13px;color:#065f46;";
+      aviso.innerHTML = '📍 <b>Ubicación recibida.</b> Completa la calle, número y referencia. ' +
+        '<a href="https://maps.google.com/?q=' + encodeURIComponent(lat + "," + lon) + '" target="_blank" style="color:#059669;">ver en mapa</a>';
+      var form = document.getElementById("f");
+      form.insertBefore(aviso, form.firstChild);
+    }
 
     // Adaptar textos según remitente / destinatario
     var tipo = (qs.get("tipo") || "remitente").toLowerCase();
@@ -181,7 +208,8 @@
         tipo: qs.get("tipo") || "remitente",
         cedula: val("cedula"), nombre: val("nombre"), correo: val("correo"), celular: val("celular"),
         calle_principal: val("calle"), numero_casa: val("numero"), calle_secundaria: val("calle2"),
-        referencia: val("referencia")
+        referencia: val("referencia"),
+        lat: lat, lon: lon
       };
       try {
         if (callback) {
