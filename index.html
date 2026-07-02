@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>Datos del remitente · EnvíaFácil</title>
+<style>
+  :root{ --amarillo:#FFD100; --negro:#1a1a1a; --gris:#6b7280; --borde:#e5e7eb; --err:#dc2626; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:#f4f4f5; color:var(--negro); }
+  .head{ background:var(--amarillo); padding:18px 20px; }
+  .head h1{ margin:0; font-size:19px; font-weight:800; }
+  .head p{ margin:4px 0 0; font-size:13px; color:#4b4b4b; }
+  form{ padding:16px 18px 96px; max-width:520px; margin:0 auto; }
+  .grp{ margin-bottom:14px; }
+  label{ display:block; font-size:13px; font-weight:600; margin-bottom:6px; }
+  label .req{ color:var(--err); }
+  input{ width:100%; padding:12px 14px; font-size:16px; border:1.5px solid var(--borde); border-radius:10px; background:#fff; outline:none; }
+  input:focus{ border-color:var(--amarillo); }
+  input.invalid{ border-color:var(--err); background:#fef2f2; }
+  .row{ display:flex; gap:10px; }
+  .row .grp{ flex:1; }
+  .hint{ font-size:11px; color:var(--gris); margin-top:4px; }
+  .errmsg{ font-size:12px; color:var(--err); margin-top:4px; display:none; }
+  .barra{ position:fixed; left:0; right:0; bottom:0; background:#fff; border-top:1px solid var(--borde); padding:12px 18px; }
+  .barra .inner{ max-width:520px; margin:0 auto; }
+  button{ width:100%; padding:15px; font-size:16px; font-weight:800; color:var(--negro); background:var(--amarillo); border:none; border-radius:12px; cursor:pointer; }
+  button:disabled{ opacity:.6; }
+  .ok-screen{ display:none; text-align:center; padding:60px 24px; }
+  .ok-screen .check{ font-size:56px; }
+  .ok-screen h2{ margin:12px 0 6px; }
+  .ok-screen p{ color:var(--gris); }
+  .seccion{ font-size:12px; font-weight:700; color:var(--gris); text-transform:uppercase; letter-spacing:.4px; margin:6px 0 10px; }
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>📦 Datos del remitente</h1>
+    <p>Completa la información de quien <b>envía</b> el paquete.</p>
+  </div>
+
+  <form id="f" novalidate>
+    <div class="seccion">Datos personales</div>
+    <div class="grp">
+      <label>Cédula o RUC <span class="req">*</span></label>
+      <input id="cedula" inputmode="numeric" maxlength="13" placeholder="10 dígitos (cédula) o 13 (RUC)" />
+      <div class="errmsg" id="e_cedula">Ingresa una cédula (10 dígitos) o RUC (13 dígitos) válido.</div>
+    </div>
+    <div class="grp">
+      <label>Nombre completo <span class="req">*</span></label>
+      <input id="nombre" placeholder="Nombres y apellidos" />
+      <div class="errmsg" id="e_nombre">Ingresa el nombre completo.</div>
+    </div>
+    <div class="row">
+      <div class="grp">
+        <label>Correo <span class="req">*</span></label>
+        <input id="correo" type="email" inputmode="email" placeholder="correo@ejemplo.com" />
+        <div class="errmsg" id="e_correo">Correo no válido.</div>
+      </div>
+      <div class="grp">
+        <label>Celular <span class="req">*</span></label>
+        <input id="celular" inputmode="numeric" maxlength="10" placeholder="09XXXXXXXX" />
+        <div class="errmsg" id="e_celular">Celular de 10 dígitos.</div>
+      </div>
+    </div>
+
+    <div class="seccion">Dirección de recolección</div>
+    <div class="grp">
+      <label>Calle principal <span class="req">*</span></label>
+      <input id="calle" placeholder="Av. / Calle principal" />
+      <div class="errmsg" id="e_calle">Ingresa la calle principal.</div>
+    </div>
+    <div class="row">
+      <div class="grp">
+        <label>Número <span class="req">*</span></label>
+        <input id="numero" placeholder="N° casa" />
+        <div class="errmsg" id="e_numero">Ingresa el número.</div>
+      </div>
+      <div class="grp">
+        <label>Calle secundaria</label>
+        <input id="calle2" placeholder="Calle secundaria (opcional)" />
+      </div>
+    </div>
+    <div class="grp">
+      <label>Referencia de recolección <span class="req">*</span></label>
+      <input id="referencia" placeholder="Punto de referencia para el retiro" />
+      <div class="hint">Ej: casa esquinera, portón verde, junto a la farmacia…</div>
+      <div class="errmsg" id="e_referencia">La referencia es obligatoria.</div>
+    </div>
+  </form>
+
+  <div class="barra"><div class="inner">
+    <button id="btn" type="button">Continuar</button>
+  </div></div>
+
+  <div class="ok-screen" id="ok">
+    <div class="check">✅</div>
+    <h2>¡Datos guardados!</h2>
+    <p>Ya puedes volver al chat de WhatsApp para continuar con tu envío.</p>
+  </div>
+
+<script>
+  (function(){
+    var qs = new URLSearchParams(location.search);
+    var executionId = qs.get("executionId") || "";
+    var callback = qs.get("callback") || "";
+    if (qs.get("direccion")) document.getElementById("calle").value = qs.get("direccion");
+
+    function setErr(id, show){
+      document.getElementById(id).classList.toggle("invalid", show);
+      document.getElementById("e_"+id).style.display = show ? "block" : "none";
+    }
+    function val(id){ return (document.getElementById(id).value || "").trim(); }
+
+    function validate(){
+      var ok = true;
+      var ced = val("cedula");
+      var cedOk = /^\d{10}$/.test(ced) || /^\d{13}$/.test(ced);
+      setErr("cedula", !cedOk); ok = ok && cedOk;
+      var nom = val("nombre").length >= 3; setErr("nombre", !nom); ok = ok && nom;
+      var corOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(val("correo")); setErr("correo", !corOk); ok = ok && corOk;
+      var celOk = /^\d{10}$/.test(val("celular")); setErr("celular", !celOk); ok = ok && celOk;
+      var calOk = val("calle").length >= 2; setErr("calle", !calOk); ok = ok && calOk;
+      var numOk = val("numero").length >= 1; setErr("numero", !numOk); ok = ok && numOk;
+      var refOk = val("referencia").length >= 3; setErr("referencia", !refOk); ok = ok && refOk;
+      return ok;
+    }
+
+    var btn = document.getElementById("btn");
+    btn.addEventListener("click", async function(){
+      if (!validate()) return;
+      btn.disabled = true; btn.textContent = "Enviando…";
+      var payload = {
+        tipo: qs.get("tipo") || "remitente",
+        cedula: val("cedula"), nombre: val("nombre"), correo: val("correo"), celular: val("celular"),
+        calle_principal: val("calle"), numero_casa: val("numero"), calle_secundaria: val("calle2"),
+        referencia: val("referencia")
+      };
+      try {
+        if (callback) {
+          var sep = callback.indexOf("?") >= 0 ? "&" : "?";
+          var url = callback + (executionId && callback.indexOf("executionId") < 0 ? sep + "executionId=" + encodeURIComponent(executionId) : "");
+          await fetch(url, { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(payload) });
+        }
+        document.getElementById("f").style.display = "none";
+        document.querySelector(".barra").style.display = "none";
+        document.querySelector(".head").style.display = "none";
+        document.getElementById("ok").style.display = "block";
+        setTimeout(function(){ try{ window.close(); }catch(e){} }, 1500);
+      } catch(e){
+        btn.disabled = false; btn.textContent = "Continuar";
+        alert("No pudimos enviar los datos. Revisa tu conexión e intenta de nuevo.");
+      }
+    });
+  })();
+</script>
+</body>
+</html>
