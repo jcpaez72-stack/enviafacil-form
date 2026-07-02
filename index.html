@@ -132,6 +132,14 @@
     pf("nombre",     ["nombre","nombres","nombre_completo"]);
     pf("correo",     ["correo","email"]);
     pf("celular",    ["celular","telefono","phone"]);
+    // Normaliza el celular a formato Ecuador 09XXXXXXXX (10 díg): quita 593 y agrega 0.
+    (function(){
+      var el = document.getElementById("celular");
+      var d = (el.value || "").replace(/\D/g, "");
+      if (d.indexOf("593") === 0) d = d.slice(3);
+      if (d.length === 9 && d.charAt(0) === "9") d = "0" + d;
+      el.value = d;
+    })();
     pf("calle",      ["calle_principal","calle","direccion","calle1"]);
     pf("numero",     ["numero_casa","numero","ncalle"]);
     pf("calle2",     ["calle_secundaria","calle2"]);
