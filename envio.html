@@ -50,7 +50,7 @@
     </div>
     <div class="grp">
       <label>Ciudad <span class="req">*</span></label>
-      <select id="ciudad"><option value="">Selecciona ciudad…</option></select>
+      <select id="ciudad" disabled><option value="">Elige provincia primero…</option></select>
       <div class="errmsg" id="e_ciudad">Selecciona la ciudad.</div>
     </div>
     <div class="grp">
@@ -128,8 +128,10 @@
     var selP = document.getElementById("provincia"), selC = document.getElementById("ciudad");
     Object.keys(CAT).forEach(function(p){ var o=document.createElement("option"); o.value=p; o.textContent=p; selP.appendChild(o); });
     function llenarCiudades(prov, sel){
-      selC.innerHTML = '<option value="">Selecciona ciudad…</option>';
-      (CAT[prov]||[]).forEach(function(c){ var o=document.createElement("option"); o.value=c[0]; o.textContent=c[1]; if(sel&&(c[0]===sel||c[1]===sel))o.selected=true; selC.appendChild(o); });
+      var lista = CAT[prov]||[];
+      selC.disabled = lista.length===0;
+      selC.innerHTML = '<option value="">'+(lista.length? 'Selecciona ciudad…' : 'Elige provincia primero…')+'</option>';
+      lista.forEach(function(c){ var o=document.createElement("option"); o.value=c[0]; o.textContent=c[1]; if(sel&&(c[0]===sel||c[1]===sel))o.selected=true; selC.appendChild(o); });
     }
     selP.addEventListener("change", function(){ llenarCiudades(selP.value); });
 
