@@ -227,9 +227,11 @@
       try {
         var resp = await fetch(PROXY, { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(payload) });
         var out = {}; try { out = await resp.json(); } catch(e){}
-        if (!resp.ok || out.ok === false) {
-          throw new Error("proxy " + (out.status || resp.status));
-        }
+        // DEBUG temporal: mostrar en pantalla lo que pasó para diagnosticar.
+        alert("DEBUG\nexecutionId: " + (executionId || "(VACÍO)") +
+              "\nproxy HTTP: " + resp.status +
+              "\nout.ok: " + out.ok + "  jelou status: " + out.status +
+              "\njelou body: " + String(out.body || "").slice(0,120));
         document.getElementById("f").style.display = "none";
         document.querySelector(".barra").style.display = "none";
         document.querySelector(".head").style.display = "none";
@@ -237,7 +239,9 @@
         setTimeout(function(){ try{ window.close(); }catch(e){} }, 1500);
       } catch(e){
         btn.disabled = false; btn.textContent = "Continuar";
-        alert("No pudimos enviar los datos. Revisa tu conexión e intenta de nuevo.");
+        alert("DEBUG ERROR\nexecutionId: " + (executionId || "(VACÍO)") +
+              "\nerror: " + (e && e.message) +
+              "\nhref: " + location.href.slice(0,180));
       }
     });
   })();
