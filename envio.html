@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>Datos del envío · EnvíaFácil</title>
+<style>
+  :root{ --amarillo:#FFD100; --negro:#1a1a1a; --gris:#6b7280; --borde:#e5e7eb; --err:#dc2626; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:#f4f4f5; color:var(--negro); }
+  .head{ background:var(--amarillo); padding:18px 20px; }
+  .head h1{ margin:0; font-size:19px; font-weight:800; }
+  .head p{ margin:4px 0 0; font-size:13px; color:#4b4b4b; }
+  form{ padding:16px 18px 96px; max-width:520px; margin:0 auto; }
+  .grp{ margin-bottom:14px; }
+  label{ display:block; font-size:13px; font-weight:600; margin-bottom:6px; }
+  label .req{ color:var(--err); }
+  input,select{ width:100%; padding:12px 14px; font-size:16px; border:1.5px solid var(--borde); border-radius:10px; background:#fff; outline:none; -webkit-appearance:none; appearance:none; }
+  select{ background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>"); background-repeat:no-repeat; background-position:right 12px center; padding-right:36px; }
+  input:focus,select:focus{ border-color:var(--amarillo); }
+  input.invalid,select.invalid{ border-color:var(--err); background:#fef2f2; }
+  .row{ display:flex; gap:10px; }
+  .row .grp{ flex:1; }
+  .hint{ font-size:11px; color:var(--gris); margin-top:4px; }
+  .errmsg{ font-size:12px; color:var(--err); margin-top:4px; display:none; }
+  .seccion{ font-size:12px; font-weight:700; color:var(--gris); text-transform:uppercase; letter-spacing:.4px; margin:6px 0 10px; }
+  .barra{ position:fixed; left:0; right:0; bottom:0; background:#fff; border-top:1px solid var(--borde); padding:12px 18px; }
+  .barra .inner{ max-width:520px; margin:0 auto; }
+  button{ width:100%; padding:15px; font-size:16px; font-weight:800; color:var(--negro); background:var(--amarillo); border:none; border-radius:12px; cursor:pointer; }
+  button:disabled{ opacity:.6; }
+  .ok-screen{ display:none; text-align:center; padding:60px 24px; }
+  .ok-screen .check{ font-size:56px; }
+  .ok-screen h2{ margin:12px 0 6px; }
+  .ok-screen p{ color:var(--gris); }
+  .aviso{ margin:0 0 12px; padding:10px 12px; background:#ecfdf5; border:1px solid #a7f3d0; border-radius:10px; font-size:13px; color:#065f46; }
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1 id="h_titulo">📦 Datos del envío</h1>
+    <p id="h_sub">Completa los datos para cotizar tu envío.</p>
+  </div>
+
+  <form id="f" novalidate>
+    <div class="seccion" id="s_dir">Dirección</div>
+    <div class="grp">
+      <label>Provincia <span class="req">*</span></label>
+      <select id="provincia"><option value="">Selecciona provincia…</option></select>
+      <div class="errmsg" id="e_provincia">Selecciona la provincia.</div>
+    </div>
+    <div class="grp">
+      <label>Ciudad <span class="req">*</span></label>
+      <select id="ciudad"><option value="">Selecciona ciudad…</option></select>
+      <div class="errmsg" id="e_ciudad">Selecciona la ciudad.</div>
+    </div>
+    <div class="grp">
+      <label>Sector / Barrio <span class="req">*</span></label>
+      <input id="sector" placeholder="Ej: El Vergel, Chillogallo…" />
+      <div class="errmsg" id="e_sector">Ingresa el sector o barrio.</div>
+    </div>
+    <div class="grp">
+      <label>Calle principal <span class="req">*</span></label>
+      <input id="calle" placeholder="Av. / Calle principal y referencia" />
+      <div class="errmsg" id="e_calle">Ingresa la calle principal.</div>
+    </div>
+
+    <div id="detalle">
+      <div class="seccion">Detalle del paquete</div>
+      <div class="grp">
+        <label>Tipo de envío <span class="req">*</span></label>
+        <select id="tipo">
+          <option value="">Selecciona…</option>
+          <option value="201202002002013">📦 Paquete</option>
+          <option value="201202002001002">📄 Documento</option>
+        </select>
+        <div class="errmsg" id="e_tipo">Selecciona el tipo.</div>
+      </div>
+      <div class="row">
+        <div class="grp">
+          <label>Piezas <span class="req">*</span></label>
+          <input id="piezas" inputmode="numeric" placeholder="Ej: 1" />
+          <div class="errmsg" id="e_piezas">N° de piezas.</div>
+        </div>
+        <div class="grp">
+          <label>Peso (kg) <span class="req">*</span></label>
+          <input id="peso" inputmode="decimal" placeholder="Ej: 1.5" />
+          <div class="errmsg" id="e_peso">Peso en kg.</div>
+        </div>
+      </div>
+      <div class="grp">
+        <label>Valor declarado (USD) <span class="req">*</span></label>
+        <input id="valor" inputmode="decimal" placeholder="Ej: 20" />
+        <div class="errmsg" id="e_valor">Valor en USD.</div>
+      </div>
+    </div>
+  </form>
+
+  <div class="barra"><div class="inner"><button id="btn" type="button">Continuar</button></div></div>
+
+  <div class="ok-screen" id="ok">
+    <div class="check">✅</div>
+    <h2>¡Datos guardados!</h2>
+    <p>Volviendo a WhatsApp…</p>
+  </div>
+
+<script>
+  var CAT = {"AZUAY":[["201001003112","ABDON CALDERON (LA UNION)"],["201001003108","ASUNCION (GIRON)"],["201001003098","BAÑOS"],["201001003081","BELLAVISTA (CUENCA)"],["201001003035","Baños Cuenca"],["201001003094","CAMILO PONCE ENRIQUEZ"],["201001003078","CAÑARIBAMBA"],["201001003016","CHAULLABAMBA"],["201001003006","CHORDELEG"],["201001003110","CHUMBLIN"],["201001003097","CUCHIL (CUTCHIL)"],["201001003011","CUENCA"],["201001003017","CUMBE"],["201001003036","Checa (Jidcay)"],["201001003037","Chiquintad"],["201001003082","EL BATAN"],["201001003079","EL CABO"],["201001003113","EL CARMEN DE PIJILI (SANTA ISABEL)"],["201001003083","EL SAGRARIO (CUENCA)"],["201001003084","EL VECINO"],["201001003039","Firma"],["201001003085","GIL RAMIREZ DAVALOS"],["201001003002","GIRON"],["201001003045","GUACHAPALA"],["201001003003","GUALACEO"],["201001003091","HERMANO MIGUEL"],["201001003086","HUAYNACAPAC"],["201001003100","LA UNION (CHORDELEG)"],["201001003104","LUIS CORDERO VEGA"],["201001003021","Llacao"],["201001003087","MACHANGARA"],["201001003099","MONAY"],["201001003115","NULTI"],["201001003022","Nulti"],["201001016002","OÑA"],["201001003004","PAUTE"],["201001009013","PONCE ENRIQUEZ"],["201001003093","PRINCIPAL"],["201001003023","Paccha"],["201001003102","REMIGIO CRESPO TORAL (GULAG)"],["201001003118","RICAURTE"],["201001003020","RICAURTE CUENCA"],["201001003088","SAN BLAS (CUENCA)"],["201001003095","SAN FELIPE DE OÑA CABECERA CANTONAL"],["201001003109","SAN GERARDO"],["201001003114","SAN SALVADOR DE CAÑARIBAMBA"],["201001003089","SAN SEBASTIAN (CUENCA)"],["201001003120","SANTA ANA (CUENCA)"],["201001003005","SANTA ISABEL"],["201001003111","SANTA ISABEL (CHAGUARURCO)"],["201001003007","SIG SIG"],["201001003105","SIGSIG"],["201001003117","SUCRE (CUENCA)"],["201001005008","SUSCAL"],["201001003096","SUSUDEL"],["201001003024","San Fernando"],["201001003025","San Joaquín"],["201001003034","San Juan Cuenca"],["201001003040","Sayausi"],["201001003026","Sidcay"],["201001003027","Simón Bolívar (Cab. en Gañanzol)"],["201001003028","Sinincay"],["201001003038","Sosudel"],["201001014026","TARQUI"],["201001003015","TOTORACOCHA"],["201001003033","Tarqui Cuenca"],["201001003029","Tomebamba"],["201001003030","Turi"],["201001003107","VALLE (CUENCA)"],["201001003031","Victoria del Portete (Irquis)"],["201001003090","YANUNCAY"],["201001003018","YUNGUILLA"],["201001003103","ZHIDMAD"],["201001003019","ZONA FRANCA"]],"BOLIVAR":[["201001004028","ANGEL POLIBIO CHAVES"],["201001004005","CHILLANES"],["201001004002","ECHEANDIA"],["201001004029","GABRIEL IGNACIO VEINTIMILLA"],["201001004036","GUANUJO"],["201001004001","GUARANDA"],["201001004037","SALINAS (GUARANDA)"],["201001004011","SALINAS DE GUARANDA"],["201001004003","SAN JOSE DE CHIMBO"],["201001004006","SAN MIGUEL DE BOLIVAR"]],"CARCHI":[["201001006006","BOLIVAR"],["201001006036","CRISTOBAL COLON"],["201001006003","EL ANGEL"],["201001006035","GONZALEZ SUAREZ (TULCAN)"],["201001006005","HUACA"],["201001002041","JULIO ANDRADE"],["201001006037","JULIO ANDRADE (OREJUELA)"],["201001006002","MIRA"],["201001006004","SAN GABRIEL"],["201001006001","TULCAN"]],"CAÑAR":[["201001005001","AZOGUES"],["201001005004","BIBLIAN"],["201001005003","CAÑAR"],["201001005007","COJITAMBO"],["201001005006","DELEG"],["201001003009","EL TAMBO"],["201001005002","LA TRONCAL"]],"CHIMBORAZO":[["201001008002","ALAUSI"],["201001008062","ALAUSI CUMANDA"],["201001008005","CAJABAMBA"],["201001008063","CALPI"],["201001004008","CHAMBO"],["201001008003","CHUNCHI"],["201001008008","COLTA"],["201001008012","Cumanda Chimborazo"],["201001008007","GUAMOTE"],["201001008004","GUANO"],["201001008067","LA MATRIZ (GUANO)"],["201001008010","LICAN"],["201001008056","LIZARZABURU"],["201001008072","MALDONADO (RIOBAMBA)"],["201001008001","RIOBAMBA"],["201001008058","VELASCO"],["201001008059","VELOZ"],["201001008011","YARUQUIES"]],"COTOPAXI":[["201001007068","BELISARIO QUEVEDO (GUANAILIN)"],["201001007012","BELISARIO QUEVEDO (LATACUNGA)"],["201001007031","EL CARMEN (COTOPAXI)"],["201001007055","ELOY ALFARO (SAN FELIPE)"],["201001007060","GUAITACAMA (GUAYTACAMA)"],["201001007009","GUAYTACAMA"],["201001007056","LA MATRIZ (LATACUNGA)"],["201001007007","LASSO"],["201001007001","LATACUNGA"],["201001007010","MULALO"],["201001007015","Mulalao"],["201001007008","PASTOCALLE"],["201001007004","PUJILI"],["201001007002","SALCEDO"],["201001007057","SAN BUENAVENTURA"],["201001007013","SAN BUENAVENTURA BELLAVISTA."],["201001007062","SAN JUAN DE PASTOCALLE"],["201001007069","SAN MIGUEL"],["201001007003","SAQUISILI"],["201001007011","TANICUCHI"],["201001007014","Tanicuchchi"]],"EL ORO":[["201001009006","ARENILLAS"],["201001009083","BELLAVISTA (SANTA ROSA)"],["201001009077","BOLIVAR (PASAJE)"],["201001009085","ECUADOR"],["201001009011","EL CAMBIO"],["201001009008","EL GUABO"],["201001009072","EL PARAISO (HUAQUILLAS)"],["201001009075","EL RETIRO"],["201001009007","HUAQUILLAS"],["201001009012","LA IBERIA"],["201001009094","LA LIBERTAD (ARENILLAS)"],["201001009076","LA PROVIDENCIA"],["201001009019","La Avanzada"],["201001009017","La Peaña"],["201001009018","Loma De Franco"],["201001009001","MACHALA"],["201001009073","MILTON REYES"],["201001009079","OCHOA LEON (MATRIZ)"],["201001009002","PASAJE"],["201001009004","PIÑAS"],["201001009003","PORTOVELO"],["201001009080","PUERTO JELI"],["201001009009","SANTA ROSA"],["201001009082","SARACAY"],["201001009081","TORATA"],["201001009074","UNION LOJANA"],["201001009005","ZARUMA"]],"ESMERALDAS":[["201001010081","5 DE AGOSTO"],["201001010003","ATACAMES"],["201001010080","BARTOLOME RUIZ (CESAR FRANCO CARRION)"],["201001010001","ESMERALDAS"],["201001010011","LA UNION"],["201001010086","LA VILLEGAS"],["201001010082","LUIS TELLO (LAS PALMAS)"],["201001010008","QUININDE"],["201001010085","ROSA ZARATE (QUININDE)"],["201001010083","SIMON PLATA TORRES"],["201001010016","TACHINA"],["201001010004","TONSUPA"],["201001010093","VALLE HERMOSO (LA CONCORDIA)"],["201001010013","VICHE"],["201001010084","VUELTA LARGA"]],"GALAPAGOS":[["201001020012","BELLAVISTA (SANTA CRUZ)"],["201001020011","EL PROGRESO"],["201001020004","PUERTO AYORA"],["201001020001","PUERTO BAQUERIZO MORENO"],["201001020003","SAN CRISTOBAL"],["201001020002","SANTA CRUZ"]],"GUAYAS":[["201001002101","ALFREDO BAQUERIZO MORENO (JUJAN)"],["201001002107","AYACUCHO (GUAYAQUIL)"],["201001002014","BALAO"],["201001002016","BALZAR"],["201001002118","BANIFE"],["201001002048","BASE TAURA"],["201001002065","BOCA DE CAÑA"],["201001002129","BOCANA"],["201001002067","BOLICHE"],["201001002108","BOLIVAR (SAGRARIO)"],["201001002037","BUCAY"],["201001002130","CANDILEJOS"],["201001002109","CARBO (CONCEPCION)"],["201001002131","CENTRAL"],["201001002027","CERECITA"],["201001002054","CHIVERIA"],["201001002032","CHONGON"],["201001002029","COLIMES"],["201001002055","COLORADAL"],["201001002105","CORONEL MARCELINO MARIDUEÑA (SAN CARLOS)"],["201001002104","CRNEL.LORENZO DE GARAICOA (PEDREGAL)"],["201001010010","CUMANDA"],["201001002078","Cumanda Milagro"],["201001002009","DAULE"],["201001002002","DURAN"],["201001002077","Data De Playas"],["201001002049","EL DESEO"],["201001002096","EL RECREO"],["201001002137","EL ROSARIO (EL EMPALME)"],["201001002007","EL TRIUNFO"],["201001002119","EMILIANO CAICEDO MARCOS"],["201001002076","Eloy Alfaro Durán"],["201001002110","FEBRES CORDERO"],["201001002111","GARCIA MORENO (GUAYAQUIL)"],["201001002106","GENERAL ELIZALDE (BUCAY)"],["201001002056","GENERAL VERNAZA"],["201001002134","GRAL. VERNAZA (DOS ESTEROS)"],["201001002001","GUAYAQUIL"],["201001002081","GUAYAS (PUEBLO NUEVO)"],["201001002075","General Villamil (Playas)"],["201001002025","ISIDRO AYORA"],["201001002122","ISIDRO AYORA (SOLEDAD)"],["201001002074","Ingenio San Carlos"],["201001002100","JESUS MARIA"],["201001002094","JUAN GOMEZ RENDON (PROGRESO)"],["201001002018","JUJAN"],["201001002136","JUNQUILLAL"],["201001002117","LA AURORA (SATELITE)"],["201001002057","LA MARAVILLA"],["201001002127","LA PUNTILLA (SATELITE)"],["201001002135","LA VICTORIA (ÑAUZA)"],["201001002058","LAS ANIMAS"],["201001002030","LAUREL"],["201001002112","LETAMENDI"],["201001002024","LOMAS DE SARGENTILLO"],["201001002050","LORENZO DE GARAICOA"],["201001002123","LOS LOJAS (ENRIQUE BAQUERIZO MORENO)"],["201001002059","LOS TINTOS"],["201001002072","La Puntilla"],["201001002053","MANUEL J. CALLE"],["201001001030","MARCELINO MARIDUEÑA"],["201001002051","MARISCAL SUCRE"],["201001002102","MARISCAL SUCRE (HUAQUES)"],["201001002064","MATILDE ESTHER"],["201001002003","MILAGRO"],["201001002015","NARANJAL"],["201001002033","NARANJITO"],["201001002099","NARCISA DE JESUS"],["201001002021","NOBOL"],["201001002113","NUEVE DE OCTUBRE"],["201001002090","OLMEDO (SAN ALEJO)"],["201001002120","PADRE JUAN BAUTISTA AGUIRRE"],["201001002022","PALESTINA"],["201001002132","PARAISO"],["201001002020","PASCUALES"],["201001002040","PEDRO CARBO"],["201001002060","PETRILLO"],["201001002124","PIEDRAHITA (NOBOL)"],["201001002005","PLAYAS"],["201001002115","PLAYAS (GRAL. VILLAMIL)"],["201001002035","POSORJA"],["201001002042","PROGRESO"],["201001002061","PUENTE LUCIA"],["201001002028","PUERTO INCA"],["201001002052","ROBERTO ASTUDILLO"],["201001002091","ROCA"],["201001002138","ROCAFUERTE (GUAYAQUIL)"],["201001002062","SABANILLA"],["201001002031","SALITRE"],["201001002019","SAMBORONDON"],["201001002066","SAMBORONDON (Pueblo)"],["201001002139","SAN JACINTO"],["201001002080","SAN JACINTO DE YAGUACHI"],["201001002133","SAN MATEO (SALITRE (URBINA JADO))"],["201001002142","SANTA CLARA"],["201001002023","SANTA LUCIA"],["201001002038","SIMON BOLIVAR"],["201001002140","SUCRE (GUAYAQUIL)"],["201001002070","San Antonio (Playas)"],["201001002063","TARIFA"],["201001002141","TARQUI (GUAYAQUIL)"],["201001002017","TENGUEL"],["201001013020","TRES POSTES"],["201001002114","URDANETA"],["201001002125","VALLE DE LA VIRGEN"],["201001002121","VICENTE PIEDRAHITA"],["201001002069","Velasco Ibarra (El Empalme)"],["201001002092","XIMENA"],["201001002006","YAGUACHI"],["201001002071","limonal"]],"IMBABURA":[["201001011021","ANDRADE MARIN"],["201001011062","ANDRADE MARIN (LOURDES)"],["201001011022","ANTONIO ANTE"],["201001011001","ATUNTAQUI"],["201001011018","CARANQUI"],["201001011023","CHALTURA"],["201001011020","CHORLAVI"],["201001011006","COTACACHI"],["201001011070","DR. MIGUEL EGAS CABEZAS (PEGUCHE)"],["201001011060","EUGENIO ESPEJO (CALPAQUI)"],["201001011012","GONZALEZ SUAREZ (OTAVALO)"],["201001011005","IBARRA"],["201001011069","IMBAYA (SAN LUIS DE COBUENDO)"],["201001011059","LA DOLOROSA DEL PRIORATO"],["201001011025","NATABUELA"],["201001011002","OTAVALO"],["201001011013","PEGUCHE"],["201001011030","PERUGACHI"],["201001011003","PIMAMPIRO"],["201001011014","QUIROGA"],["201001011032","Quiroga Otavalo"],["201001011065","SAGRARIO"],["201001011075","SAN ANTONIO (IBARRA)"],["201001001027","SAN ANTONIO IBARRA"],["201001011066","SAN FRANCISCO (COTACACHI)"],["201001011074","SAN FRANCISCO (IBARRA)"],["201001011063","SAN FRANCISCO DE NATABUELA"],["201001011026","SAN JOSE"],["201001011064","SAN JOSE DE CHALTURA"],["201001011010","SAN PABLO IMBABURA"],["201001011073","SAN RAFAEL (OTAVALO)"],["201001011011","SAN ROQUE"],["201001011028","SANTA BERTHA"],["201001011031","San Miguel de Ibarra"],["201001011029","TIERRA BLANCA"],["201001011004","URCUQUI"],["201001011058","URCUQUI CABECERA CANTONAL"],["201001011019","YAGUARCOCHA"]],"LOJA":[["201001012004","CARIAMANGA"],["201001012005","CATACOCHA"],["201001012002","CATAMAYO"],["201001012043","CATAMAYO (LA TOMA)"],["201001012011","CELICA"],["201001012038","COLAISACA"],["201001012017","Calvas"],["201001012024","EL SAGRARIO (LOJA)"],["201001012070","GENERAL ELOY ALFARO (SAN SEBASTIAN)"],["201001012010","GONZANAMA"],["201001012073","LARAMA"],["201001012001","LOJA"],["201001012076","LOURDES"],["201001019003","MACARA"],["201001012072","MACARA (LOJA)"],["201001012071","MACARA (MANUEL ENRIQUE RENGEL SUQUILANDA)"],["201001012006","MALACATOS"],["201001012032","MALACATOS (VALLADOLID)"],["201001012016","Paltas"],["201001012124","SAN JOSE (CATAMAYO)"],["201001012025","SAN SEBASTIAN (LOJA)"],["201001012009","SARAGURO"],["201001012113","SUCRE (LOJA)"],["201001012015","San Lucas"],["201001012014","San Pedro de La Bendita"],["201001012013","San Pedro de Vilcabamba"],["201001012098","URDANETA (PAQUISHAPA)"],["201001012026","VALLE (LOJA)"],["201001012007","VILCABAMBA"],["201001012034","VILCABAMBA (VICTORIA)"]],"LOS RIOS":[["201001013048","7 DE AGOSTO"],["201001013013","BABA"],["201001013001","BABAHOYO"],["201001013040","BARREIRO"],["201001013005","BUENA FE"],["201001004007","CALUMA"],["201001013041","CARACOL"],["201001012003","CATARAMA"],["201001013043","CLEMENTE BAQUERIZO"],["201001013044","DR. CAMILO PONCE"],["201001002011","EL EMPALME"],["201001013056","EL SALTO"],["201001013027","Guare"],["201001011009","ISLA BEJUCAL"],["201001013021","ISLA DE BEJUCAL"],["201001007005","LA MANA"],["201001013042","LA UNION (BABAHOYO)"],["201001013026","La Esperanza"],["201001013025","La Julia"],["201001013024","La Unión (Valencia)"],["201001013007","MOCACHE"],["201001013009","MONTALVO (LOS RIOS)"],["201001002036","PALENQUE"],["201001013010","PATRICIA PILAR"],["201001013012","PUEBLO VIEJO"],["201001013045","PUEBLOVIEJO"],["201001013002","QUEVEDO"],["201001013019","QUINSALOMA"],["201001013016","RICAURTE LOS RIOS"],["201001013014","SAN CAMILO"],["201001013015","SAN CARLOS"],["201001013008","SAN JUAN"],["201001013046","SIETE DE OCTUBRE"],["201001013023","San Jacinto de Buena Fe"],["201001013022","San Juan Babahoyo"],["201001013004","VALENCIA"],["201001013003","VENTANAS"],["201001013047","VENUS DEL RIO QUEVEDO"],["201001013006","VINCES"]],"MANABI":[["201001014078","12 DE MARZO"],["201001014082","18 DE OCTUBRE"],["201001001032","24 DE MAYO"],["201001014093","4 DE DICIEMBRE"],["201001014136","ABDONCALDERON(SANFRANCISCO)"],["201001014036","ALAHUELA"],["201001014109","ALHAJUELA (BAJO GRANDE)"],["201001014129","ANDRESDEVERA"],["201001014106","ANGEL PEDRO GILER (LA ESTANCILLA)"],["201001014131","ANIBALSANANDRES"],["201001014133","ARQ.SIXTODURANBALLEN"],["201001014141","AYACUCHO (SANTA ANA)"],["201001014105","BACHILLERO"],["201001014003","BAHIA DE CARAQUEZ"],["201001014132","BELLAVISTA (24 DE MAYO)"],["201001014016","CALCETA"],["201001014031","CALDERON DE PORTOVIEJO"],["201001014066","CANOA (SAN VICENTE)"],["201001014032","CANUTO"],["201001014015","CHARAPOTO"],["201001014111","CHIRIJOS"],["201001014004","CHONE"],["201001014011","COLON"],["201001014010","CRUCITA"],["201001014127","DR.MIGUELMORANLUCIO"],["201001014005","EL CARMEN"],["201001014086","EL COLORADO"],["201001014130","ELOY ALFARO (MANTA)"],["201001014033","ESTANCILLA"],["201001014021","FLAVIO ALFARO"],["201001014081","FRANCISCO PACHECO"],["201001014087","GENERAL ELOY ALFARO"],["201001014117","HONORATOVASQUEZ(CAB.ENVASQUEZ)"],["201001014024","JAMA"],["201001014013","JARAMIJO"],["201001014006","JIPIJAPA"],["201001014009","JUNIN"],["201001014035","LA DELICIA KM. 29"],["201001014027","LEONIDAS PLAZA"],["201001014088","LEONIDAS PROAÑO"],["201001014135","LEONIDASPLAZAGUTIERREZ"],["201001014114","LODANA"],["201001014084","LOS ESTEROS"],["201001014097","MACHALILLA"],["201001014001","MANTA"],["201001014075","MANUEL INOCENCIO PARRALES Y GUALE"],["201001014020","MONTECRISTI"],["201001017009","NUEVO ISRAEL"],["201001014019","OLMEDO"],["201001014014","PAJAN"],["201001010009","PEDERNALES"],["201001014007","PICHINCHA MANABI"],["201001014037","PICOAZA (DENTRO DEL PERIMETRO URBANO)"],["201001014002","PORTOVIEJO"],["201001014029","PUERTO CAYO"],["201001014098","PUERTO DE CAYO"],["201001014022","PUERTO LOPEZ"],["201001014134","PUERTOLOPEZ"],["201001014040","RICAURTE MANABI"],["201001014039","RIO CHICO (DENTRO DEL PERIMETRO URBANO)"],["201001014137","RIOCHICO(RIOCHICO)"],["201001014012","ROCAFUERTE"],["201001014034","SAN ANTONIO DE CHONE"],["201001014076","SAN LORENZO DE JIPIJAPA"],["201001014073","SAN MATEO (MANTA)"],["201001014128","SAN PABLO"],["201001014038","SAN PLACIDO (DENTRO DEL PERIMETRO URBANO)"],["201001014018","SAN VICENTE"],["201001014138","SANPLACIDO"],["201001014008","SANTA ANA (PORTOVIEJO)"],["201001014115","SANTA ANA DE VUELTA LARGA"],["201001014083","SANTA RITA (CHONE)"],["201001014140","SIMONBOLIVAR"],["201001014042","Sucre"],["201001014017","TOSAGUA"],["201001014041","Tarqui Manabi"],["201001014102","ZAPALLO"],["201001014044","colorado"]],"MORONA SANTIAGO":[["201001015002","GUALAQUIZA"],["201001015001","MACAS"],["201001015043","PALORA (METZERA)"],["201001017007","SUCUA"]],"NAPO":[["201001016003","ARCHIDONA"],["201001016006","AROSEMENA TOLA"],["201001016039","BAEZA"],["201001016009","Carlos Julio Arosemena"],["201001016008","Carlos Julio Arosemena Tola"],["201001017012","EL CHACO"],["201001016005","MISAHUALLI"],["201001016004","PTO. NAPO"],["201001016041","PUERTO MISAHUALLI"],["201001016007","Puerto Napo"],["201001016022","SARDINAS"],["201001016001","TENA"]],"ORELLANA":[["201001017002","EL COCA"],["201001017001","FRANCISCO DE ORELLANA"],["201001017042","INES ARANGO (CAB. EN WESTERN)"],["201001017006","LA JOYA DE LOS SACHAS"],["201001017016","LORETO"],["201001017045","PUERTO FRANCISCO DE ORELLANA (EL COCA)"],["201001017046","SAN LUIS DE ARMENIA"],["201001017047","SAN SEBASTIAN DEL COCA"]],"PASTAZA":[["201001018002","PALORA"],["201001018001","PUYO"],["201001017004","SHELL"]],"PICHINCHA":[["201001001031","ALANGASI"],["201001001019","ALOAG"],["201001001141","ALOAG (MEJIA)"],["201001001046","ALOASI"],["201001001018","AMAGUAÑA"],["201001001062","ASCAZUBI"],["201001001082","ASCAZUBI (CAYAMBE)"],["201001001140","ATAHUALPA (QUITO)"],["201001001042","AYORA"],["201001001043","AZCASUBI VIA AL QUINCHE"],["201001001134","BELISARIO QUEVEDO (QUITO)"],["201001001022","CALACALI"],["201001001024","CALDERON"],["201001001072","CANGAHUA"],["201001001084","CARCELEN"],["201001001002","CAYAMBE"],["201001001085","CENTRO HISTORICO"],["201001001111","CHAVEZPAMBA"],["201001001063","CHECA"],["201001001088","CHILIBULO"],["201001001016","CHILLOGALLO"],["201001001089","CHIMBACALLE"],["201001001086","COCHAPAMBA (QUITO)"],["201001001087","COMITE DEL PUEBLO"],["201001001033","CONOCOTO"],["201001001034","COTOCOLLAO"],["201001001118","COTOGCHOA"],["201001001009","CUMBAYA"],["201001001125","CUTUGLAHUA"],["201001001061","CUZUBAMBA"],["201001001090","EL CONDADO"],["201001001007","EL QUINCHE"],["201001001071","El Chaupi"],["201001001091","GUAMANI"],["201001001014","GUAYLLABAMBA"],["201001001070","Guangopolo"],["201001001093","ITCHIMBIA"],["201001001092","IÑAQUITO"],["201001001135","JIPIJAPA (QUITO)"],["201001001045","JUAN MONTALVO"],["201001001094","KENNEDY"],["201001001095","LA ARGELIA"],["201001001047","LA ARMENIA"],["201001001096","LA CONCEPCION"],["201001001097","LA ECUATORIANA"],["201001001143","LA ESPERANZA (PEDRO MONCAYO)"],["201001001098","LA FERROVIARIA"],["201001001136","LA LIBERTAD (QUITO)"],["201001001099","LA MAGDALENA"],["201001001100","LA MENA"],["201001001139","LA MERCED (QUITO)"],["201001001048","LLANO CHICO"],["201001001049","LLANO GRANDE"],["201001001008","MACHACHI"],["201001001131","MALCHINGUI"],["201001001137","MARISCAL SUCRE (QUITO)"],["201001001051","MIRAVALLE"],["201001001021","MITAD DEL MUNDO"],["201001002043","MONJAS"],["201001001069","Mejía"],["201001001029","NANEGALITO"],["201001001112","NAYON"],["201001001073","OLMEDO (PESILLO)"],["201001001052","ORQUIDEAS"],["201001001067","Otón"],["201001001035","PEDRO MONCAYO"],["201001001012","PEDRO V. MALDONADO"],["201001001113","PEDRO VICENTE MALDONADO"],["201001001122","PERUCHO"],["201001001025","PIFO"],["201001001036","PINTAG"],["201001001028","POMASQUI"],["201001001101","PONCEANO"],["201001001126","PUELLARO"],["201001001026","PUEMBO"],["201001001102","PUENGASI"],["201001001013","PUERTO QUITO"],["201001001041","PUSUQUI"],["201001001001","QUITO"],["201001001103","QUITUMBE"],["201001001065","Rumipamba"],["201001001066","Rumiñahui"],["201001001053","SAN ANTONIO DE PICHINCHA"],["201001001104","SAN BARTOLO"],["201001001105","SAN ISIDRO DEL INCA"],["201001001079","SAN JOSE DE MINAS"],["201001001054","SAN JOSE DE MORAN"],["201001001138","SAN JUAN (QUITO)"],["201001001010","SAN MIGUEL DE LOS BANCOS"],["201001001117","SAN PEDRO DE TABOADA"],["201001001006","SAN RAFAEL"],["201001001005","SANGOLQUI"],["201001001083","SANTA ROSA DE CUZUBAMBA"],["201001001106","SOLANDA"],["201001001056","TABABELA"],["201001001003","TABACUNDO"],["201001021003","TAMBILLO"],["201001001142","TAMBILLO (MEJIA)"],["201001001132","TOCACHI"],["201001001020","TUMBACO"],["201001001133","TUPIGACHI"],["201001001107","TURUBAMBA"],["201001001057","UYUMBICHO"],["201001001039","VALLE DE LOS CHILLOS"],["201001001037","YARUQUI"],["201001001058","ZAMBISA"],["201001001064","Zambiza"]],"SANTA ELENA":[["201001002034","ANCON"],["201001002046","ANCONCITO"],["201001023018","AYANGUE"],["201001014023","BALLENITA"],["201001023008","CADEATE"],["201001023009","CAPAES"],["201001023024","CARLOS ESPINOZA LARREA"],["201001023020","El Tambo Santa Elena"],["201001023025","GRAL. ALBERTO ENRIQUEZ GALLO"],["201001023028","JOSE LUIS TAMAYO (MUEY)"],["201001002013","LA LIBERTAD"],["201001023032","LA LIBERTAD (LA LIBERTAD)"],["201001023010","LIBERTADOR BOLIVAR"],["201001023011","MANGLARALTO"],["201001023004","MAR BRAVO"],["201001023003","MONTAÑITA"],["201001023012","MONTEVERDE"],["201001023005","MUEY"],["201001023006","OLON"],["201001023013","PALMAR"],["201001023014","PROSPERIDAD"],["201001023007","PUERTO SANTA ROSA"],["201001023015","PUNTA BARANDUA"],["201001023002","PUNTA BLANCA"],["201001023001","PUNTA CARNERO"],["201001023019","Punta Centinela"],["201001002004","SALINAS"],["201001023030","SALINAS (SALINAS)"],["201001023029","SAN JOSE DE ANCON"],["201001023017","SAN PABLO SANTA ELENA"],["201001011007","SAN PEDRO"],["201001002010","SANTA ELENA"],["201001023034","SANTA ELENA (SANTA ELENA)"],["201001023021","SANTA ROSA SANTA ELENA"],["201001023027","SIMON BOLIVAR (JULIO MORENO)"],["201001023016","VALDIVIA"],["201001023026","VICENTE ROCAFUERTE"]],"SANTO DOMINGO DE LOS TSACHILAS":[["201001024013","ABRAHAM CALAZACON"],["201001024014","BOMBOLI"],["201001024015","CHIGUILPE"],["201001024004","KM 14 QUEVEDO"],["201001024005","KM 24 QUEVEDO"],["201001024006","KM 38.5 QUEVEDO"],["201001024007","KM 41 QUEVEDO"],["201001001011","LA CONCORDIA"],["201001001060","LAS VILLEGAS"],["201001024008","LUZ DE AMERICA"],["201001001059","MONTERREY"],["201001024016","RIO TOACHI"],["201001024017","RIO VERDE (SANTO DOMINGO)"],["201001024003","SAN JACINTO DEL BUA"],["201001024021","SAN PABLO DE CHILA"],["201001001004","SANTO DOMINGO"],["201001024022","SANTO DOMINGO DE LOS COLORADOS"],["201001001040","VALLE HERMOSO"],["201001024019","ZARACAY"]],"SUCUMBIOS":[["201001022038","EL ENO"],["201001017003","LAGO AGRIO"],["201001022001","NUEVA LOJA"],["201001022036","SAN PEDRO DE LOS COFANES"],["201001022002","SHUSHUFINDI"],["201001022037","SIETE DE JULIO"]],"TUNGURAHUA":[["20100101901","AMBATO"],["201001019051","ATAHUALPA (CHISALATA)"],["201001019043","ATOCHA FICOA"],["201001019052","AUGUSTO N. MARTINEZ (MUNDUGLEO)"],["20100101902","BAÑOS DE AGUA SANTA"],["201001019014","Betínez (Pachanlica)"],["201001019044","CELIANO MONGE"],["201001019005","CEVALLOS"],["201001019061","CIUDAD NUEVA"],["201001019059","GARCIA MORENO (CHUMAQUI)"],["201001019064","GUAMBALO (HUAMBALO)"],["201001019045","HUACHI CHICO"],["201001019053","HUACHI GRANDE"],["201001019046","HUACHI LORETO"],["201001019011","HUAMBALO"],["201001019054","IZAMBA"],["201001019068","LA MERCED (AMBATO)"],["201001019047","LA PENINSULA"],["201001019048","MATRIZ"],["201001019007","MOCHA"],["201001019071","MONTALVO (TUNGURAHUA)"],["201001003008","PATATE"],["201001019004","PELILEO"],["201001019057","PELILEO GRANDE"],["201001019055","PICAIGUA"],["201001019006","PILLARO"],["201001019049","PISHILATA"],["201001019008","QUERO"],["201001019060","SALASACA"],["201001019056","SAN BARTOLOME DE PINLLOG"],["201001019050","SAN FRANCISCO (AMBATO)"],["201001019069","SANTA ROSA (AMBATO)"],["201001019013","San Pedro De Pelileo"],["201001019009","TISALEO"],["201001019070","TOTORAS"],["201001019012","Ulba"]],"ZAMORA CHINCHIPE":[["201001021006","CENTINELA DEL CONDOR"],["201001021007","CUMBARATZA"],["201001021013","EL LIMON"],["201001021036","EL PANGUI"],["201001021037","LOS ENCUENTROS"],["201001021040","PACHICUTZA"],["201001021005","PANGUI"],["201001021044","PANGUINTZA"],["201001021051","SABANILLA (ZAMORA)"],["201001021016","TIMBARA"],["201001015003","YANTZAZA"],["201001021034","YANTZAZA (YANZATZA)"],["201001021001","ZAMORA"],["201001021017","ZUMBI"]]};
+  (function(){
+    var PROXY = "https://enviafacil-callback.fn.jelou.ai";
+    var qs = new URLSearchParams(location.search);
+    var executionId = qs.get("executionId") || "";
+    if (!executionId){ var m=location.href.match(/[?&]executionId=([^&#]+)/); if(m) executionId=decodeURIComponent(m[1]); }
+    var paso = (qs.get("paso") || "destino").toLowerCase();  // origen | destino
+
+    // Adaptar textos + mostrar detalle solo en destino
+    if (paso === "origen"){
+      document.getElementById("h_titulo").textContent = "📍 Dirección de recolección";
+      document.getElementById("h_sub").textContent = "¿Dónde recogemos tu paquete?";
+      document.getElementById("s_dir").textContent = "Dirección de recolección";
+      document.getElementById("detalle").style.display = "none";
+    } else {
+      document.getElementById("h_titulo").textContent = "🎯 Datos del envío";
+      document.getElementById("h_sub").textContent = "Dirección de entrega y detalle del paquete.";
+      document.getElementById("s_dir").textContent = "Dirección de entrega";
+    }
+
+    // Provincias
+    var selP = document.getElementById("provincia"), selC = document.getElementById("ciudad");
+    Object.keys(CAT).forEach(function(p){ var o=document.createElement("option"); o.value=p; o.textContent=p; selP.appendChild(o); });
+    function llenarCiudades(prov, sel){
+      selC.innerHTML = '<option value="">Selecciona ciudad…</option>';
+      (CAT[prov]||[]).forEach(function(c){ var o=document.createElement("option"); o.value=c[0]; o.textContent=c[1]; if(sel&&(c[0]===sel||c[1]===sel))o.selected=true; selC.appendChild(o); });
+    }
+    selP.addEventListener("change", function(){ llenarCiudades(selP.value); });
+
+    // Prefill (pin / datos previos)
+    if (qs.get("provincia")){ selP.value=qs.get("provincia").toUpperCase(); llenarCiudades(selP.value, qs.get("ciudad")||""); }
+    if (qs.get("sector")) document.getElementById("sector").value=qs.get("sector");
+    if (qs.get("calle")) document.getElementById("calle").value=qs.get("calle");
+    var lat=qs.get("lat")||"", lon=qs.get("lon")||"";
+    if (lat && lon){ var a=document.createElement("div"); a.className="aviso"; a.innerHTML='📍 <b>Ubicación recibida.</b> Confirma provincia/ciudad y completa sector y calle. <a href="https://maps.google.com/?q='+encodeURIComponent(lat+","+lon)+'" target="_blank" style="color:#059669">ver mapa</a>'; document.getElementById("f").insertBefore(a, document.getElementById("f").firstChild); }
+
+    function setErr(id, show){ document.getElementById(id).classList.toggle("invalid",show); document.getElementById("e_"+id).style.display=show?"block":"none"; }
+    function val(id){ return (document.getElementById(id).value||"").trim(); }
+
+    function validate(){
+      var ok=true, esDest = (paso!=="origen");
+      var p=val("provincia")!==""; setErr("provincia",!p); ok=ok&&p;
+      var c=val("ciudad")!==""; setErr("ciudad",!c); ok=ok&&c;
+      var s=val("sector").length>=2; setErr("sector",!s); ok=ok&&s;
+      var ca=val("calle").length>=2; setErr("calle",!ca); ok=ok&&ca;
+      if (esDest){
+        var t=val("tipo")!==""; setErr("tipo",!t); ok=ok&&t;
+        var pz=/^\d+$/.test(val("piezas"))&&Number(val("piezas"))>=1; setErr("piezas",!pz); ok=ok&&pz;
+        var pe=Number(val("peso"))>0; setErr("peso",!pe); ok=ok&&pe;
+        var v=Number(val("valor"))>0; setErr("valor",!v); ok=ok&&v;
+      }
+      return ok;
+    }
+
+    var btn=document.getElementById("btn");
+    btn.addEventListener("click", async function(){
+      if(!validate()) return;
+      btn.disabled=true; btn.textContent="Enviando…";
+      var payload = {
+        executionId: executionId, paso: paso,
+        provincia: val("provincia"),
+        ciudadCodigo: val("ciudad"),
+        ciudadNombre: (selC.options[selC.selectedIndex]||{}).text || "",
+        sector: val("sector"), calle: val("calle"),
+        lat: lat, lon: lon
+      };
+      if (paso!=="origen"){
+        payload.tipoCodigo = val("tipo");
+        payload.tipoNombre = (document.getElementById("tipo").selectedOptions[0]||{}).text || "";
+        payload.piezas = val("piezas"); payload.peso = val("peso"); payload.valor = val("valor");
+      }
+      try{
+        var resp = await fetch(PROXY,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+        var out={}; try{ out=await resp.json(); }catch(e){}
+        if(!resp.ok || out.ok===false) throw new Error("proxy "+(out.status||resp.status));
+        document.getElementById("f").style.display="none";
+        document.querySelector(".barra").style.display="none";
+        document.querySelector(".head").style.display="none";
+        document.getElementById("ok").style.display="block";
+        var wa=(qs.get("wa")||"").replace(/\D/g,"");
+        if(wa) setTimeout(function(){ window.location.href="https://wa.me/"+wa; },900);
+        else setTimeout(function(){ try{window.close();}catch(e){} },1200);
+      }catch(e){ btn.disabled=false; btn.textContent="Continuar"; alert("No pudimos enviar los datos. Revisa tu conexión e intenta de nuevo."); }
+    });
+  })();
+</script>
+</body>
+</html>
