@@ -60,8 +60,14 @@
     </div>
     <div class="grp">
       <label>Calle principal <span class="req">*</span></label>
-      <input id="calle" placeholder="Av. / Calle principal y referencia" />
+      <input id="calle" placeholder="Av. / Calle principal y número" />
       <div class="errmsg" id="e_calle">Ingresa la calle principal.</div>
+    </div>
+    <div class="grp">
+      <label id="l_ref">Referencia de entrega <span class="req">*</span></label>
+      <input id="referencia" placeholder="Casa esquinera, portón verde, junto a la farmacia…" />
+      <div class="hint">Ayuda al mensajero a ubicar el lugar exacto.</div>
+      <div class="errmsg" id="e_referencia">La referencia es obligatoria.</div>
     </div>
 
     <div id="detalle">
@@ -84,6 +90,7 @@
         <div class="grp">
           <label>Peso (kg) <span class="req">*</span></label>
           <input id="peso" inputmode="decimal" placeholder="Ej: 1.5" />
+          <div class="hint" id="h_peso">Documento: máx 2 kg · Paquete: máx 50 kg por pieza.</div>
           <div class="errmsg" id="e_peso">Peso en kg.</div>
         </div>
       </div>
@@ -117,6 +124,8 @@
       document.getElementById("h_titulo").textContent = "📍 Dirección de recolección";
       document.getElementById("h_sub").textContent = "¿Dónde recogemos tu paquete?";
       document.getElementById("s_dir").textContent = "Dirección de recolección";
+      document.getElementById("l_ref").innerHTML = 'Referencia de recolección <span class="req">*</span>';
+      document.getElementById("referencia").placeholder = "Casa esquinera, portón verde, junto a…";
       document.getElementById("detalle").style.display = "none";
     } else {
       document.getElementById("h_titulo").textContent = "🎯 Datos del envío";
@@ -134,11 +143,21 @@
       lista.forEach(function(c){ var o=document.createElement("option"); o.value=c[0]; o.textContent=c[1]; if(sel&&(c[0]===sel||c[1]===sel))o.selected=true; selC.appendChild(o); });
     }
     selP.addEventListener("change", function(){ llenarCiudades(selP.value); });
+    function actualizarHintPeso(){
+      var hp=document.getElementById("h_peso"); if(!hp) return;
+      var esDoc=(document.getElementById("tipo")&&document.getElementById("tipo").value==="201202002001002");
+      var pzv=parseInt((document.getElementById("piezas")||{}).value||"0",10);
+      if(esDoc){ hp.textContent="Documento: máx 2 kg (con punto decimal)."; }
+      else if(pzv>=1){ hp.textContent="Paquete: máx "+(pzv*50)+" kg para "+pzv+" pieza(s)."; }
+      else { hp.textContent="Documento: máx 2 kg · Paquete: máx 50 kg por pieza."; }
+    }
+    ["tipo","piezas"].forEach(function(id){ var el=document.getElementById(id); if(el) el.addEventListener("input",actualizarHintPeso); el&&el.addEventListener("change",actualizarHintPeso); });
 
     // Prefill (pin / datos previos)
     if (qs.get("provincia")){ selP.value=qs.get("provincia").toUpperCase(); llenarCiudades(selP.value, qs.get("ciudad")||""); }
     if (qs.get("sector")) document.getElementById("sector").value=qs.get("sector");
     if (qs.get("calle")) document.getElementById("calle").value=qs.get("calle");
+    if (qs.get("referencia")) document.getElementById("referencia").value=qs.get("referencia");
     var lat=qs.get("lat")||"", lon=qs.get("lon")||"";
     if (lat && lon){ var a=document.createElement("div"); a.className="aviso"; a.innerHTML='📍 <b>Ubicación recibida.</b> Confirma provincia/ciudad y completa sector y calle. <a href="https://maps.google.com/?q='+encodeURIComponent(lat+","+lon)+'" target="_blank" style="color:#059669">ver mapa</a>'; document.getElementById("f").insertBefore(a, document.getElementById("f").firstChild); }
 
@@ -151,10 +170,15 @@
       var c=val("ciudad")!==""; setErr("ciudad",!c); ok=ok&&c;
       var s=val("sector").length>=2; setErr("sector",!s); ok=ok&&s;
       var ca=val("calle").length>=2; setErr("calle",!ca); ok=ok&&ca;
+      var rf=val("referencia").length>=3; setErr("referencia",!rf); ok=ok&&rf;
       if (esDest){
         var t=val("tipo")!==""; setErr("tipo",!t); ok=ok&&t;
         var pz=/^\d+$/.test(val("piezas"))&&Number(val("piezas"))>=1; setErr("piezas",!pz); ok=ok&&pz;
-        var pe=Number(val("peso"))>0; setErr("peso",!pe); ok=ok&&pe;
+        var esDoc=(val("tipo")==="201202002001002");
+        var pesoStr=val("peso"), pesoNum=Number(pesoStr), pesoOk;
+        if(esDoc){ pesoOk=/^\d+(\.\d{1,2})?$/.test(pesoStr)&&pesoNum>0&&pesoNum<=2; }
+        else { var maxKg=(pz?Number(val("piezas")):1)*50; pesoOk=/^(?:0\.(?:0[1-9]|[1-9]\d?)|[1-9]\d*(?:\.\d{1,2})?)$/.test(pesoStr)&&pesoNum<=maxKg; }
+        setErr("peso",!pesoOk); ok=ok&&pesoOk;
         var v=Number(val("valor"))>0; setErr("valor",!v); ok=ok&&v;
       }
       return ok;
@@ -169,7 +193,7 @@
         provincia: val("provincia"),
         ciudadCodigo: val("ciudad"),
         ciudadNombre: (selC.options[selC.selectedIndex]||{}).text || "",
-        sector: val("sector"), calle: val("calle"),
+        sector: val("sector"), calle: val("calle"), referencia: val("referencia"),
         lat: lat, lon: lon
       };
       if (paso!=="origen"){
