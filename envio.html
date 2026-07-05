@@ -115,8 +115,12 @@
   (function(){
     var PROXY = "https://enviafacil-callback.fn.jelou.ai";
     var qs = new URLSearchParams(location.search);
+    // ---- executionId + callback (idéntico a index.html, que SÍ reanuda) ----
+    var DEFAULT_CALLBACK = "https://workflows.jelou.ai/v1/webview/callback";
     var executionId = qs.get("executionId") || "";
+    var callback = qs.get("callback") || DEFAULT_CALLBACK;
     if (!executionId){ var m=location.href.match(/[?&]executionId=([^&#]+)/); if(m) executionId=decodeURIComponent(m[1]); }
+    if (callback.indexOf("executionId=") >= 0){ var cm=callback.match(/^(.*?)[?&]executionId=([^&#]+)(.*)$/); if(cm){ if(!executionId) executionId=decodeURIComponent(cm[2]); callback=cm[1]; } }
     var paso = (qs.get("paso") || "destino").toLowerCase();  // origen | destino
     var soloDir = qs.get("soloDir")==="1";                    // destino solo direccion (sin detalle de paquete)
     var esDest = (paso!=="origen") && !soloDir;               // ¿pedir detalle de paquete?
@@ -192,7 +196,7 @@
       if(!validate()) return;
       btn.disabled=true; btn.textContent="Enviando…";
       var payload = {
-        executionId: executionId, paso: paso,
+        executionId: executionId, callback: callback, dbgHref: location.href, paso: paso,
         provincia: val("provincia"),
         ciudadCodigo: val("ciudad"),
         ciudadNombre: (selC.options[selC.selectedIndex]||{}).text || "",
