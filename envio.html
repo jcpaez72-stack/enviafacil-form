@@ -118,6 +118,8 @@
     var executionId = qs.get("executionId") || "";
     if (!executionId){ var m=location.href.match(/[?&]executionId=([^&#]+)/); if(m) executionId=decodeURIComponent(m[1]); }
     var paso = (qs.get("paso") || "destino").toLowerCase();  // origen | destino
+    var soloDir = qs.get("soloDir")==="1";                    // destino solo direccion (sin detalle de paquete)
+    var esDest = (paso!=="origen") && !soloDir;               // ¿pedir detalle de paquete?
 
     // Adaptar textos + mostrar detalle solo en destino
     if (paso === "origen"){
@@ -132,6 +134,7 @@
       document.getElementById("h_sub").textContent = "Dirección de entrega y detalle del paquete.";
       document.getElementById("s_dir").textContent = "Dirección de entrega";
     }
+    if (soloDir) document.getElementById("detalle").style.display = "none";
 
     // Provincias
     var selP = document.getElementById("provincia"), selC = document.getElementById("ciudad");
@@ -165,7 +168,7 @@
     function val(id){ return (document.getElementById(id).value||"").trim(); }
 
     function validate(){
-      var ok=true, esDest = (paso!=="origen");
+      var ok=true;
       var p=val("provincia")!==""; setErr("provincia",!p); ok=ok&&p;
       var c=val("ciudad")!==""; setErr("ciudad",!c); ok=ok&&c;
       var s=val("sector").length>=2; setErr("sector",!s); ok=ok&&s;
@@ -196,7 +199,7 @@
         sector: val("sector"), calle: val("calle"), referencia: val("referencia"),
         lat: lat, lon: lon
       };
-      if (paso!=="origen"){
+      if (esDest){
         payload.tipoCodigo = val("tipo");
         payload.tipoNombre = (document.getElementById("tipo").selectedOptions[0]||{}).text || "";
         payload.piezas = val("piezas"); payload.peso = val("peso"); payload.valor = val("valor");
