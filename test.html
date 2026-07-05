@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>Test WebView · EnvíaFácil</title>
+<style>
+  body{ margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:#f4f4f5; color:#1a1a1a; padding:18px; }
+  h1{ font-size:18px; }
+  .box{ background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:12px; margin:12px 0; font-size:12px; word-break:break-all; }
+  .box b{ color:#6b7280; display:block; margin-bottom:4px; text-transform:uppercase; font-size:10px; letter-spacing:.4px; }
+  .val{ font-family:monospace; font-size:13px; color:#065f46; }
+  button{ width:100%; padding:16px; font-size:17px; font-weight:800; color:#1a1a1a; background:#FFD100; border:none; border-radius:12px; cursor:pointer; margin-top:8px; }
+  button:disabled{ opacity:.6; }
+  #estado{ margin-top:12px; font-size:13px; }
+</style>
+</head>
+<body>
+  <h1>🧪 Test de WebView (reanudar)</h1>
+  <p style="font-size:13px;color:#6b7280">Esta pantalla muestra el <b>executionId</b> que Jelou puso en la URL, y prueba el callback de reanudación.</p>
+
+  <div class="box"><b>URL completa (location.href)</b><div class="val" id="v_href"></div></div>
+  <div class="box"><b>executionId (nivel superior)</b><div class="val" id="v_exec"></div></div>
+  <div class="box"><b>callback (de la URL)</b><div class="val" id="v_cb"></div></div>
+  <div class="box"><b>executionId dentro de callback</b><div class="val" id="v_execcb"></div></div>
+
+  <button id="btn">▶️ PROBAR REANUDAR</button>
+  <div id="estado"></div>
+
+<script>
+  (function(){
+    var qs = new URLSearchParams(location.search);
+    var DEFAULT_CALLBACK = "https://workflows.jelou.ai/v1/webview/callback";
+    var execTop = qs.get("executionId") || "";
+    if (!execTop){ var m=location.href.match(/[?&]executionId=([^&#]+)/); if(m) execTop=decodeURIComponent(m[1]); }
+    var callback = qs.get("callback") || "";
+    var execInCb = "";
+    if (callback.indexOf("executionId=") >= 0){ var cm=callback.match(/[?&]executionId=([^&#]+)/); if(cm) execInCb=decodeURIComponent(cm[1]); }
+
+    document.getElementById("v_href").textContent = location.href;
+    document.getElementById("v_exec").textContent = execTop || "(vacío)";
+    document.getElementById("v_cb").textContent = callback || "(vacío)";
+    document.getElementById("v_execcb").textContent = execInCb || "(vacío)";
+
+    var PROXY = "https://enviafacil-callback.fn.jelou.ai";
+    var executionId = execInCb || execTop;  // prueba: prefiere el de dentro del callback si existe
+    var wa = (qs.get("wa")||"").replace(/\D/g,"");
+
+    document.getElementById("btn").addEventListener("click", async function(){
+      var b=this; b.disabled=true; b.textContent="Enviando…";
+      document.getElementById("estado").textContent = "Posteando callback con executionId="+executionId+" …";
+      try{
+        var resp = await fetch(PROXY,{ method:"POST", headers:{"Content-Type":"application/json"},
+          body: JSON.stringify({ executionId: executionId, callback: callback||DEFAULT_CALLBACK, dbgHref: location.href, test: true, valor: "OK" }) });
+        var out={}; try{ out=await resp.json(); }catch(e){}
+        document.getElementById("estado").textContent = "Respuesta proxy: "+JSON.stringify(out);
+        if (wa) setTimeout(function(){ window.location.href="https://wa.me/"+wa; }, 2500);
+      }catch(e){
+        document.getElementById("estado").textContent = "Error: "+e; b.disabled=false; b.textContent="▶️ PROBAR REANUDAR";
+      }
+    });
+  })();
+</script>
+</body>
+</html>
