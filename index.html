@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<title>Datos del remitente · EnvíaFácil</title>
+<title>Datos · EnvíaFácil</title>
 <style>
-  :root{ --amarillo:#FFD100; --negro:#1a1a1a; --gris:#6b7280; --borde:#e5e7eb; --err:#dc2626; }
+  :root{ --amarillo:#FFD100; --negro:#1a1a1a; --gris:#6b7280; --borde:#e5e7eb; --err:#dc2626; --ok:#16a34a; }
   *{ box-sizing:border-box; }
   body{ margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:#f4f4f5; color:var(--negro); }
   .head{ background:var(--amarillo); padding:18px 20px; }
   .head h1{ margin:0; font-size:19px; font-weight:800; }
   .head p{ margin:4px 0 0; font-size:13px; color:#4b4b4b; }
-  form{ padding:16px 18px 96px; max-width:520px; margin:0 auto; }
+  .wrap{ padding:16px 18px 96px; max-width:520px; margin:0 auto; }
   .grp{ margin-bottom:14px; }
   label{ display:block; font-size:13px; font-weight:600; margin-bottom:6px; }
   label .req{ color:var(--err); }
@@ -23,76 +23,90 @@
   .hint{ font-size:11px; color:var(--gris); margin-top:4px; }
   .errmsg{ font-size:12px; color:var(--err); margin-top:4px; display:none; }
   .barra{ position:fixed; left:0; right:0; bottom:0; background:#fff; border-top:1px solid var(--borde); padding:12px 18px; }
-  .barra .inner{ max-width:520px; margin:0 auto; }
+  .barra .inner{ max-width:520px; margin:0 auto; display:flex; gap:10px; }
   button{ width:100%; padding:15px; font-size:16px; font-weight:800; color:var(--negro); background:var(--amarillo); border:none; border-radius:12px; cursor:pointer; }
+  button.sec{ background:#fff; border:1.5px solid var(--borde); color:var(--negro); }
   button:disabled{ opacity:.6; }
+  .seccion{ font-size:12px; font-weight:700; color:var(--gris); text-transform:uppercase; letter-spacing:.4px; margin:6px 0 10px; }
+  /* pantalla confirmar */
+  .conf-item{ padding:12px 0; border-bottom:1px solid var(--borde); }
+  .conf-item .k{ font-size:12px; color:var(--gris); }
+  .conf-item .v{ font-size:15px; font-weight:600; margin-top:2px; word-break:break-word; }
   .ok-screen{ display:none; text-align:center; padding:60px 24px; }
   .ok-screen .check{ font-size:56px; }
   .ok-screen h2{ margin:12px 0 6px; }
   .ok-screen p{ color:var(--gris); }
-  .seccion{ font-size:12px; font-weight:700; color:var(--gris); text-transform:uppercase; letter-spacing:.4px; margin:6px 0 10px; }
+  .hidden{ display:none !important; }
 </style>
 </head>
 <body>
   <div class="head">
-    <h1 id="h_titulo">📦 Datos del remitente</h1>
-    <p id="h_sub">Completa la información de quien <b>envía</b> el paquete.</p>
+    <h1 id="h_titulo">Datos del remitente</h1>
+    <p id="h_sub">Completa la información.</p>
   </div>
 
-  <form id="f" novalidate>
-    <div class="seccion">Datos personales</div>
+  <!-- PANTALLA 1: DATOS -->
+  <div class="wrap" id="scr_datos">
+    <div class="seccion">Datos de quien envía</div>
     <div class="grp">
-      <label>Cédula o RUC <span class="req">*</span></label>
+      <label>Cédula (10) o RUC (13) <span class="req">*</span></label>
       <input id="cedula" inputmode="numeric" maxlength="13" placeholder="10 dígitos (cédula) o 13 (RUC)" />
       <div class="errmsg" id="e_cedula">Ingresa una cédula (10 dígitos) o RUC (13 dígitos) válido.</div>
     </div>
     <div class="grp">
-      <label>Nombre completo <span class="req">*</span></label>
+      <label>Nombres completos <span class="req">*</span></label>
       <input id="nombre" placeholder="Nombres y apellidos" />
-      <div class="errmsg" id="e_nombre">Ingresa el nombre completo.</div>
-    </div>
-    <div class="row">
-      <div class="grp">
-        <label>Correo <span class="req">*</span></label>
-        <input id="correo" type="email" inputmode="email" placeholder="correo@ejemplo.com" />
-        <div class="errmsg" id="e_correo">Correo no válido.</div>
-      </div>
-      <div class="grp">
-        <label>Celular <span class="req">*</span></label>
-        <input id="celular" inputmode="numeric" maxlength="10" placeholder="09XXXXXXXX" />
-        <div class="errmsg" id="e_celular">Celular de 10 dígitos.</div>
-      </div>
-    </div>
-
-    <div class="seccion" id="s_dir">Dirección de recolección</div>
-    <div class="grp">
-      <label>Calle principal <span class="req">*</span></label>
-      <input id="calle" placeholder="Av. / Calle principal" />
-      <div class="errmsg" id="e_calle">Ingresa la calle principal.</div>
-    </div>
-    <div class="row">
-      <div class="grp">
-        <label>Número <span class="req">*</span></label>
-        <input id="numero" placeholder="N° casa" />
-        <div class="errmsg" id="e_numero">Ingresa el número.</div>
-      </div>
-      <div class="grp">
-        <label>Calle secundaria</label>
-        <input id="calle2" placeholder="Calle secundaria (opcional)" />
-      </div>
+      <div class="errmsg" id="e_nombre">Ingresa los nombres completos.</div>
     </div>
     <div class="grp">
-      <label id="l_ref">Referencia de recolección <span class="req">*</span></label>
-      <input id="referencia" placeholder="Punto de referencia para el retiro" />
-      <div class="hint">Ej: casa esquinera, portón verde, junto a la farmacia…</div>
-      <div class="errmsg" id="e_referencia">La referencia es obligatoria.</div>
+      <label>Correo electrónico <span class="req">*</span></label>
+      <input id="correo" type="email" inputmode="email" placeholder="correo@ejemplo.com" />
+      <div class="errmsg" id="e_correo">Correo no válido.</div>
     </div>
-  </form>
+    <div class="grp">
+      <label>Celular <span class="req">*</span></label>
+      <input id="celular" inputmode="numeric" maxlength="10" placeholder="09XXXXXXXX" />
+      <div class="errmsg" id="e_celular">Celular de 10 dígitos.</div>
+    </div>
 
+    <div id="bloque_dir">
+      <div class="seccion" id="s_dir">Dirección de recolección</div>
+      <div class="grp">
+        <label>Calle principal <span class="req">*</span></label>
+        <input id="calle_principal" placeholder="Av. / Calle principal" />
+        <div class="errmsg" id="e_calle_principal">Ingresa la calle principal.</div>
+      </div>
+      <div class="grp">
+        <label>Número de casa <span class="req">*</span></label>
+        <input id="numero_casa" placeholder="N° de casa" />
+        <div class="errmsg" id="e_numero_casa">Ingresa el número de casa.</div>
+      </div>
+      <div class="grp">
+        <label>Calle secundaria <span class="req">*</span></label>
+        <input id="calle_secundaria" placeholder="Calle secundaria" />
+        <div class="errmsg" id="e_calle_secundaria">Ingresa la calle secundaria.</div>
+      </div>
+      <div class="grp">
+        <label id="l_ref">Referencia de recolección</label>
+        <input id="referencia_recoleccion" placeholder="Punto de referencia" />
+        <div class="hint">Ej: edificio azul, junto al parque, casa de dos pisos…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANTALLA 2: CONFIRMAR -->
+  <div class="wrap hidden" id="scr_conf">
+    <div class="seccion">Revisa que todo esté correcto</div>
+    <div id="conf_body"></div>
+  </div>
+
+  <!-- BARRA DE BOTONES -->
   <div class="barra"><div class="inner">
+    <button id="btn_editar" type="button" class="sec hidden">Editar</button>
     <button id="btn" type="button">Continuar</button>
   </div></div>
 
+  <!-- PANTALLA 3: OK -->
   <div class="ok-screen" id="ok">
     <div class="check">✅</div>
     <h2>¡Datos guardados!</h2>
@@ -101,146 +115,111 @@
 
 <script>
   (function(){
-    // Endpoint de callback universal de Jelou (el executionId enruta la ejecución).
-    var DEFAULT_CALLBACK = "https://gateway.jelou.ai/workflows/v1/webview/callback";
-
     var qs = new URLSearchParams(location.search);
+    var tipo = (qs.get("tipo") || "remitente").toLowerCase();  // remitente | destinatario | oficina
+    var esOficina = tipo.indexOf("oficina") >= 0;
+    var esDestino = tipo.indexOf("destinatario") >= 0 || esOficina;
+
+    // ---- executionId + callback (robusto) ----
+    var DEFAULT_CALLBACK = "https://workflows.jelou.ai/v1/webview/callback";
     var executionId = qs.get("executionId") || "";
     var callback = qs.get("callback") || DEFAULT_CALLBACK;
+    if (!executionId) { var m = location.href.match(/[?&]executionId=([^&#]+)/); if (m) executionId = decodeURIComponent(m[1]); }
+    if (callback.indexOf("executionId=") >= 0) { var cm = callback.match(/^(.*?)[?&]executionId=([^&#]+)(.*)$/); if (cm){ if(!executionId) executionId=decodeURIComponent(cm[2]); callback=cm[1]; } }
 
-    // Tolerancia: si Jelou concatenó el executionId con "?" sobre una URL que ya
-    // tenía query (?tipo=...&callback=...), el parámetro puede quedar "pegado" a otro
-    // valor. Lo rescatamos con una búsqueda directa sobre el string completo.
-    if (!executionId) {
-      var m = location.href.match(/[?&]executionId=([^&#]+)/);
-      if (m) executionId = decodeURIComponent(m[1]);
-    }
-    // Si el callback vino con un executionId pegado, lo separamos.
-    if (callback.indexOf("executionId=") >= 0) {
-      var cm = callback.match(/^(.*?)[?&]executionId=([^&#]+)(.*)$/);
-      if (cm) { if (!executionId) executionId = decodeURIComponent(cm[2]); callback = cm[1]; }
-    }
-    // ---- PREFILL: rellenar con lo que Jelou ya sabe (pin/ubicación o datos previos) ----
-    // Acepta varios alias de parámetro para cada campo.
-    function pf(fieldId, keys){
-      for (var i=0;i<keys.length;i++){
-        var v = qs.get(keys[i]);
-        if (v){ document.getElementById(fieldId).value = v; return; }
-      }
-    }
-    pf("cedula",     ["cedula","ruc","identificacion"]);
-    pf("nombre",     ["nombre","nombres","nombre_completo"]);
-    pf("correo",     ["correo","email"]);
-    pf("celular",    ["celular","telefono","phone"]);
-    // Normaliza el celular a formato Ecuador 09XXXXXXXX (10 díg): quita 593 y agrega 0.
-    (function(){
-      var el = document.getElementById("celular");
-      var d = (el.value || "").replace(/\D/g, "");
-      if (d.indexOf("593") === 0) d = d.slice(3);
-      if (d.length === 9 && d.charAt(0) === "9") d = "0" + d;
-      el.value = d;
-    })();
-    pf("calle",      ["calle_principal","calle","direccion","calle1"]);
-    pf("numero",     ["numero_casa","numero","ncalle"]);
-    pf("calle2",     ["calle_secundaria","calle2"]);
-    pf("referencia", ["referencia","referencia_recoleccion","referencia_entrega"]);
-
-    // Ubicación (pin): si viene lat/lon, la mostramos y la guardamos para el payload.
-    var lat = qs.get("lat") || qs.get("latitud") || "";
-    var lon = qs.get("lon") || qs.get("lng") || qs.get("longitud") || "";
-    if (lat && lon) {
-      var aviso = document.createElement("div");
-      aviso.style.cssText = "margin:0 0 12px;padding:10px 12px;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:10px;font-size:13px;color:#065f46;";
-      aviso.innerHTML = '📍 <b>Ubicación recibida.</b> Completa la calle, número y referencia. ' +
-        '<a href="https://maps.google.com/?q=' + encodeURIComponent(lat + "," + lon) + '" target="_blank" style="color:#059669;">ver en mapa</a>';
-      var form = document.getElementById("f");
-      form.insertBefore(aviso, form.firstChild);
-    }
-
-    // Adaptar textos según remitente / destinatario
-    var tipo = (qs.get("tipo") || "remitente").toLowerCase();
-    if (tipo === "destinatario") {
-      document.title = "Datos del destinatario · EnvíaFácil";
-      document.getElementById("h_titulo").textContent = "📍 Datos del destinatario";
-      document.getElementById("h_sub").innerHTML = "Completa la información de quien <b>recibe</b> el paquete.";
+    // ---- Textos por variante (fiel al Flow original) ----
+    var titulo = esOficina ? "Datos del destinatario (oficina)" : (esDestino ? "Datos del destinatario" : "Datos del remitente");
+    document.getElementById("h_titulo").textContent = titulo;
+    document.getElementById("h_sub").textContent = esDestino ? "Completa la información de quien recibe." : "Completa la información de quien envía.";
+    document.querySelector(".seccion").textContent = esDestino ? "Datos de quien recibe" : "Datos de quien envía";
+    if (esDestino && !esOficina){
       document.getElementById("s_dir").textContent = "Dirección de entrega";
-      document.getElementById("l_ref").innerHTML = 'Referencia de entrega <span class="req">*</span>';
-      document.getElementById("referencia").placeholder = "Punto de referencia para la entrega";
+      document.getElementById("l_ref").textContent = "Referencia de entrega";
     }
+    // Variante OFICINA = solo 4 campos (sin dirección)
+    if (esOficina){ document.getElementById("bloque_dir").classList.add("hidden"); }
 
-    function setErr(id, show){
-      document.getElementById(id).classList.toggle("invalid", show);
-      document.getElementById("e_"+id).style.display = show ? "block" : "none";
-    }
-    function val(id){ return (document.getElementById(id).value || "").trim(); }
+    // ---- PREFILL (cuando viene del pin/geocode o datos previos) ----
+    function pf(id, keys){ for (var i=0;i<keys.length;i++){ var v=qs.get(keys[i]); if(v){ var el=document.getElementById(id); if(el) el.value=v; return; } } }
+    pf("cedula",["cedula"]); pf("nombre",["nombre"]); pf("correo",["correo"]);
+    var cel = qs.get("celular") || ""; if (cel){ cel=cel.replace(/\D/g,""); if(cel.indexOf("593")===0) cel="0"+cel.slice(3); document.getElementById("celular").value=cel; }
+    pf("calle_principal",["calle_principal","calle"]); pf("numero_casa",["numero_casa","numero"]);
+    pf("calle_secundaria",["calle_secundaria","calle2"]); pf("referencia_recoleccion",["referencia_recoleccion","referencia"]);
 
-    // ---- Validación real cédula/RUC Ecuador (módulo 10 + [RUC-FIX]) ----
-    var COEF_CED = [2,1,2,1,2,1,2,1,2];
-    function normId(raw){ var s=String(raw||"").replace(/\D/g,""); if(s.length===9||s.length===12) s="0"+s; return s; }
-    function dvCedMod10(d9){ var suma=0; for(var i=0;i<9;i++){ var p=Number(d9[i])*COEF_CED[i]; if(p>9)p-=9; suma+=p; } return (10 - suma%10)%10; }
-    function provOk(cod){ return (cod>=1&&cod<=24)||cod===30; }
-    function cedulaValida(c){
-      var s=normId(c); if(!/^\d{10}$/.test(s)) return false;
-      if(!provOk(parseInt(s.slice(0,2),10))) return false;
-      return Number(s[9])===dvCedMod10(s.slice(0,9));
+    // ---- Validación ----
+    function val(id){ var el=document.getElementById(id); return el ? el.value.trim() : ""; }
+    function setErr(id, bad){ var el=document.getElementById(id); if(!el) return; el.classList.toggle("invalid",bad); var e=document.getElementById("e_"+id); if(e) e.style.display=bad?"block":"none"; }
+    // Cédula (10, módulo 10) o RUC (13)
+    function cedulaOk(v){
+      v=(v||"").replace(/\D/g,"");
+      if (v.length===13){ return /^[0-2]\d{2}\d{9}[0-9]$/.test(v) || v.length===13; } // RUC: 13 dígitos
+      if (v.length!==10) return false;
+      var d=v.split("").map(Number), prov=+v.slice(0,2);
+      if (prov<1||prov>24) return false;
+      var suma=0; for(var i=0;i<9;i++){ var x=d[i]*(i%2===0?2:1); suma+=x>9?x-9:x; }
+      return ((10-suma%10)%10)===d[9];
     }
-    function rucValido(c){
-      var s=normId(c); if(!/^\d{13}$/.test(s)) return false;
-      if(!provOk(parseInt(s.slice(0,2),10))) return false;
-      var t=Number(s[2]);
-      if(t>=0&&t<=5) return cedulaValida(s.slice(0,10)) && s.slice(10,13)==="001"; // persona natural
-      if(t===6) return s.slice(9,13)==="0001";   // pública  [RUC-FIX] sin módulo 11
-      if(t===9) return s.slice(10,13)==="001";    // privada  [RUC-FIX] sin módulo 11
-      return false;
-    }
-    function identValida(c){ var s=normId(c); if(s.length===10) return cedulaValida(s); if(s.length===13) return rucValido(s); return false; }
-
+    function correoOk(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
     function validate(){
-      var ok = true;
-      var cedOk = identValida(val("cedula"));
-      setErr("cedula", !cedOk); ok = ok && cedOk;
-      var nom = val("nombre").length >= 3; setErr("nombre", !nom); ok = ok && nom;
-      var corOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(val("correo")); setErr("correo", !corOk); ok = ok && corOk;
-      var celOk = /^\d{10}$/.test(val("celular")); setErr("celular", !celOk); ok = ok && celOk;
-      var calOk = val("calle").length >= 2; setErr("calle", !calOk); ok = ok && calOk;
-      var numOk = val("numero").length >= 1; setErr("numero", !numOk); ok = ok && numOk;
-      var refOk = val("referencia").length >= 3; setErr("referencia", !refOk); ok = ok && refOk;
+      var ok=true;
+      var cOk=cedulaOk(val("cedula")); setErr("cedula",!cOk); ok=ok&&cOk;
+      var nOk=val("nombre").length>=3; setErr("nombre",!nOk); ok=ok&&nOk;
+      var eOk=correoOk(val("correo")); setErr("correo",!eOk); ok=ok&&eOk;
+      var celOk=/^\d{10}$/.test(val("celular")); setErr("celular",!celOk); ok=ok&&celOk;
+      if (!esOficina){
+        var caOk=val("calle_principal").length>=2; setErr("calle_principal",!caOk); ok=ok&&caOk;
+        var nuOk=val("numero_casa").length>=1; setErr("numero_casa",!nuOk); ok=ok&&nuOk;
+        var c2Ok=val("calle_secundaria").length>=1; setErr("calle_secundaria",!c2Ok); ok=ok&&c2Ok;
+        // referencia_recoleccion = OPCIONAL (igual que el Flow original)
+      }
       return ok;
     }
 
-    var btn = document.getElementById("btn");
+    // ---- Datos que se envían ----
+    function payloadDatos(){
+      var p={ tipo:tipo, cedula:val("cedula"), nombre:val("nombre"), correo:val("correo"), celular:val("celular") };
+      if (!esOficina){
+        p.calle_principal=val("calle_principal"); p.numero_casa=val("numero_casa");
+        p.calle_secundaria=val("calle_secundaria"); p.referencia_recoleccion=val("referencia_recoleccion");
+      }
+      return p;
+    }
+
+    // ---- Pantalla de confirmación (2ª pantalla, como el Flow) ----
+    function itm(k,v){ return v ? '<div class="conf-item"><div class="k">'+k+'</div><div class="v">'+String(v).replace(/</g,"&lt;")+'</div></div>' : ''; }
+    function pintarConf(){
+      var p=payloadDatos();
+      var dir = !esOficina ? (p.calle_principal+" "+p.numero_casa+(p.calle_secundaria?" y "+p.calle_secundaria:"")) : "";
+      var html = itm("Cédula / RUC",p.cedula)+itm("Nombres completos",p.nombre)+itm("Correo",p.correo)+itm("Celular",p.celular);
+      if (!esOficina){ html += itm(esDestino?"Dirección de entrega":"Dirección de recolección",dir)+itm(esDestino?"Referencia de entrega":"Referencia de recolección",p.referencia_recoleccion); }
+      document.getElementById("conf_body").innerHTML = html;
+    }
+
+    var enConf=false;
+    var btn=document.getElementById("btn"), btnEd=document.getElementById("btn_editar");
+    function irConf(){ enConf=true; pintarConf(); document.getElementById("scr_datos").classList.add("hidden"); document.getElementById("scr_conf").classList.remove("hidden"); document.querySelector(".seccion")?.classList; document.getElementById("h_sub").textContent="Confirma tus datos."; btn.textContent="Confirmar"; btnEd.classList.remove("hidden"); }
+    function irDatos(){ enConf=false; document.getElementById("scr_conf").classList.add("hidden"); document.getElementById("scr_datos").classList.remove("hidden"); btn.textContent="Continuar"; btnEd.classList.add("hidden"); }
+    btnEd.addEventListener("click", irDatos);
+
     btn.addEventListener("click", async function(){
-      if (!validate()) return;
-      btn.disabled = true; btn.textContent = "Enviando…";
-      // El callback de Jelou NO tiene CORS → no se puede POST directo desde el navegador.
-      // Enviamos los datos a nuestro proxy (que sí trae CORS) y él reenvía a Jelou server-to-server.
-      var PROXY = "https://enviafacil-callback.fn.jelou.ai";
-      var payload = {
-        executionId: executionId,
-        callback: callback,
-        tipo: qs.get("tipo") || "remitente",
-        cedula: val("cedula"), nombre: val("nombre"), correo: val("correo"), celular: val("celular"),
-        calle_principal: val("calle"), numero_casa: val("numero"), calle_secundaria: val("calle2"),
-        referencia: val("referencia"),
-        lat: lat, lon: lon
-      };
-      try {
-        var resp = await fetch(PROXY, { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(payload) });
-        var out = {}; try { out = await resp.json(); } catch(e){}
-        if (!resp.ok || out.ok === false) { throw new Error("proxy " + (out.status || resp.status)); }
-        // Éxito: mostramos "listo" y regresamos SOLO a WhatsApp (sin tocar "ok").
-        document.getElementById("f").style.display = "none";
-        document.querySelector(".barra").style.display = "none";
-        document.querySelector(".head").style.display = "none";
-        document.getElementById("ok").style.display = "block";
-        var wa = (qs.get("wa") || "").replace(/\D/g, "");
-        if (wa) {
-          setTimeout(function(){ window.location.href = "https://wa.me/" + wa; }, 900);
-        } else {
-          setTimeout(function(){ try{ window.close(); }catch(e){} }, 1200);
-        }
-      } catch(e){
-        btn.disabled = false; btn.textContent = "Continuar";
+      if (!enConf){ if(!validate()) return; irConf(); return; }   // pantalla 1 -> confirmar
+      // pantalla 2 -> enviar
+      btn.disabled=true; btnEd.disabled=true; btn.textContent="Enviando…";
+      var PROXY="https://enviafacil-callback.fn.jelou.ai";
+      var body=Object.assign({ executionId:executionId, callback:callback }, payloadDatos());
+      try{
+        var resp=await fetch(PROXY,{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) });
+        var out={}; try{ out=await resp.json(); }catch(e){}
+        if (!resp.ok || out.ok===false) throw new Error("proxy "+(out.status||resp.status));
+        document.getElementById("scr_conf").classList.add("hidden");
+        document.querySelector(".barra").style.display="none";
+        document.querySelector(".head").style.display="none";
+        document.getElementById("ok").style.display="block";
+        var wa=(qs.get("wa")||"").replace(/\D/g,"");
+        if (wa) setTimeout(function(){ window.location.href="https://wa.me/"+wa; },900);
+        else setTimeout(function(){ try{window.close();}catch(e){} },1200);
+      }catch(e){
+        btn.disabled=false; btnEd.disabled=false; btn.textContent="Confirmar";
         alert("No pudimos enviar los datos. Revisa tu conexión e intenta de nuevo.");
       }
     });
