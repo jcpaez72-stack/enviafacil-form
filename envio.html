@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<title>Datos del envío · EnvíaFácil</title>
+<title>Dirección · EnvíaFácil</title>
 <style>
   :root{ --amarillo:#FFD100; --negro:#1a1a1a; --gris:#6b7280; --borde:#e5e7eb; --err:#dc2626; }
   *{ box-sizing:border-box; }
@@ -37,8 +37,8 @@
 </head>
 <body>
   <div class="head">
-    <h1 id="h_titulo">📦 Datos del envío</h1>
-    <p id="h_sub">Completa los datos para cotizar tu envío.</p>
+    <h1 id="h_titulo">📦 Dirección</h1>
+    <p id="h_sub">Completa la dirección para continuar.</p>
   </div>
 
   <form id="f" novalidate>
@@ -134,8 +134,8 @@
       document.getElementById("referencia").placeholder = "Casa esquinera, portón verde, junto a…";
       document.getElementById("detalle").style.display = "none";
     } else {
-      document.getElementById("h_titulo").textContent = "🎯 Datos del envío";
-      document.getElementById("h_sub").textContent = "Dirección de entrega y detalle del paquete.";
+      document.getElementById("h_titulo").textContent = "🎯 Dirección de entrega";
+      document.getElementById("h_sub").textContent = soloDir ? "¿Dónde entregamos tu paquete?" : "Dirección de entrega y detalle del paquete.";
       document.getElementById("s_dir").textContent = "Dirección de entrega";
     }
     if (soloDir) document.getElementById("detalle").style.display = "none";
