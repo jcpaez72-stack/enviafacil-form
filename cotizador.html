@@ -66,19 +66,9 @@ async function cotizar(){
  const valor=paq?parseFloat(document.getElementById('valor').value||'0'):0;
  if(!(piezas>=1)){alert('Indica el n\u00famero de piezas.');return;}
  if(paq&&!(peso>0)){alert('Indica el peso en kg.');return;}
- const body={executionId:executionId,dbgHref:location.href,tipo:sel.tipo,idServicio:sel.idServicio,
-  idCiuOrigen:sel.Ori.code,ciudadOrigen:sel.Ori.name,idCiuDestino:sel.Des.code,ciudadDestino:sel.Des.name,
-  provinciaOrigen:sel.Ori.prov,provinciaDestino:sel.Des.prov,piezas:String(piezas),peso:String(peso),valorDeclarado:String(valor)};
- const btn=document.getElementById('cot');btn.disabled=true;btn.textContent='Cotizando\u2026';
- try{
-  const resp=await fetch(PROXY,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-  let out={};try{out=await resp.json();}catch(e){}
-  if(resp.ok&&out.ok!==false){
-   document.body.innerHTML='<div style="text-align:center;padding:70px 20px"><div style="font-size:56px">\u2705</div><h2 style="color:#0F0F0F;margin-top:8px">\u00a1Cotizado!</h2><p style="color:#6b6b6b;margin-top:6px">Tu precio llega al chat\u2026</p></div>';
-   const wa=(qs.get("wa")||"13239183195").replace(/\D/g,"");
-   setTimeout(()=>{window.location.href="https://wa.me/"+wa;},900);
-  }else{
-   document.body.innerHTML='<div style="padding:22px;font-family:monospace;font-size:12px;line-height:1.6"><h3 style="font-family:sans-serif">\ud83d\udd0d Diagn\u00f3stico callback</h3>executionId: <b>'+(executionId||'(VAC\u00cdO)')+'</b><br>proxy ok: <b>'+out.ok+'</b><br>Jelou status: <b>'+(out.status||resp.status)+'</b><br>body: '+JSON.stringify(out.body||out.error||'')+'<br><br><a href="https://wa.me/13239183195" style="font-family:sans-serif">\u2190 Volver a WhatsApp</a></div>';
-  }
- }catch(e){document.body.innerHTML='<div style="padding:22px;font-family:monospace">Error de red: '+e.message+'<br>executionId: '+(executionId||'(VAC\u00cdO)')+'</div>';}
+ const tipoLabel=paq?'Paquete':'Documento';
+ const msg='Cotizar mi env\u00edo \ud83d\udce6\nOrigen: '+sel.Ori.name+'\nDestino: '+sel.Des.name+'\nTipo: '+tipoLabel+'\nPiezas: '+piezas+'\nPeso: '+peso+' kg\nValor: $'+valor;
+ const wa=(qs.get("wa")||"13239183195").replace(/\D/g,"");
+ document.body.innerHTML='<div style="text-align:center;padding:70px 22px"><div style="font-size:56px">\ud83d\udce6</div><h2 style="color:#0F0F0F;margin-top:8px">\u00a1Cotizaci\u00f3n lista!</h2><p style="color:#6b6b6b;margin-top:8px">Abriendo WhatsApp\u2026 solo toca <b>enviar</b> \ud83d\udce4 y te llega el precio.</p></div>';
+ setTimeout(function(){window.location.href='https://wa.me/'+wa+'?text='+encodeURIComponent(msg);},700);
 }</script></body></html>
