@@ -85,18 +85,10 @@ async function cotizar(){
   const valor=paq?parseFloat(document.getElementById('valor').value||'0'):0;
   if(!(piezas>=1)){alert('Indica el número de piezas.');return;}
   if(paq&&!(peso>0)){alert('Indica el peso en kg.');return;}
-  const body={executionId:executionId,tipo:sel.tipo,idServicio:sel.idServicio,
-    idCiuOrigen:sel.Ori.code,ciudadOrigen:sel.Ori.name,
-    idCiuDestino:sel.Des.code,ciudadDestino:sel.Des.name,provinciaOrigen:sel.Ori.prov,provinciaDestino:sel.Des.prov,
-    piezas:String(piezas),peso:String(peso),valorDeclarado:String(valor)};
-  const btn=document.getElementById('cot');btn.disabled=true;btn.textContent='Cotizando…';
-  try{
-    const resp=await fetch(PROXY,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-    let out={};try{out=await resp.json();}catch(e){}
-    if(!resp.ok||out.ok===false) throw new Error("proxy "+(out.status||resp.status));
-    document.body.innerHTML='<div style="text-align:center;padding:70px 20px"><div style="font-size:56px">✅</div><h2 style="color:#0F0F0F;margin-top:8px">¡Datos enviados!</h2><p style="color:#6b6b6b;margin-top:6px">Tu cotización llega al chat…</p></div>';
-    const wa=(qs.get("wa")||"").replace(/\D/g,"");
-    if(wa) setTimeout(()=>{window.location.href="https://wa.me/"+wa;},900);
-  }catch(e){btn.disabled=false;btn.textContent='Cotizar 📦';alert('No se pudo enviar. Revisa tu conexión e intenta de nuevo.');}
+  const parts=['COT',sel.idServicio,sel.Ori.code,sel.Des.code,String(piezas),String(peso),String(valor),sel.Ori.name,sel.Des.name,sel.Ori.prov,sel.Des.prov];
+  const txt=encodeURIComponent(parts.join('|'));
+  const wa=(qs.get("wa")||"13239183195").replace(/\D/g,"");
+  document.body.innerHTML='<div style="text-align:center;padding:70px 22px"><div style="font-size:56px">📦</div><h2 style="color:#0F0F0F;margin-top:8px">¡Cotización lista!</h2><p style="color:#6b6b6b;margin-top:8px">Abriendo WhatsApp… solo toca <b>enviar</b> 📤 y te llega el precio.</p></div>';
+  setTimeout(function(){window.location.href='https://wa.me/'+wa+'?text='+txt;},700);
 }
 </script></body></html>
