@@ -85,8 +85,9 @@ async function cotizar(){
   const valor=paq?parseFloat(document.getElementById('valor').value||'0'):0;
   if(!(piezas>=1)){alert('Indica el número de piezas.');return;}
   if(paq&&!(peso>0)){alert('Indica el peso en kg.');return;}
-  const parts=['COT',sel.idServicio,sel.Ori.code,sel.Des.code,String(piezas),String(peso),String(valor),sel.Ori.name,sel.Des.name,sel.Ori.prov,sel.Des.prov];
-  const txt=encodeURIComponent(parts.join('|'));
+  const tipoLabel=paq?'Paquete':'Documento';
+  const msg='Cotizar mi env\u00edo \ud83d\udce6\nOrigen: '+sel.Ori.name+'\nDestino: '+sel.Des.name+'\nTipo: '+tipoLabel+'\nPiezas: '+piezas+'\nPeso: '+peso+' kg\nValor: $'+valor;
+  const txt=encodeURIComponent(msg);
   const wa=(qs.get("wa")||"13239183195").replace(/\D/g,"");
   document.body.innerHTML='<div style="text-align:center;padding:70px 22px"><div style="font-size:56px">📦</div><h2 style="color:#0F0F0F;margin-top:8px">¡Cotización lista!</h2><p style="color:#6b6b6b;margin-top:8px">Abriendo WhatsApp… solo toca <b>enviar</b> 📤 y te llega el precio.</p></div>';
   setTimeout(function(){window.location.href='https://wa.me/'+wa+'?text='+txt;},700);
