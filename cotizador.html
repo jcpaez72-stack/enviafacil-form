@@ -31,8 +31,8 @@ input:focus{border-color:var(--laar)}
 <div class="tipo" data-tipo="documento" data-id="201202002001002" onclick="pickTipo(this)"><div class="ic">📄</div><div class="t">Documento</div></div>
 <div class="tipo" data-tipo="paquete" data-id="201202002002013" onclick="pickTipo(this)"><div class="ic">📦</div><div class="t">Paquete</div></div></div></div>
 <div id="form" class="card hidden"><div class="step">Paso 2 · Datos del envío</div>
-<div class="fld"><label class="lbl">📍 Ciudad de origen</label><input id="qOri" placeholder="Escribe tu ciudad..." autocomplete="off" oninput="search(\'Ori\')" onfocus="search(\'Ori\')"><div id="sugOri" class="sug"></div><div id="chOri"></div></div>
-<div class="fld"><label class="lbl">🎯 Ciudad de destino</label><input id="qDes" placeholder="Escribe la ciudad destino..." autocomplete="off" oninput="search(\'Des\')" onfocus="search(\'Des\')"><div id="sugDes" class="sug"></div><div id="chDes"></div></div>
+<div class="fld"><label class="lbl">📍 Ciudad de origen</label><input id="qOri" placeholder="Escribe tu ciudad..." autocomplete="off" oninput="search('Ori')" onfocus="search('Ori')"><div id="sugOri" class="sug"></div><div id="chOri"></div></div>
+<div class="fld"><label class="lbl">🎯 Ciudad de destino</label><input id="qDes" placeholder="Escribe la ciudad destino..." autocomplete="off" oninput="search('Des')" onfocus="search('Des')"><div id="sugDes" class="sug"></div><div id="chDes"></div></div>
 <div class="fld"><label class="lbl">📦 Número de piezas</label><input id="piezas" type="number" inputmode="numeric" min="1" max="100" value="1"></div>
 <div id="paqFields" class="hidden"><div class="row"><div class="fld"><label class="lbl">⚖️ Peso (kg)</label><input id="peso" type="number" inputmode="decimal" min="0.1" step="0.1" placeholder="ej. 1.5"></div><div class="fld"><label class="lbl">💵 Valor declarado</label><input id="valor" type="number" inputmode="numeric" min="0" placeholder="USD"></div></div></div>
 <div id="docHint" class="hint hidden">📄 Documento: peso fijo 2 kg, sin valor declarado.</div>
