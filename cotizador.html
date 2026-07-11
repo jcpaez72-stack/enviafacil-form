@@ -76,9 +76,7 @@ async function cotizar(){
  document.body.innerHTML='<div style="text-align:center;padding:70px 22px"><div style="font-size:56px">\u23f3</div><h2 style="color:#0F0F0F;margin-top:8px">Enviando cotizaci\u00f3n\u2026</h2></div>';
  try{
   await fetch(PROXY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({executionId:executionId,success:true},data))});
-  document.body.innerHTML='<div style="text-align:center;padding:70px 22px"><div style="font-size:56px">\u2705</div><h2 style="color:#0F0F0F;margin-top:8px">\u00a1Listo!</h2><p style="color:#6b6b6b;margin-top:8px">Volviendo a WhatsApp\u2026 \ud83d\udce6</p></div>';
-  var waClose=(qs.get("wa")||"593999842656").replace(/\D/g,"");
-  setTimeout(function(){window.location.href="https://wa.me/"+waClose;},1400);
+  document.body.innerHTML='<div style="text-align:center;padding:70px 22px"><div style="font-size:56px">\u2705</div><h2 style="color:#0F0F0F;margin-top:8px">\u00a1Listo!</h2><p style="color:#6b6b6b;margin-top:8px">Vuelve a WhatsApp para ver tu precio \ud83d\udce6<br><span style="font-size:13px;color:#9b9b9b">(toca la \u2715 arriba para cerrar)</span></p></div>';
  }catch(e){
   document.body.innerHTML='<div style="text-align:center;padding:70px 22px"><div style="font-size:56px">\u26a0\ufe0f</div><h2 style="color:#0F0F0F;margin-top:8px">No se pudo enviar</h2><p style="color:#6b6b6b;margin-top:8px">Int\u00e9ntalo de nuevo.</p></div>';
  }
