@@ -67,8 +67,17 @@ async function cotizar(){
  if(!(piezas>=1)){alert('Indica el n\u00famero de piezas.');return;}
  if(paq&&!(peso>0)){alert('Indica el peso en kg.');return;}
  const tipoLabel=paq?'Paquete':'Documento';
- const msg='Cotizar mi env\u00edo \ud83d\udce6\nOrigen: '+sel.Ori.name+'\nDestino: '+sel.Des.name+'\nTipo: '+tipoLabel+'\nPiezas: '+piezas+'\nPeso: '+peso+' kg\nValor: $'+valor;
- const wa=(qs.get("wa")||"13239183195").replace(/\D/g,"");
- document.body.innerHTML='<div style="text-align:center;padding:70px 22px"><div style="font-size:56px">\ud83d\udce6</div><h2 style="color:#0F0F0F;margin-top:8px">\u00a1Cotizaci\u00f3n lista!</h2><p style="color:#6b6b6b;margin-top:8px">Abriendo WhatsApp\u2026 solo toca <b>enviar</b> \ud83d\udce4</p></div>';
- setTimeout(function(){window.location.href='https://wa.me/'+wa+'?text='+encodeURIComponent(msg);},700);
+ const data={origen:sel.Ori.code,origenNombre:sel.Ori.name,destino:sel.Des.code,destinoNombre:sel.Des.name,idServicio:sel.idServicio,tipo:tipoLabel,piezas:piezas,peso:peso,valor:valor};
+ if(!executionId){
+  const msg='Cotizar mi env\u00edo \ud83d\udce6\nOrigen: '+sel.Ori.name+'\nDestino: '+sel.Des.name+'\nTipo: '+tipoLabel+'\nPiezas: '+piezas+'\nPeso: '+peso+' kg\nValor: $'+valor;
+  const wa=(qs.get("wa")||"13239183195").replace(/\D/g,"");
+  window.location.href='https://wa.me/'+wa+'?text='+encodeURIComponent(msg);return;
+ }
+ document.body.innerHTML='<div style="text-align:center;padding:70px 22px"><div style="font-size:56px">\u23f3</div><h2 style="color:#0F0F0F;margin-top:8px">Enviando cotizaci\u00f3n\u2026</h2></div>';
+ try{
+  await fetch(PROXY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({executionId:executionId,success:true},data))});
+  document.body.innerHTML='<div style="text-align:center;padding:70px 22px"><div style="font-size:56px">\u2705</div><h2 style="color:#0F0F0F;margin-top:8px">\u00a1Listo!</h2><p style="color:#6b6b6b;margin-top:8px">Vuelve a WhatsApp para ver tu precio \ud83d\udce6</p></div>';
+ }catch(e){
+  document.body.innerHTML='<div style="text-align:center;padding:70px 22px"><div style="font-size:56px">\u26a0\ufe0f</div><h2 style="color:#0F0F0F;margin-top:8px">No se pudo enviar</h2><p style="color:#6b6b6b;margin-top:8px">Int\u00e9ntalo de nuevo.</p></div>';
+ }
 }</script></body></html>
