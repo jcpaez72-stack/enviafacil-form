@@ -177,7 +177,7 @@
 
     // ---- Datos que se envían ----
     function payloadDatos(){
-      var p={ tipo:tipo, cedula:val("cedula"), nombre:val("nombre"), correo:val("correo"), celular:val("celular") };
+      var p={ tipo:tipo, cedula:val("cedula"), nombre:val("nombre"), nombres_completos:val("nombre"), correo:val("correo"), celular:val("celular") };
       if (!esOficina){
         p.calle_principal=val("calle_principal"); p.numero_casa=val("numero_casa");
         p.calle_secundaria=val("calle_secundaria"); p.referencia_recoleccion=val("referencia_recoleccion");
