@@ -40,7 +40,7 @@ function enviar(){
  show('mced',!okC);show('mnom',!okN);show('mcor',!okE);show('mcel',!okT);
  if(!(okC&&okN&&okE&&okT))return;
  var msg='Datos del remitente 📇\nCédula: '+c+'\nNombre: '+n+'\nCorreo: '+e+'\nCelular: '+t;
- var wa=(qs.get('wa')||'13239183195').replace(/\D/g,'');
+ var wa=(qs.get('wa')||'593999842656').replace(/\D/g,'');
  document.body.innerHTML='<div style="text-align:center;padding:70px 22px"><div style="font-size:56px">📇</div><h2 style="color:#0F0F0F;margin-top:8px">¡Datos guardados!</h2><p style="color:#6b6b6b;margin-top:8px">Abriendo WhatsApp… toca <b>enviar</b> 📤</p></div>';
  setTimeout(function(){window.location.href='https://wa.me/'+wa+'?text='+encodeURIComponent(msg);},700);
 }
