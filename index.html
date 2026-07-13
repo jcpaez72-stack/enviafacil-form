@@ -87,8 +87,9 @@
         <div class="errmsg" id="e_calle_secundaria">Ingresa la calle secundaria.</div>
       </div>
       <div class="grp">
-        <label id="l_ref">Referencia de recolección</label>
+        <label id="l_ref">Referencia de recolección <span class="req">*</span></label>
         <input id="referencia_recoleccion" placeholder="Punto de referencia" />
+        <div class="errmsg" id="e_referencia_recoleccion">Ingresa un punto de referencia (ej. edificio, color de casa, junto a…).</div>
         <div class="hint">Ej: edificio azul, junto al parque, casa de dos pisos…</div>
       </div>
     </div>
@@ -133,7 +134,7 @@
     document.querySelector(".seccion").textContent = esDestino ? "Datos de quien recibe" : "Datos de quien envía";
     if (esDestino && !esOficina){
       document.getElementById("s_dir").textContent = "Dirección de entrega";
-      document.getElementById("l_ref").textContent = "Referencia de entrega";
+      document.getElementById("l_ref").innerHTML = 'Referencia de entrega <span class="req">*</span>';
     }
     // Variante OFICINA = solo 4 campos (sin dirección)
     if (esOficina){ document.getElementById("bloque_dir").classList.add("hidden"); }
@@ -177,7 +178,7 @@
         var caOk=val("calle_principal").length>=2; setErr("calle_principal",!caOk); ok=ok&&caOk;
         var nuOk=val("numero_casa").length>=1; setErr("numero_casa",!nuOk); ok=ok&&nuOk;
         var c2Ok=val("calle_secundaria").length>=1; setErr("calle_secundaria",!c2Ok); ok=ok&&c2Ok;
-        // referencia_recoleccion = OPCIONAL (igual que el Flow original)
+        var rfOk=val("referencia_recoleccion").length>=3; setErr("referencia_recoleccion",!rfOk); ok=ok&&rfOk;  // referencia OBLIGATORIA
       }
       return ok;
     }
