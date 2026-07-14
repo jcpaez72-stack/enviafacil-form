@@ -1,124 +1,120 @@
-<!doctype html>
-<html lang="es">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>Oficina de retiro · EnvíaFácil LAAR</title>
-<style>
-  :root{ --amarillo:#FCE200; --amarilloD:#E4C201; --negro:#0F0F0F; --gris:#6b6b6b; --linea:#e6e6e6; }
-  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-  body{ margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; color:var(--negro); background:#fff; }
-  .wrap{ max-width:520px; margin:0 auto; padding:20px 18px 40px; }
-  .top{ background:var(--amarillo); border-radius:16px; padding:16px 18px; margin-bottom:6px; }
-  .top h1{ margin:0; font-size:19px; }
-  .top p{ margin:6px 0 0; font-size:13px; color:#333; }
-  label{ display:block; font-size:13px; font-weight:600; margin:16px 0 6px; }
-  select{ width:100%; padding:13px 12px; font-size:16px; border:1.5px solid var(--linea); border-radius:12px; background:#fff; }
-  select:disabled{ background:#f4f4f4; color:#aaa; }
-  .card{ margin-top:16px; border:1.5px solid var(--linea); border-radius:14px; padding:14px; display:none; }
-  .card.show{ display:block; }
-  .card .nom{ font-weight:700; font-size:15px; }
-  .card .dir{ color:var(--gris); font-size:13px; margin-top:4px; }
-  .card .hor{ color:var(--negro); font-size:13px; margin-top:8px; background:#fff8c9; display:inline-block; padding:4px 10px; border-radius:8px; }
-  button{ width:100%; margin-top:22px; padding:15px; font-size:16px; font-weight:700; color:var(--negro); background:var(--amarillo); border:none; border-radius:14px; cursor:pointer; }
-  button:disabled{ opacity:.5; }
-  .msg{ margin-top:14px; font-size:13px; color:var(--gris); text-align:center; }
-  .ok{ text-align:center; padding:40px 12px; display:none; }
-  .ok.show{ display:block; }
-  .ok .big{ font-size:44px; }
-</style>
-</head>
-<body>
-<div class="wrap">
-  <div id="form">
-    <div class="top">
-      <h1>🏢 Elige tu oficina de retiro</h1>
-      <p>El destinatario retirará el paquete en la agencia LAAR que selecciones.</p>
-    </div>
-    <label for="prov">Provincia</label>
-    <select id="prov"><option value="">Selecciona la provincia…</option></select>
-    <label for="ciu">Ciudad</label>
-    <select id="ciu" disabled><option value="">Elige primero la provincia…</option></select>
-    <label for="ofi">Oficina</label>
-    <select id="ofi" disabled><option value="">Elige primero la ciudad…</option></select>
-    <div class="card" id="card">
-      <div class="nom" id="c_nom"></div>
-      <div class="dir" id="c_dir"></div>
-      <div class="hor" id="c_hor"></div>
-    </div>
-    <div class="msg" id="msg"></div>
-    <button id="btn" disabled>Confirmar oficina</button>
-  </div>
-  <div class="ok" id="ok">
-    <div class="big">✅</div>
-    <p><b>¡Listo!</b> Tu oficina quedó registrada.<br>Volvemos a WhatsApp…</p>
-  </div>
-</div>
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><title>Oficina de retiro · EnvíaFácil</title><style>:root{--laar:#FCE200;--laarD:#E4C201;--ink:#0F0F0F;--mut:#6b6b6b;--bg:#f5f5f5;--card:#fff;--line:#e4e4e4}
+*{box-sizing:border-box;margin:0;font-family:-apple-system,"Segoe UI",Roboto,sans-serif}
+body{background:var(--bg);color:var(--ink);padding:14px;max-width:460px;margin:0 auto}
+.head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.logo{width:42px;height:42px;border-radius:12px;background:var(--laar);display:flex;align-items:center;justify-content:center;font-size:22px}
+.head h1{font-size:17px}.head p{font-size:12px;color:var(--mut)}
+.card{background:var(--card);border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(20,60,70,.06);margin-bottom:12px}
+.lbl{font-size:13px;font-weight:600;margin-bottom:8px;display:block}
+.fld{margin-bottom:14px;position:relative}
+input{width:100%;padding:12px 13px;border:1.5px solid var(--line);border-radius:11px;font-size:15px;outline:none}
+input:focus{border-color:var(--laar)}
+.sug{position:absolute;left:0;right:0;top:100%;z-index:9;background:#fff;border:1px solid var(--line);border-radius:12px;margin-top:4px;max-height:230px;overflow:auto;box-shadow:0 6px 20px rgba(0,0,0,.12);display:none}
+.sug.show{display:block}
+.sug div{padding:10px 13px;font-size:14px;cursor:pointer;border-bottom:1px solid #f0f5f6}
+.sug div:hover{background:#FFFBE0}.sug .pv{font-size:11px;color:var(--mut)}
+.sug .empty{color:var(--mut);cursor:default}
+.chosen{display:flex;align-items:center;gap:8px;padding:11px 13px;background:#FFFBE0;border:1.5px solid var(--laar);border-radius:11px;font-size:14px;font-weight:600}
+.chosen .x{margin-left:auto;color:#8a7500;cursor:pointer;font-weight:700}
+.ofi{border:1.5px solid var(--line);border-radius:12px;padding:12px 13px;margin-top:10px;cursor:pointer;transition:.12s}
+.ofi.sel{border-color:var(--laar);background:#FFFBE0;box-shadow:0 0 0 3px rgba(252,226,0,.25)}
+.ofi .nom{font-weight:700;font-size:14px}
+.ofi .dir{color:var(--mut);font-size:12px;margin-top:3px}
+.ofi .hor{font-size:12px;margin-top:6px;background:#fff8c9;display:inline-block;padding:3px 9px;border-radius:8px}
+.hint{font-size:12px;color:var(--mut);margin-top:6px}
+.btn{width:100%;padding:15px;border:none;border-radius:13px;background:var(--laar);color:var(--ink);font-size:16px;font-weight:700;cursor:pointer}
+.btn:disabled{background:#efe6a8;cursor:not-allowed}
+.hidden{display:none}
+.salir{margin-top:16px;text-align:center;font-size:13px;color:var(--mut);cursor:pointer;padding:8px}
+.salir span{color:#8a7500;font-weight:600;text-decoration:underline}
+.salir.alert{margin-top:10px;background:#fff8e0;border:1px solid var(--laar);border-radius:11px;padding:12px;color:var(--ink)}
+.ok{text-align:center;padding:44px 12px;display:none}.ok.show{display:block}.ok .big{font-size:44px}</style></head><body>
+<div id="wrap">
+<div class="head"><div class="logo">🏢</div><div><h1>Oficina de retiro LAAR</h1><p>El destinatario retirará el paquete en la agencia que elijas</p></div></div>
+<div class="card">
+  <div class="fld"><label class="lbl">🏢 Ciudad de retiro</label><input id="qCiu" placeholder="Escribe la ciudad..." autocomplete="off"><div id="sugCiu" class="sug"></div><div id="chCiu"></div></div>
+  <div id="ofiWrap" class="hidden"><label class="lbl">📍 Elige la oficina</label><div id="ofiList"></div><div id="ofiHint" class="hint hidden"></div></div>
+  <button id="btn" class="btn hidden" disabled>Confirmar oficina</button>
+  <div class="salir" id="salir">¿No encuentras tu ciudad? <span>Salir y elegir entrega a domicilio →</span></div>
+</div></div>
+<div class="ok" id="ok"><div class="big">✅</div><p><b>¡Listo!</b> Tu oficina quedó registrada.<br>Volvemos a WhatsApp…</p></div>
 <script>
-  var OFICINAS = [{"id":14,"idCiudad":201001003011,"ciudad":"CUENCA","provincia":"AZUAY","nombre":"CUENCA - CENTRO DE SERVICIOS Y RETIROS DE OFICINA","direccion":"Calle Agustin Cueva 9-44 y Alfonso Moreno Mora","horarioApertura":"08:30","horarioCierre":"18:30","retiroOficina":true,"activo":true},{"id":15,"idCiudad":201001003011,"ciudad":"CUENCA","provincia":"AZUAY","nombre":"CUENCA - MATRIZ  OPERACIONES","direccion":"Italia 54 y Unión Soviética, por el sector CELEC EP detrás de la gasolinera Vidal.","horarioApertura":"08:30","horarioCierre":"18:30","retiroOficina":true,"activo":true},{"id":154,"idCiudad":201001004001,"ciudad":"GUARANDA","provincia":"BOLIVAR","nombre":"Cas Guaranda","direccion":"Calle Moraima Ofir y av Cándido Rada entre av Cándido Rada y Azuay atras del Mies","horarioApertura":"08:00","horarioCierre":"17:00","retiroOficina":true,"activo":true},{"id":8,"idCiudad":201001005001,"ciudad":"AZOGUES","provincia":"CAÑAR","nombre":"CAS AZOGUES - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"calle 4 de noviembre y Av. de la virgen a pocos pasos del restaurant berta juncal","horarioApertura":"08:30","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":145,"idCiudad":201001006001,"ciudad":"TULCAN","provincia":"CARCHI","nombre":"CAS - TULCÁN -  CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Calle Bolivia 5-050 entre Sucre  y Olmedo, junto a la Escuela Angelica Martinez","horarioApertura":"08:30","horarioCierre":"17:00","retiroOficina":true,"activo":true},{"id":134,"idCiudad":201001008001,"ciudad":"RIOBAMBA","provincia":"CHIMBORAZO","nombre":"RIOBAMBA - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Av. Pedro Vicente Maldonado Edifico Nueva Aurora Planta Baja  Referencia: Media cuadra mas abajo del restaurante Las Cascaritas, secto media luna","horarioApertura":"09:00","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":71,"idCiudad":201001007001,"ciudad":"LATACUNGA","provincia":"COTOPAXI","nombre":"LATACUNGA - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Calle Marco Aurelio Subía s/n y Rio Illuchi entre","horarioApertura":"08:30","horarioCierre":"18:30","retiroOficina":true,"activo":true},{"id":77,"idCiudad":201001009001,"ciudad":"MACHALA","provincia":"EL ORO","nombre":"MACHALA - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Calle Pichincha entre Buenavista y Segunda  Diagonal (a una cuadra antes de llegar al mercado 25 de junio).","horarioApertura":"09:00","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":93,"idCiudad":201001010008,"ciudad":"QUININDE","provincia":"ESMERALDAS","nombre":"QUININDÉ -  CENTRO DE SERVICIOS Y OPERACIONES","direccion":"calle gomez de la torre en gustavo becerra y nelson valencia","horarioApertura":"08:00","horarioCierre":"17:00","retiroOficina":true,"activo":true},{"id":33,"idCiudad":201001010001,"ciudad":"ESMERALDAS","provincia":"ESMERALDAS","nombre":"ESMERALDAS - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"AV.JAIME HURTADO ENTRE CALLE C1 FRENTE AL TERMINAL","horarioApertura":"08:00","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":38,"idCiudad":201001002001,"ciudad":"GUAYAQUIL","provincia":"GUAYAS","nombre":"GUAYAQUIL - ALBORADA","direccion":"Alborada 1ra etapa mz j se 23 SI23","horarioApertura":"08:30","horarioCierre":"17:30","retiroOficina":true,"activo":true},{"id":39,"idCiudad":201001002001,"ciudad":"GUAYAQUIL","provincia":"GUAYAS","nombre":"GUAYAQUIL -  OPERACIONES","direccion":"Km 12 1/2 Via a Daule, Complejo Bodegas Verde Loma","horarioApertura":"08:30","horarioCierre":"17:30","retiroOficina":true,"activo":true},{"id":146,"idCiudad":201001002003,"ciudad":"MILAGRO","provincia":"GUAYAS","nombre":"LaarMilagro","direccion":"AV. VÍA TRONCAL DE LA COSTA ANTES DEL KM 4, Frente a la iglesia san Juan Pablo 2","horarioApertura":"09:30","horarioCierre":"16:30","retiroOficina":true,"activo":true},{"id":155,"idCiudad":201001002015,"ciudad":"NARANJAL","provincia":"GUAYAS","nombre":"Laar Naranjal","direccion":"Av Olmedo 412 entre calle 2 este y 3 este a una cu","horarioApertura":"08:30","horarioCierre":"17:30","retiroOficina":true,"activo":true},{"id":156,"idCiudad":201001002001,"ciudad":"GUAYAQUIL","provincia":"GUAYAS","nombre":"LAAR CS GYE -Santa Leonor","direccion":"AV. RIO DAULE SOLAR 10 Y 11 FRENTE A DIFARE","horarioApertura":"08:30","horarioCierre":"17:30","retiroOficina":true,"activo":true},{"id":7,"idCiudad":201001011001,"ciudad":"ATUNTAQUI","provincia":"IMBABURA","nombre":"CAS ATUNTAQUI - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Ave. Salinas y Atahualpa /a media cuadra de la Panamericana Norte / Frente a Multiferreteria","horarioApertura":"07:00","horarioCierre":"19:00","retiroOficina":true,"activo":true},{"id":83,"idCiudad":201001011002,"ciudad":"OTAVALO","provincia":"IMBABURA","nombre":"CAS OTAVALO - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"AV JOSE ANTONIO DE SUCRE A 100 METROS DEL BANCO INTERNACIONAL JUNTO AL RESTAURANTE WAMBRAS WOK Y LABORATORIOS ZURITA","horarioApertura":"08:00","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":13,"idCiudad":201001011006,"ciudad":"COTACACHI","provincia":"IMBABURA","nombre":"CAS COTACACHI - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Calle García Moreno S/N entre Gonzales Suarez y Simon Bolivar  junto a BANECUADOR","horarioApertura":"9:00:00 AM","horarioCierre":"6:00:00 PM","retiroOficina":true,"activo":true},{"id":63,"idCiudad":201001011005,"ciudad":"IBARRA","provincia":"IMBABURA","nombre":"CAS IBARRA - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Av. Eleodoro Ayala y Teodoro Gomez De La Torre, junto al parque Pilanqui.","horarioApertura":"08:00","horarioCierre":"18:30","retiroOficina":true,"activo":true},{"id":73,"idCiudad":201001012001,"ciudad":"LOJA","provincia":"LOJA","nombre":"LOJA - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Av. Padre Julián Lorente (Antes Quinara) y Atahual frente al balcón Lojano","horarioApertura":"08:30","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":92,"idCiudad":201001013002,"ciudad":"QUEVEDO","provincia":"LOS RIOS","nombre":"QUEVEDO -  CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Ciudadela San Jose Sur, Ave. Walter Andrade, entre la 5ta y la 6ta,  Junto a Agripac, Edf. Blanco","horarioApertura":"08:30","horarioCierre":"17:30","retiroOficina":true,"activo":true},{"id":9,"idCiudad":201001013001,"ciudad":"BABAHOYO","provincia":"LOS RIOS","nombre":"BABAHOYO - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"km 5 via babhoyo - guayaquil sector las tolas","horarioApertura":"08:30","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":24,"idCiudad":201001010009,"ciudad":"PEDERNALES","provincia":"MANABI","nombre":"Cas Pedernales","direccion":"AV ALEOY ALFARO / S/N / CALLE MANABI","horarioApertura":"08:30","horarioCierre":"17:30","retiroOficina":true,"activo":true},{"id":31,"idCiudad":201001014005,"ciudad":"EL CARMEN","provincia":"MANABI","nombre":"EL CARMEN - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Centro de Servicios - Av.  Chone y García Moreno (Junto a la Policía)","horarioApertura":"15:00","horarioCierre":"17:00","retiroOficina":true,"activo":true},{"id":12,"idCiudad":201001014004,"ciudad":"CHONE","provincia":"MANABI","nombre":"CAS CHONE - CENTRO DE SERVICIOS Y RETIROS DE OFICINA","direccion":"Ciudadela Los Naranjos 1 Diagonal al Hospital; una cuadra más adelante de la escuela Trajano Centeno Viteri","horarioApertura":"08:30","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":86,"idCiudad":201001014002,"ciudad":"PORTOVIEJO","provincia":"MANABI","nombre":"PORTOVIEJO - CENTRO DE SERVICIOS Y RETIROS DE OFICINA","direccion":"AVENIDA METROPOLITANA –VIA MANTA FRENTE A CLUB BEL","horarioApertura":"08:30","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":78,"idCiudad":201001014001,"ciudad":"MANTA","provincia":"MANABI","nombre":"MANTA - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Complejo multibodegas, Av. 113, via Manta Montecristi y calle C. Oliva Miranda","horarioApertura":"08:30","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":80,"idCiudad":201001014003,"ciudad":"BAHIA DE CARAQUEZ","provincia":"MANABI","nombre":"LAARCOURIER BAHIA - CENTRO DE SERVICIOS","direccion":"bARRIO MAURICIO AV.CESAR RUPERTI Y HOMERO ORCES FRENTE AL TERMINAL","horarioApertura":"09:00","horarioCierre":"19:00","retiroOficina":true,"activo":true},{"id":161,"idCiudad":201001014006,"ciudad":"JIPIJAPA","provincia":"MANABI","nombre":"LAARCOURIER JIÍJAPA","direccion":"Rocafuerte E/9 entre 9 de octubre y guayaquil diagonal al distrito de educacion","horarioApertura":"15:00","horarioCierre":"17:30","retiroOficina":true,"activo":true},{"id":76,"idCiudad":201001015001,"ciudad":"MACAS","provincia":"MORONA SANTIAGO","nombre":"MACAS - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Juan de salinas entre 24 de Mayo y Soasti a pocos pasos del consultorio del Dr. Ramones","horarioApertura":"08:00","horarioCierre":"12:00","retiroOficina":true,"activo":true},{"id":48,"idCiudad":201001017012,"ciudad":"EL CHACO","provincia":"NAPO","nombre":"Cas El Chaco","direccion":"Calle 13 de enero y av  Francisco tramarrollo","horarioApertura":"10:00","horarioCierre":"16:00","retiroOficina":true,"activo":true},{"id":144,"idCiudad":201001016001,"ciudad":"TENA","provincia":"NAPO","nombre":"CAS TENA - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Barrio Las Palmas, Av Las Palmas y Tamiahurco a media cuadra del la CNE","horarioApertura":"11:30","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":32,"idCiudad":201001017002,"ciudad":"EL COCA","provincia":"ORELLANA","nombre":"LAAR COCA CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Calle Ambato y Juan Montalvo esquina cerca a la iglesia Comunidad de Fé","horarioApertura":"08:30","horarioCierre":"17:30","retiroOficina":true,"activo":true},{"id":90,"idCiudad":201001018001,"ciudad":"PUYO","provincia":"PASTAZA","nombre":"PUYO - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"AV. GONZALES SUAREZ S/N Y ENTRE CESLAO MARIN Y CAS","horarioApertura":"08:30","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":100,"idCiudad":201001001001,"ciudad":"QUITO","provincia":"PICHINCHA","nombre":"QUITO MATRIZ - CENTRO DE SERVICIOS, OPERACIONES Y RETIROS DE OFICINA","direccion":"De los Cipreses Lote 26 y De las Avellanas","horarioApertura":"08:30","horarioCierre":"17:30","retiroOficina":true,"activo":true},{"id":101,"idCiudad":201001001001,"ciudad":"QUITO","provincia":"PICHINCHA","nombre":"QUITO FLORIPONDIOS - CENTRO DE SERVICIOS Y RETIROS DE OFICINA","direccion":"De los Floripondios N57-120 y Leonardo Murialdo","horarioApertura":"08:30","horarioCierre":"17:30","retiroOficina":true,"activo":true},{"id":10,"idCiudad":201001001002,"ciudad":"CAYAMBE","provincia":"PICHINCHA","nombre":"CAS CAYAMBE - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Av. 24 de Mayo y Ascázubi / frente a la Pizzería Oscar","horarioApertura":"08:30","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":143,"idCiudad":201001001003,"ciudad":"TABACUNDO","provincia":"PICHINCHA","nombre":"CAS TABACUNDO - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Panamericana Norte via Cayambe en la Y de Tabacund","horarioApertura":"08:30","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":158,"idCiudad":201001001001,"ciudad":"QUITO","provincia":"PICHINCHA","nombre":"BODEGA SUR UIO","direccion":"Amaruñan ñan s/n y Maldonado frente al banco pichincha","horarioApertura":"09:30","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":68,"idCiudad":201001002013,"ciudad":"LA LIBERTAD","provincia":"SANTA ELENA","nombre":"Laar Libertad -  CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Calle 24 entre Av. 4 y 5, Barrio Rocafuerte","horarioApertura":"09:00","horarioCierre":"18:30","retiroOficina":true,"activo":true},{"id":67,"idCiudad":201001001011,"ciudad":"LA CONCORDIA","provincia":"SANTO DOMINGO DE LOS TSACHILAS","nombre":"CAS 2 LA CONCORDIA - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Barrio los ángeles Calle Simón Plata Torres, S/N y Calle 8 By Pass Puerto Quito Km 43 Dentro de la Gasolinera Amazonas Dos","horarioApertura":"08:30","horarioCierre":"18:30","retiroOficina":true,"activo":true},{"id":142,"idCiudad":201001001004,"ciudad":"SANTO DOMINGO","provincia":"SANTO DOMINGO DE LOS TSACHILAS","nombre":"SANTO DOMINGO - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Vía Quininde km 1 cooperativa brisas del colorado, sector 1 calle José campo y Av complejo ramia.","horarioApertura":"08:30","horarioCierre":"17:00","retiroOficina":true,"activo":true},{"id":44,"idCiudad":201001001004,"ciudad":"SANTO DOMINGO","provincia":"SANTO DOMINGO DE LOS TSACHILAS","nombre":"Cas Sto. Domingo4 \"Rio Verde\"","direccion":"AV. TSAFIQUI / S/N / TULCAN","horarioApertura":"08:30","horarioCierre":"17:30","retiroOficina":true,"activo":true},{"id":70,"idCiudad":201001017003,"ciudad":"LAGO AGRIO","provincia":"SUCUMBIOS","nombre":"LAGO AGRIO - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Calle 18 de noviembre, entre la Av. Progreso y Av. Choferes, Frente a la iglesia el Verbo, diagonal a la Escuela Celia","horarioApertura":"08:30","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":1,"idCiudad":20100101901,"ciudad":"AMBATO","provincia":"TUNGURAHUA","nombre":"AMBATO - OPERACIONES","direccion":"Bodegas Parque Industrial. Salida a Quito Calle F y Calle 4ta y 5ta, diagonal a Dipor","horarioApertura":"08:30","horarioCierre":"17:30","retiroOficina":true,"activo":true},{"id":2,"idCiudad":20100101901,"ciudad":"AMBATO","provincia":"TUNGURAHUA","nombre":"AMBATO - CENTRO DE SERVICIOS Y RETIROS DE OFICINA","direccion":"Av. Los Shyris entre Chaquitinta y Quingaluma a media cuadra del Edificio Cnt en el Edificio Amador primer piso","horarioApertura":"08:30","horarioCierre":"17:00","retiroOficina":true,"activo":true}];
-  var qs = new URLSearchParams(location.search);
-  var ciudadParam = qs.get("ciudad") || qs.get("idCiudad") || "";
-  var wa = qs.get("wa") || "";
-  var DEFAULT_CALLBACK = "https://workflows.jelou.ai/v1/webview/callback";
-  var executionId = qs.get("executionId") || "";
-  var callback = qs.get("callback") || DEFAULT_CALLBACK;
-  if (!executionId) { var mm = location.href.match(/[?&]executionId=([^&#]+)/); if (mm) executionId = decodeURIComponent(mm[1]); }
-  if (callback.indexOf("executionId=") >= 0) { var cm = callback.match(/^(.*?)[?&]executionId=([^&#]+)(.*)$/); if (cm){ if(!executionId) executionId=decodeURIComponent(cm[2]); callback=cm[1]; } }
+var OFICINAS=[{"id":14,"idCiudad":201001003011,"ciudad":"CUENCA","provincia":"AZUAY","nombre":"CUENCA - CENTRO DE SERVICIOS Y RETIROS DE OFICINA","direccion":"Calle Agustin Cueva 9-44 y Alfonso Moreno Mora","horarioApertura":"08:30","horarioCierre":"18:30","retiroOficina":true,"activo":true},{"id":15,"idCiudad":201001003011,"ciudad":"CUENCA","provincia":"AZUAY","nombre":"CUENCA - MATRIZ  OPERACIONES","direccion":"Italia 54 y Unión Soviética, por el sector CELEC EP detrás de la gasolinera Vidal.","horarioApertura":"08:30","horarioCierre":"18:30","retiroOficina":true,"activo":true},{"id":154,"idCiudad":201001004001,"ciudad":"GUARANDA","provincia":"BOLIVAR","nombre":"Cas Guaranda","direccion":"Calle Moraima Ofir y av Cándido Rada entre av Cándido Rada y Azuay atras del Mies","horarioApertura":"08:00","horarioCierre":"17:00","retiroOficina":true,"activo":true},{"id":8,"idCiudad":201001005001,"ciudad":"AZOGUES","provincia":"CAÑAR","nombre":"CAS AZOGUES - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"calle 4 de noviembre y Av. de la virgen a pocos pasos del restaurant berta juncal","horarioApertura":"08:30","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":145,"idCiudad":201001006001,"ciudad":"TULCAN","provincia":"CARCHI","nombre":"CAS - TULCÁN -  CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Calle Bolivia 5-050 entre Sucre  y Olmedo, junto a la Escuela Angelica Martinez","horarioApertura":"08:30","horarioCierre":"17:00","retiroOficina":true,"activo":true},{"id":134,"idCiudad":201001008001,"ciudad":"RIOBAMBA","provincia":"CHIMBORAZO","nombre":"RIOBAMBA - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Av. Pedro Vicente Maldonado Edifico Nueva Aurora Planta Baja  Referencia: Media cuadra mas abajo del restaurante Las Cascaritas, secto media luna","horarioApertura":"09:00","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":71,"idCiudad":201001007001,"ciudad":"LATACUNGA","provincia":"COTOPAXI","nombre":"LATACUNGA - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Calle Marco Aurelio Subía s/n y Rio Illuchi entre","horarioApertura":"08:30","horarioCierre":"18:30","retiroOficina":true,"activo":true},{"id":77,"idCiudad":201001009001,"ciudad":"MACHALA","provincia":"EL ORO","nombre":"MACHALA - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Calle Pichincha entre Buenavista y Segunda  Diagonal (a una cuadra antes de llegar al mercado 25 de junio).","horarioApertura":"09:00","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":93,"idCiudad":201001010008,"ciudad":"QUININDE","provincia":"ESMERALDAS","nombre":"QUININDÉ -  CENTRO DE SERVICIOS Y OPERACIONES","direccion":"calle gomez de la torre en gustavo becerra y nelson valencia","horarioApertura":"08:00","horarioCierre":"17:00","retiroOficina":true,"activo":true},{"id":33,"idCiudad":201001010001,"ciudad":"ESMERALDAS","provincia":"ESMERALDAS","nombre":"ESMERALDAS - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"AV.JAIME HURTADO ENTRE CALLE C1 FRENTE AL TERMINAL","horarioApertura":"08:00","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":38,"idCiudad":201001002001,"ciudad":"GUAYAQUIL","provincia":"GUAYAS","nombre":"GUAYAQUIL - ALBORADA","direccion":"Alborada 1ra etapa mz j se 23 SI23","horarioApertura":"08:30","horarioCierre":"17:30","retiroOficina":true,"activo":true},{"id":39,"idCiudad":201001002001,"ciudad":"GUAYAQUIL","provincia":"GUAYAS","nombre":"GUAYAQUIL -  OPERACIONES","direccion":"Km 12 1/2 Via a Daule, Complejo Bodegas Verde Loma","horarioApertura":"08:30","horarioCierre":"17:30","retiroOficina":true,"activo":true},{"id":146,"idCiudad":201001002003,"ciudad":"MILAGRO","provincia":"GUAYAS","nombre":"LaarMilagro","direccion":"AV. VÍA TRONCAL DE LA COSTA ANTES DEL KM 4, Frente a la iglesia san Juan Pablo 2","horarioApertura":"09:30","horarioCierre":"16:30","retiroOficina":true,"activo":true},{"id":155,"idCiudad":201001002015,"ciudad":"NARANJAL","provincia":"GUAYAS","nombre":"Laar Naranjal","direccion":"Av Olmedo 412 entre calle 2 este y 3 este a una cu","horarioApertura":"08:30","horarioCierre":"17:30","retiroOficina":true,"activo":true},{"id":156,"idCiudad":201001002001,"ciudad":"GUAYAQUIL","provincia":"GUAYAS","nombre":"LAAR CS GYE -Santa Leonor","direccion":"AV. RIO DAULE SOLAR 10 Y 11 FRENTE A DIFARE","horarioApertura":"08:30","horarioCierre":"17:30","retiroOficina":true,"activo":true},{"id":7,"idCiudad":201001011001,"ciudad":"ATUNTAQUI","provincia":"IMBABURA","nombre":"CAS ATUNTAQUI - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Ave. Salinas y Atahualpa /a media cuadra de la Panamericana Norte / Frente a Multiferreteria","horarioApertura":"07:00","horarioCierre":"19:00","retiroOficina":true,"activo":true},{"id":83,"idCiudad":201001011002,"ciudad":"OTAVALO","provincia":"IMBABURA","nombre":"CAS OTAVALO - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"AV JOSE ANTONIO DE SUCRE A 100 METROS DEL BANCO INTERNACIONAL JUNTO AL RESTAURANTE WAMBRAS WOK Y LABORATORIOS ZURITA","horarioApertura":"08:00","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":13,"idCiudad":201001011006,"ciudad":"COTACACHI","provincia":"IMBABURA","nombre":"CAS COTACACHI - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Calle García Moreno S/N entre Gonzales Suarez y Simon Bolivar  junto a BANECUADOR","horarioApertura":"9:00:00 AM","horarioCierre":"6:00:00 PM","retiroOficina":true,"activo":true},{"id":63,"idCiudad":201001011005,"ciudad":"IBARRA","provincia":"IMBABURA","nombre":"CAS IBARRA - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Av. Eleodoro Ayala y Teodoro Gomez De La Torre, junto al parque Pilanqui.","horarioApertura":"08:00","horarioCierre":"18:30","retiroOficina":true,"activo":true},{"id":73,"idCiudad":201001012001,"ciudad":"LOJA","provincia":"LOJA","nombre":"LOJA - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Av. Padre Julián Lorente (Antes Quinara) y Atahual frente al balcón Lojano","horarioApertura":"08:30","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":92,"idCiudad":201001013002,"ciudad":"QUEVEDO","provincia":"LOS RIOS","nombre":"QUEVEDO -  CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Ciudadela San Jose Sur, Ave. Walter Andrade, entre la 5ta y la 6ta,  Junto a Agripac, Edf. Blanco","horarioApertura":"08:30","horarioCierre":"17:30","retiroOficina":true,"activo":true},{"id":9,"idCiudad":201001013001,"ciudad":"BABAHOYO","provincia":"LOS RIOS","nombre":"BABAHOYO - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"km 5 via babhoyo - guayaquil sector las tolas","horarioApertura":"08:30","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":24,"idCiudad":201001010009,"ciudad":"PEDERNALES","provincia":"MANABI","nombre":"Cas Pedernales","direccion":"AV ALEOY ALFARO / S/N / CALLE MANABI","horarioApertura":"08:30","horarioCierre":"17:30","retiroOficina":true,"activo":true},{"id":31,"idCiudad":201001014005,"ciudad":"EL CARMEN","provincia":"MANABI","nombre":"EL CARMEN - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Centro de Servicios - Av.  Chone y García Moreno (Junto a la Policía)","horarioApertura":"15:00","horarioCierre":"17:00","retiroOficina":true,"activo":true},{"id":12,"idCiudad":201001014004,"ciudad":"CHONE","provincia":"MANABI","nombre":"CAS CHONE - CENTRO DE SERVICIOS Y RETIROS DE OFICINA","direccion":"Ciudadela Los Naranjos 1 Diagonal al Hospital; una cuadra más adelante de la escuela Trajano Centeno Viteri","horarioApertura":"08:30","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":86,"idCiudad":201001014002,"ciudad":"PORTOVIEJO","provincia":"MANABI","nombre":"PORTOVIEJO - CENTRO DE SERVICIOS Y RETIROS DE OFICINA","direccion":"AVENIDA METROPOLITANA –VIA MANTA FRENTE A CLUB BEL","horarioApertura":"08:30","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":78,"idCiudad":201001014001,"ciudad":"MANTA","provincia":"MANABI","nombre":"MANTA - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Complejo multibodegas, Av. 113, via Manta Montecristi y calle C. Oliva Miranda","horarioApertura":"08:30","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":80,"idCiudad":201001014003,"ciudad":"BAHIA DE CARAQUEZ","provincia":"MANABI","nombre":"LAARCOURIER BAHIA - CENTRO DE SERVICIOS","direccion":"bARRIO MAURICIO AV.CESAR RUPERTI Y HOMERO ORCES FRENTE AL TERMINAL","horarioApertura":"09:00","horarioCierre":"19:00","retiroOficina":true,"activo":true},{"id":161,"idCiudad":201001014006,"ciudad":"JIPIJAPA","provincia":"MANABI","nombre":"LAARCOURIER JIÍJAPA","direccion":"Rocafuerte E/9 entre 9 de octubre y guayaquil diagonal al distrito de educacion","horarioApertura":"15:00","horarioCierre":"17:30","retiroOficina":true,"activo":true},{"id":76,"idCiudad":201001015001,"ciudad":"MACAS","provincia":"MORONA SANTIAGO","nombre":"MACAS - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Juan de salinas entre 24 de Mayo y Soasti a pocos pasos del consultorio del Dr. Ramones","horarioApertura":"08:00","horarioCierre":"12:00","retiroOficina":true,"activo":true},{"id":48,"idCiudad":201001017012,"ciudad":"EL CHACO","provincia":"NAPO","nombre":"Cas El Chaco","direccion":"Calle 13 de enero y av  Francisco tramarrollo","horarioApertura":"10:00","horarioCierre":"16:00","retiroOficina":true,"activo":true},{"id":144,"idCiudad":201001016001,"ciudad":"TENA","provincia":"NAPO","nombre":"CAS TENA - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Barrio Las Palmas, Av Las Palmas y Tamiahurco a media cuadra del la CNE","horarioApertura":"11:30","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":32,"idCiudad":201001017002,"ciudad":"EL COCA","provincia":"ORELLANA","nombre":"LAAR COCA CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Calle Ambato y Juan Montalvo esquina cerca a la iglesia Comunidad de Fé","horarioApertura":"08:30","horarioCierre":"17:30","retiroOficina":true,"activo":true},{"id":90,"idCiudad":201001018001,"ciudad":"PUYO","provincia":"PASTAZA","nombre":"PUYO - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"AV. GONZALES SUAREZ S/N Y ENTRE CESLAO MARIN Y CAS","horarioApertura":"08:30","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":100,"idCiudad":201001001001,"ciudad":"QUITO","provincia":"PICHINCHA","nombre":"QUITO MATRIZ - CENTRO DE SERVICIOS, OPERACIONES Y RETIROS DE OFICINA","direccion":"De los Cipreses Lote 26 y De las Avellanas","horarioApertura":"08:30","horarioCierre":"17:30","retiroOficina":true,"activo":true},{"id":101,"idCiudad":201001001001,"ciudad":"QUITO","provincia":"PICHINCHA","nombre":"QUITO FLORIPONDIOS - CENTRO DE SERVICIOS Y RETIROS DE OFICINA","direccion":"De los Floripondios N57-120 y Leonardo Murialdo","horarioApertura":"08:30","horarioCierre":"17:30","retiroOficina":true,"activo":true},{"id":10,"idCiudad":201001001002,"ciudad":"CAYAMBE","provincia":"PICHINCHA","nombre":"CAS CAYAMBE - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Av. 24 de Mayo y Ascázubi / frente a la Pizzería Oscar","horarioApertura":"08:30","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":143,"idCiudad":201001001003,"ciudad":"TABACUNDO","provincia":"PICHINCHA","nombre":"CAS TABACUNDO - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Panamericana Norte via Cayambe en la Y de Tabacund","horarioApertura":"08:30","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":158,"idCiudad":201001001001,"ciudad":"QUITO","provincia":"PICHINCHA","nombre":"BODEGA SUR UIO","direccion":"Amaruñan ñan s/n y Maldonado frente al banco pichincha","horarioApertura":"09:30","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":68,"idCiudad":201001002013,"ciudad":"LA LIBERTAD","provincia":"SANTA ELENA","nombre":"Laar Libertad -  CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Calle 24 entre Av. 4 y 5, Barrio Rocafuerte","horarioApertura":"09:00","horarioCierre":"18:30","retiroOficina":true,"activo":true},{"id":67,"idCiudad":201001001011,"ciudad":"LA CONCORDIA","provincia":"SANTO DOMINGO DE LOS TSACHILAS","nombre":"CAS 2 LA CONCORDIA - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Barrio los ángeles Calle Simón Plata Torres, S/N y Calle 8 By Pass Puerto Quito Km 43 Dentro de la Gasolinera Amazonas Dos","horarioApertura":"08:30","horarioCierre":"18:30","retiroOficina":true,"activo":true},{"id":142,"idCiudad":201001001004,"ciudad":"SANTO DOMINGO","provincia":"SANTO DOMINGO DE LOS TSACHILAS","nombre":"SANTO DOMINGO - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Vía Quininde km 1 cooperativa brisas del colorado, sector 1 calle José campo y Av complejo ramia.","horarioApertura":"08:30","horarioCierre":"17:00","retiroOficina":true,"activo":true},{"id":44,"idCiudad":201001001004,"ciudad":"SANTO DOMINGO","provincia":"SANTO DOMINGO DE LOS TSACHILAS","nombre":"Cas Sto. Domingo4 \"Rio Verde\"","direccion":"AV. TSAFIQUI / S/N / TULCAN","horarioApertura":"08:30","horarioCierre":"17:30","retiroOficina":true,"activo":true},{"id":70,"idCiudad":201001017003,"ciudad":"LAGO AGRIO","provincia":"SUCUMBIOS","nombre":"LAGO AGRIO - CENTRO DE SERVICIOS Y OPERACIONES","direccion":"Calle 18 de noviembre, entre la Av. Progreso y Av. Choferes, Frente a la iglesia el Verbo, diagonal a la Escuela Celia","horarioApertura":"08:30","horarioCierre":"18:00","retiroOficina":true,"activo":true},{"id":1,"idCiudad":20100101901,"ciudad":"AMBATO","provincia":"TUNGURAHUA","nombre":"AMBATO - OPERACIONES","direccion":"Bodegas Parque Industrial. Salida a Quito Calle F y Calle 4ta y 5ta, diagonal a Dipor","horarioApertura":"08:30","horarioCierre":"17:30","retiroOficina":true,"activo":true},{"id":2,"idCiudad":20100101901,"ciudad":"AMBATO","provincia":"TUNGURAHUA","nombre":"AMBATO - CENTRO DE SERVICIOS Y RETIROS DE OFICINA","direccion":"Av. Los Shyris entre Chaquitinta y Quingaluma a media cuadra del Edificio Cnt en el Edificio Amador primer piso","horarioApertura":"08:30","horarioCierre":"17:00","retiroOficina":true,"activo":true}], CIUDADES=[["AMBATO","20100101901","TUNGURAHUA"],["ATUNTAQUI","201001011001","IMBABURA"],["AZOGUES","201001005001","CAÑAR"],["BABAHOYO","201001013001","LOS RIOS"],["BAHIA DE CARAQUEZ","201001014003","MANABI"],["CAYAMBE","201001001002","PICHINCHA"],["CHONE","201001014004","MANABI"],["COTACACHI","201001011006","IMBABURA"],["CUENCA","201001003011","AZUAY"],["EL CARMEN","201001014005","MANABI"],["EL CHACO","201001017012","NAPO"],["EL COCA","201001017002","ORELLANA"],["ESMERALDAS","201001010001","ESMERALDAS"],["GUARANDA","201001004001","BOLIVAR"],["GUAYAQUIL","201001002001","GUAYAS"],["IBARRA","201001011005","IMBABURA"],["JIPIJAPA","201001014006","MANABI"],["LA CONCORDIA","201001001011","SANTO DOMINGO DE LOS TSACHILAS"],["LA LIBERTAD","201001002013","SANTA ELENA"],["LAGO AGRIO","201001017003","SUCUMBIOS"],["LATACUNGA","201001007001","COTOPAXI"],["LOJA","201001012001","LOJA"],["MACAS","201001015001","MORONA SANTIAGO"],["MACHALA","201001009001","EL ORO"],["MANTA","201001014001","MANABI"],["MILAGRO","201001002003","GUAYAS"],["NARANJAL","201001002015","GUAYAS"],["OTAVALO","201001011002","IMBABURA"],["PEDERNALES","201001010009","MANABI"],["PORTOVIEJO","201001014002","MANABI"],["PUYO","201001018001","PASTAZA"],["QUEVEDO","201001013002","LOS RIOS"],["QUININDE","201001010008","ESMERALDAS"],["QUITO","201001001001","PICHINCHA"],["RIOBAMBA","201001008001","CHIMBORAZO"],["SANTO DOMINGO","201001001004","SANTO DOMINGO DE LOS TSACHILAS"],["TABACUNDO","201001001003","PICHINCHA"],["TENA","201001016001","NAPO"],["TULCAN","201001006001","CARCHI"]];
+var qs=new URLSearchParams(location.search);
+var ciudadParam=qs.get("ciudad")||qs.get("idCiudad")||"";
+var wa=qs.get("wa")||"593999842656";
+var DEFAULT_CALLBACK="https://workflows.jelou.ai/v1/webview/callback";
+var executionId=qs.get("executionId")||"";
+var callback=qs.get("callback")||DEFAULT_CALLBACK;
+if(!executionId){var m0=location.href.match(/[?&]executionId=([^&#]+)/);if(m0)executionId=decodeURIComponent(m0[1]);}
+if(callback.indexOf("executionId=")>=0){var cm=callback.match(/^(.*?)[?&]executionId=([^&#]+)(.*)$/);if(cm){if(!executionId)executionId=decodeURIComponent(cm[2]);callback=cm[1];}}
+var PROXY="https://enviafacil-callback.fn.jelou.ai";
+function norm(s){return String(s||"").normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toUpperCase();}
+var qCiu=document.getElementById("qCiu"), sugCiu=document.getElementById("sugCiu"), chCiu=document.getElementById("chCiu");
+var ofiWrap=document.getElementById("ofiWrap"), ofiList=document.getElementById("ofiList"), ofiHint=document.getElementById("ofiHint");
+var btn=document.getElementById("btn");
+var selCiudad=null, curOfi=null;
 
-  var ACTIVAS = OFICINAS.filter(function(o){ return o.activo && o.retiroOficina; });
-  var selP=document.getElementById("prov"), selC=document.getElementById("ciu"), selO=document.getElementById("ofi");
-  var card=document.getElementById("card"), btn=document.getElementById("btn"), msg=document.getElementById("msg"), cur=null;
+function buscar(){
+  var q=norm(qCiu.value.trim());
+  if(q.length<2){ sugCiu.classList.remove("show"); return; }
+  var hits=CIUDADES.filter(function(c){ return norm(c[0]).indexOf(q)>=0; }).slice(0,30);
+  var sal=document.getElementById("salir");
+  if(!hits.length){ sugCiu.classList.remove("show"); sal.classList.add("alert"); sal.innerHTML='Esa ciudad no tiene oficina de retiro. <span>Salir y elegir entrega a domicilio →</span>'; return; }
+  sal.classList.remove("alert"); sal.innerHTML='¿No encuentras tu ciudad? <span>Salir y elegir entrega a domicilio →</span>';
+  sugCiu.innerHTML=""; 
+  hits.forEach(function(c){ var d=document.createElement("div"); d.innerHTML=c[0]+'<div class="pv">'+c[2]+'</div>'; d.addEventListener("click",function(){ elegirCiudad(c); }); sugCiu.appendChild(d); });
+  sugCiu.classList.add("show");
+}
+qCiu.addEventListener("input", buscar);
+qCiu.addEventListener("focus", buscar);
 
-  // provincias A-Z
-  var provincias=[]; ACTIVAS.forEach(function(o){ if(provincias.indexOf(o.provincia)<0) provincias.push(o.provincia); });
-  provincias.sort(function(a,b){ return a.localeCompare(b,"es"); });
-  provincias.forEach(function(p){ var op=document.createElement("option"); op.value=p; op.textContent=p; selP.appendChild(op); });
-
-  function resetCard(){ card.classList.remove("show"); btn.disabled=true; cur=null; }
-  function llenarCiudades(prov, ciudadPre){
-    selC.innerHTML='<option value="">Selecciona la ciudad…</option>';
-    var ciu=[], vistas={}; ACTIVAS.forEach(function(o){ if(o.provincia===prov && !vistas[o.idCiudad]){ vistas[o.idCiudad]=1; ciu.push({id:o.idCiudad,nom:o.ciudad}); } });
-    ciu.sort(function(a,b){ return a.nom.localeCompare(b.nom,"es"); });
-    ciu.forEach(function(c){ var op=document.createElement("option"); op.value=String(c.id); op.textContent=c.nom; selC.appendChild(op); });
-    selC.disabled=false;
-    selO.innerHTML='<option value="">Elige primero la ciudad…</option>'; selO.disabled=true; resetCard();
-    if(ciudadPre){ selC.value=String(ciudadPre); if(selC.value) llenarOficinas(ciudadPre,true); }
-  }
-  function llenarOficinas(idCiudad, autoUnica){
-    selO.innerHTML='<option value="">Selecciona la oficina…</option>';
-    var lista=ACTIVAS.filter(function(o){ return String(o.idCiudad)===String(idCiudad); });
-    lista.forEach(function(o,i){ var op=document.createElement("option"); op.value=String(i); op.textContent=o.nombre; selO.appendChild(op); });
-    selO.disabled=false; resetCard();
-    selO._lista=lista;
-    if(autoUnica && lista.length===1){ selO.value="0"; pintarOficina(lista[0]); }
-  }
-  function pintarOficina(o){
-    cur=o;
-    document.getElementById("c_nom").textContent=o.nombre;
-    document.getElementById("c_dir").textContent="📍 "+o.direccion;
-    document.getElementById("c_hor").textContent="🕒 "+((o.horarioApertura||"")+" - "+(o.horarioCierre||""));
-    card.classList.add("show"); btn.disabled=false;
-  }
-  selP.addEventListener("change", function(){ if(selP.value){ llenarCiudades(selP.value); } });
-  selC.addEventListener("change", function(){ if(selC.value){ llenarOficinas(selC.value,true); } else { selO.disabled=true; resetCard(); } });
-  selO.addEventListener("change", function(){ var v=selO.value; if(v===""){ resetCard(); return; } pintarOficina(selO._lista[parseInt(v,10)]); });
-
-  // preseleccion por ciudad destino de la cotizacion
-  if(ciudadParam){
-    var mp=ACTIVAS.filter(function(o){ return String(o.idCiudad)===String(ciudadParam); });
-    if(mp.length){ selP.value=mp[0].provincia; llenarCiudades(mp[0].provincia, ciudadParam); }
-    else { msg.textContent="Tu ciudad destino no tiene oficina de retiro; elige la más cercana."; }
-  }
-
-  btn.addEventListener("click", async function(){
-    if(!cur) return; btn.disabled=true; btn.textContent="Enviando…";
-    var body={ executionId:executionId, callback:callback, oficinaId:cur.id, oficinaNombre:cur.nombre, oficinaDireccion:cur.direccion, oficinaCiudad:cur.ciudad, oficinaProvincia:cur.provincia, oficinaLat:cur.latitud, oficinaLon:cur.longitud };
-    var PROXY="https://enviafacil-callback.fn.jelou.ai";
-    try{ await fetch(PROXY,{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) }); }catch(e){}
-    document.getElementById("form").style.display="none";
-    document.getElementById("ok").classList.add("show");
-    if(wa) setTimeout(function(){ window.location.href="https://wa.me/"+wa; }, 900);
+function elegirCiudad(c){
+  selCiudad=c; sugCiu.classList.remove("show"); qCiu.classList.add("hidden");
+  chCiu.innerHTML='<div class="chosen">✅ '+c[0]+' <span class="pv">('+c[2]+')</span><span class="x" id="xCiu">✕</span></div>';
+  document.getElementById("xCiu").addEventListener("click", limpiarCiudad);
+  renderOficinas(c[1]);
+}
+function limpiarCiudad(){
+  selCiudad=null; curOfi=null; chCiu.innerHTML=""; qCiu.classList.remove("hidden"); qCiu.value="";
+  ofiWrap.classList.add("hidden"); btn.classList.add("hidden"); btn.disabled=true; ofiList.innerHTML="";
+}
+function renderOficinas(idCiudad){
+  var lista=OFICINAS.filter(function(o){ return String(o.idCiudad)===String(idCiudad); });
+  ofiList.innerHTML=""; curOfi=null;
+  lista.forEach(function(o,i){
+    var el=document.createElement("div"); el.className="ofi";
+    el.innerHTML='<div class="nom">'+o.nombre+'</div><div class="dir">📍 '+o.direccion+'</div><div class="hor">🕒 '+((o.horarioApertura||"")+" - "+(o.horarioCierre||""))+'</div>';
+    el.addEventListener("click", function(){ [].forEach.call(ofiList.children,function(x){x.classList.remove("sel");}); el.classList.add("sel"); curOfi=o; btn.disabled=false; });
+    ofiList.appendChild(el);
   });
-</script>
-</body>
-</html>
+  ofiWrap.classList.remove("hidden"); btn.classList.remove("hidden"); btn.disabled=true;
+  if(lista.length===1){ ofiList.firstChild.click(); ofiHint.classList.add("hidden"); }
+  else { ofiHint.textContent="Esta ciudad tiene "+lista.length+" oficinas — toca la que prefieras."; ofiHint.classList.remove("hidden"); }
+}
+
+// prefill por ciudad destino
+if(ciudadParam){
+  var pre=CIUDADES.filter(function(c){ return String(c[1])===String(ciudadParam); });
+  if(pre.length){ elegirCiudad(pre[0]); }
+}
+
+document.getElementById("salir").addEventListener("click", async function(){
+  var body={ executionId:executionId, callback:callback, salir:true, entrega:"domicilio" };
+  try{ await fetch(PROXY,{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) }); }catch(e){}
+  document.getElementById("wrap").style.display="none";
+  var ok=document.getElementById("ok");
+  ok.innerHTML='<div class="big">🏠</div><p><b>Perfecto.</b> Seguimos con <b>entrega a domicilio</b>.<br>Volvemos a WhatsApp…</p>';
+  ok.classList.add("show");
+  if(wa) setTimeout(function(){ window.location.href="https://wa.me/"+wa; }, 900);
+});
+
+btn.addEventListener("click", async function(){
+  if(!curOfi) return; btn.disabled=true; btn.textContent="Enviando…";
+  var body={ executionId:executionId, callback:callback, oficinaId:curOfi.id, oficinaNombre:curOfi.nombre, oficinaDireccion:curOfi.direccion, oficinaCiudad:curOfi.ciudad, oficinaProvincia:curOfi.provincia, oficinaLat:curOfi.latitud, oficinaLon:curOfi.longitud };
+  try{ await fetch(PROXY,{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) }); }catch(e){}
+  document.getElementById("wrap").style.display="none";
+  document.getElementById("ok").classList.add("show");
+  if(wa) setTimeout(function(){ window.location.href="https://wa.me/"+wa; }, 900);
+});
+</script></body></html>
