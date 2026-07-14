@@ -111,7 +111,7 @@ document.getElementById("salir").addEventListener("click", async function(){
 
 btn.addEventListener("click", async function(){
   if(!curOfi) return; btn.disabled=true; btn.textContent="Enviando…";
-  var body={ executionId:executionId, callback:callback, oficinaId:curOfi.id, oficinaNombre:curOfi.nombre, oficinaDireccion:curOfi.direccion, oficinaCiudad:curOfi.ciudad, oficinaProvincia:curOfi.provincia, oficinaLat:curOfi.latitud, oficinaLon:curOfi.longitud };
+  var body={ executionId:executionId, callback:callback, oficinaId:curOfi.id, oficinaCodigoCiudad:curOfi.idCiudad, oficinaNombre:curOfi.nombre, oficinaDireccion:curOfi.direccion, oficinaCiudad:curOfi.ciudad, oficinaProvincia:curOfi.provincia, oficinaLat:curOfi.latitud, oficinaLon:curOfi.longitud };
   try{ await fetch(PROXY,{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) }); }catch(e){}
   document.getElementById("wrap").style.display="none";
   document.getElementById("ok").classList.add("show");
