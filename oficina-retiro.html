@@ -47,8 +47,10 @@ var DEFAULT_CALLBACK="https://workflows.jelou.ai/v1/webview/callback";
 var executionId=qs.get("executionId")||"";
 var callback=qs.get("callback")||DEFAULT_CALLBACK;
 if(!executionId){var m0=location.href.match(/[?&]executionId=([^&#]+)/);if(m0)executionId=decodeURIComponent(m0[1]);}
+    var EF_N=qs.get("n")||"";var EF_LOCK=(executionId&&EF_N)?("ef_"+executionId+"_"+EF_N+"_"+(qs.get("tipo")||"")):"";function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_LOCK);}catch(e){return null;}}function efLock(d){if(!EF_LOCK)return;try{localStorage.setItem(EF_LOCK,JSON.stringify(d||{}));}catch(e){}}function efShowLocked(){var d={};try{d=JSON.parse(efLocked())||{};}catch(e){}var SKIP={executionId:1,callback:1,success:1,dbgHref:1,idServicio:1};var rows="";for(var k in d){if(SKIP[k]||d[k]===""||d[k]==null)continue;rows+='<div style="display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #eee"><span style="color:#8a8a8a">'+k.replace(/_/g," ")+'</span><b style="text-align:right;max-width:60%">'+String(d[k])+'</b></div>';}var _wa=((qs.get("wa")||"593999842656").replace(/\D/g,""));document.body.innerHTML='<div style="max-width:430px;margin:0 auto;padding:44px 22px;text-align:center"><div style="font-size:52px">\u2705</div><h2 style="margin:10px 0 4px;color:#0F0F0F">Datos ya enviados</h2><p style="color:#6b6b6b;margin:0 0 16px">Esta informaci\u00f3n ya fue registrada y no se puede modificar aqu\u00ed.</p><div style="text-align:left;background:#fafafa;border:1px solid #eee;border-radius:12px;padding:12px 16px">'+rows+'</div><p style="color:#9b9b9b;font-size:13px;margin-top:14px">Para corregir algo, hazlo desde la conversaci\u00f3n de WhatsApp.</p><a href="https://wa.me/'+_wa+'" style="display:inline-block;margin-top:8px;background:#FFD100;color:#0F0F0F;font-weight:700;padding:12px 26px;border-radius:26px;text-decoration:none">Volver a WhatsApp</a></div>';}if(efLocked()){efShowLocked();}
+
 if(callback.indexOf("executionId=")>=0){var cm=callback.match(/^(.*?)[?&]executionId=([^&#]+)(.*)$/);if(cm){if(!executionId)executionId=decodeURIComponent(cm[2]);callback=cm[1];}}
-var PROXY="https://enviafacil-callback.fn.jelou.ai";
+var PROXY="https://enviafacil-callback.fn.jelou.ai";var EF_KEY="__EF_API_KEY__";
 function norm(s){return String(s||"").normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toUpperCase();}
 var qCiu=document.getElementById("qCiu"), sugCiu=document.getElementById("sugCiu"), chCiu=document.getElementById("chCiu");
 var ofiWrap=document.getElementById("ofiWrap"), ofiList=document.getElementById("ofiList"), ofiHint=document.getElementById("ofiHint");
@@ -100,8 +102,8 @@ if(ciudadParam){
 }
 
 document.getElementById("salir").addEventListener("click", async function(){
-  var body={ executionId:executionId, callback:callback, salir:true, entrega:"domicilio" };
-  try{ await fetch(PROXY,{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) }); }catch(e){}
+  var body={ executionId:executionId, success:true, salir:true, entrega:"domicilio" };efLock({resultado:"Entrega a domicilio (saliste del retiro en oficina)"});
+  try{ await fetch(PROXY,{ method:"POST", headers:{"Content-Type":"application/json","X-EF-Key":EF_KEY}, body:JSON.stringify(body) }); }catch(e){}
   document.getElementById("wrap").style.display="none";
   var ok=document.getElementById("ok");
   ok.innerHTML='<div class="big">🏠</div><p><b>Perfecto.</b> Seguimos con <b>entrega a domicilio</b>.<br>Volvemos a WhatsApp…</p>';
@@ -111,8 +113,8 @@ document.getElementById("salir").addEventListener("click", async function(){
 
 btn.addEventListener("click", async function(){
   if(!curOfi) return; btn.disabled=true; btn.textContent="Enviando…";
-  var body={ executionId:executionId, callback:callback, oficinaId:curOfi.id, oficinaCodigoCiudad:curOfi.idCiudad, oficinaNombre:curOfi.nombre, oficinaDireccion:curOfi.direccion, oficinaCiudad:curOfi.ciudad, oficinaProvincia:curOfi.provincia, oficinaLat:curOfi.latitud, oficinaLon:curOfi.longitud };
-  try{ await fetch(PROXY,{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) }); }catch(e){}
+  var body={ executionId:executionId, success:true, oficinaId:curOfi.id, oficinaCodigoCiudad:curOfi.idCiudad, oficinaNombre:curOfi.nombre, oficinaDireccion:curOfi.direccion, oficinaCiudad:curOfi.ciudad, oficinaProvincia:curOfi.provincia, oficinaLat:curOfi.latitud, oficinaLon:curOfi.longitud };efLock({oficina:curOfi.nombre,direccion:curOfi.direccion,ciudad:curOfi.ciudad,provincia:curOfi.provincia});
+  try{ await fetch(PROXY,{ method:"POST", headers:{"Content-Type":"application/json","X-EF-Key":EF_KEY}, body:JSON.stringify(body) }); }catch(e){}
   document.getElementById("wrap").style.display="none";
   document.getElementById("ok").classList.add("show");
   if(wa) setTimeout(function(){ window.location.href="https://wa.me/"+wa; }, 900);
