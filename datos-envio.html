@@ -59,7 +59,8 @@ function search(k){const q=norm(document.getElementById('q'+k).value.trim());con
 function choose(k,code,name,prov){sel[k]={code,name,prov};document.getElementById('sug'+k).classList.remove('show');
  document.getElementById('q'+k).classList.add('hidden');
  document.getElementById('ch'+k).innerHTML=`<div class="chosen">\u2705 ${name} <span class="pv">(${prov})</span><span class="x" onclick="clr('${k}')">\u2715</span></div>`;checkReady();}
-function efPrellenar(){if(EF_PRE.Ori.c&&EF_PRE.Ori.n){choose('Ori',EF_PRE.Ori.c,EF_PRE.Ori.n,EF_PRE.Ori.p);}if(!EF_DESLOCK&&EF_PRE.Des.c&&EF_PRE.Des.n){choose('Des',EF_PRE.Des.c,EF_PRE.Des.n,EF_PRE.Des.p);}}
+function efPorCodigo(cod){for(var i=0;i<CAT.length;i++){if(String(CAT[i][1])===String(cod))return CAT[i];}return null;}
+function efPrellenar(){var o=efPorCodigo(EF_PRE.Ori.c);if(o){choose('Ori',o[1],o[0],o[2]);}var d=efPorCodigo(EF_PRE.Des.c);if(!EF_DESLOCK&&d){choose('Des',d[1],d[0],d[2]);}}
 function efFijarDestino(){if(!EF_DESLOCK||!EF_DESCOD)return;sel.Des={code:EF_DESCOD,name:EF_DESNOM,prov:EF_DESPROV};var q=document.getElementById('qDes');if(q)q.classList.add('hidden');var ch=document.getElementById('chDes');if(ch)ch.innerHTML='<div class="chosen" style="align-items:flex-start"><span>\u2705</span><span style="display:block">'+EF_DESNOM+' <span class="pv">('+EF_DESPROV+')</span><span class="pv" style="display:block;margin-top:3px">\ud83c\udfe2 Retiro en oficina \u2014 no editable</span></span></div>';checkReady();}
 function clr(k){sel[k]=null;document.getElementById('ch'+k).innerHTML='';const i=document.getElementById('q'+k);i.classList.remove('hidden');i.value='';checkReady();}
 function checkReady(){document.getElementById('cot').disabled=!(sel.idServicio&&sel.Ori&&sel.Des);}
@@ -74,7 +75,7 @@ async function cotizar(){
  const contenido=paq?(document.getElementById('contenido').value||'').trim():'Documentos';
  if(paq&&contenido.length<3){alert('Escribe qué contiene tu paquete (mínimo 3 letras).');return;}
  const tipoLabel=paq?'Paquete':'Documento';
- var EF_CONFIRMADO=false;if(!EF_CONFIRMADO&&!EF_DESLOCK){var okc=confirm('Confirma tu envio:\n\nDESDE: '+sel.Ori.name+' ('+sel.Ori.prov+')'+'\nHACIA: '+sel.Des.name+' ('+sel.Des.prov+')'+'\n\nLa direccion que registres despues debe estar en esa ciudad.');if(!okc)return;}const data={origen:sel.Ori.code,origenNombre:sel.Ori.name,origenProvincia:sel.Ori.prov,destino:sel.Des.code,destinoNombre:sel.Des.name,destinoProvincia:sel.Des.prov,idServicio:sel.idServicio,tipo:tipoLabel,contenido:contenido,piezas:piezas,peso:peso,valor:valor};
+ const data={origen:sel.Ori.code,origenNombre:sel.Ori.name,origenProvincia:sel.Ori.prov,destino:sel.Des.code,destinoNombre:sel.Des.name,destinoProvincia:sel.Des.prov,idServicio:sel.idServicio,tipo:tipoLabel,contenido:contenido,piezas:piezas,peso:peso,valor:valor};
  if(!executionId){
   const msg='Datos del env\u00edo \ud83d\udce6\nOrigen: '+sel.Ori.name+'\nDestino: '+sel.Des.name+'\nTipo: '+tipoLabel+'\nPiezas: '+piezas+'\nPeso: '+peso+' kg\nValor: $'+valor;
   const wa=(qs.get("wa")||"593999842656").replace(/\D/g,"");
