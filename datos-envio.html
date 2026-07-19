@@ -52,9 +52,9 @@ function chkPeso(){var el=document.getElementById('peso');var v=parseFloat(el.va
 (function(){var pre=(qs.get('tipo')||'').trim().toLowerCase();if(pre==='documento'||pre==='paquete'){var tile=document.querySelector('.tipo[data-tipo="'+pre+'"]');if(tile){pickTipo(tile);var c=tile.closest('.card');if(c)c.style.display='none';}}})();
 function search(k){const q=norm(document.getElementById('q'+k).value.trim());const box=document.getElementById('sug'+k);
  if(q.length<2){box.classList.remove('show');return;}
- const hits=CAT.filter(c=>norm(c[0]).includes(q)).slice(0,30);
+ const hits=CAT.filter(c=>norm(c[0]).includes(q)||norm(c[2]).includes(q)).sort(function(a,b){var A=norm(a[0]).indexOf(q),B=norm(b[0]).indexOf(q);if(A<0)A=99;if(B<0)B=99;return A-B;}).slice(0,30);
  if(!hits.length){box.innerHTML='<div class="empty">Sin resultados</div>';box.classList.add('show');return;}
- box.innerHTML=hits.map(c=>`<div onclick="choose('${k}','${c[1]}',${JSON.stringify(c[0]).replace(/"/g,'&quot;')},'${c[2]}')">${c[0]}<div class="pv">${c[2]}</div></div>`).join('');
+ box.innerHTML=hits.map(c=>`<div onclick="choose('${k}','${c[1]}',${JSON.stringify(c[0]).replace(/"/g,'&quot;')},'${c[2]}')"><span style="font-weight:600">${c[0]}</span> <span style="font-weight:600;color:#7a6a00">\u00b7 ${c[2]}</span></div>`).join('');
  box.classList.add('show');}
 function choose(k,code,name,prov){sel[k]={code,name,prov};document.getElementById('sug'+k).classList.remove('show');
  document.getElementById('q'+k).classList.add('hidden');
@@ -73,7 +73,7 @@ async function cotizar(){
  const contenido=paq?(document.getElementById('contenido').value||'').trim():'Documentos';
  if(paq&&contenido.length<3){alert('Escribe qué contiene tu paquete (mínimo 3 letras).');return;}
  const tipoLabel=paq?'Paquete':'Documento';
- const data={origen:sel.Ori.code,origenNombre:sel.Ori.name,origenProvincia:sel.Ori.prov,destino:sel.Des.code,destinoNombre:sel.Des.name,destinoProvincia:sel.Des.prov,idServicio:sel.idServicio,tipo:tipoLabel,contenido:contenido,piezas:piezas,peso:peso,valor:valor};
+ var EF_CONFIRMADO=false;if(!EF_CONFIRMADO&&!EF_DESLOCK){var okc=confirm('Confirma tu envio:\n\nDESDE: '+sel.Ori.name+' ('+sel.Ori.prov+')'+'\nHACIA: '+sel.Des.name+' ('+sel.Des.prov+')'+'\n\nLa direccion que registres despues debe estar en esa ciudad.');if(!okc)return;}const data={origen:sel.Ori.code,origenNombre:sel.Ori.name,origenProvincia:sel.Ori.prov,destino:sel.Des.code,destinoNombre:sel.Des.name,destinoProvincia:sel.Des.prov,idServicio:sel.idServicio,tipo:tipoLabel,contenido:contenido,piezas:piezas,peso:peso,valor:valor};
  if(!executionId){
   const msg='Datos del env\u00edo \ud83d\udce6\nOrigen: '+sel.Ori.name+'\nDestino: '+sel.Des.name+'\nTipo: '+tipoLabel+'\nPiezas: '+piezas+'\nPeso: '+peso+' kg\nValor: $'+valor;
   const wa=(qs.get("wa")||"593999842656").replace(/\D/g,"");
