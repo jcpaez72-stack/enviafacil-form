@@ -121,7 +121,7 @@
     var esDestino = tipo.indexOf("destinatario") >= 0 || esOficina;
 
     // ---- executionId + callback (robusto) ----
-    var DEFAULT_CALLBACK = "https://workflows.jelou.ai/v1/webview/callback";
+    var DEFAULT_CALLBACK = "https://enviafacil-callback.fn.jelou.ai";
     var executionId = qs.get("executionId") || "";
     var callback = qs.get("callback") || DEFAULT_CALLBACK;
     if (!executionId) { var m = location.href.match(/[?&]executionId=([^&#]+)/); if (m) executionId = decodeURIComponent(m[1]); }

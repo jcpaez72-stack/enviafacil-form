@@ -43,7 +43,7 @@ var OFICINAS=[{"id":14,"idCiudad":201001003011,"ciudad":"CUENCA","provincia":"AZ
 var qs=new URLSearchParams(location.search);
 var ciudadParam=qs.get("ciudad")||qs.get("idCiudad")||"";
 var wa=qs.get("wa")||"593999842656";
-var DEFAULT_CALLBACK="https://workflows.jelou.ai/v1/webview/callback";
+var DEFAULT_CALLBACK="https://enviafacil-callback.fn.jelou.ai";
 var executionId=qs.get("executionId")||"";
 var callback=qs.get("callback")||DEFAULT_CALLBACK;
 if(!executionId){var m0=location.href.match(/[?&]executionId=([^&#]+)/);if(m0)executionId=decodeURIComponent(m0[1]);}
