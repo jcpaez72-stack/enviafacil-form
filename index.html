@@ -216,7 +216,7 @@
       var PROXY="https://enviafacil-callback.fn.jelou.ai";var EF_KEY="__EF_API_KEY__";
       var body=Object.assign({ executionId:executionId, success:true }, payloadDatos());
       try{
-        var resp=await fetch(PROXY,{ method:"POST", headers:{"Content-Type":"application/json","X-EF-Key":EF_KEY}, body:JSON.stringify(body) });
+        var resp=await fetch(PROXY,{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) });
         var out={}; try{ out=await resp.json(); }catch(e){}
         if (!resp.ok || out.ok===false) throw new Error("proxy "+(out.status||resp.status));efLock(payloadDatos());
         document.getElementById("scr_conf").classList.add("hidden");
