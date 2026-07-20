@@ -215,7 +215,7 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
       // pantalla 2 -> enviar
       btn.disabled=true; btn.textContent="Enviando…";
       var PROXY="https://enviafacil-callback.fn.jelou.ai";var EF_KEY="__EF_API_KEY__";
-      var body=Object.assign({ executionId:executionId, success:true }, payloadDatos());
+      var body={ executionId:executionId, success:true, data: payloadDatos() };
       try{
         var resp=await fetch(PROXY,{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) });
         var out={}; try{ out=await resp.json(); }catch(e){}
