@@ -72,8 +72,8 @@
     </div>
     <div class="grp">
       <label id="l_celular">Celular <span class="req">*</span></label>
-      <input id="celular" inputmode="numeric" maxlength="10" placeholder="09XXXXXXXX" />
-      <div class="errmsg" id="e_celular">Celular de 10 dígitos.</div>
+      <input id="celular" inputmode="numeric" maxlength="15" placeholder="09XXXXXXXX (o internacional)" />
+      <div class="errmsg" id="e_celular">Celular de 10 dígitos (Ecuador) o número internacional.</div>
     </div>
 
     <div id="bloque_dir">
@@ -160,7 +160,7 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
     // ---- PREFILL (cuando viene del pin/geocode o datos previos) ----
     function pf(id, keys){ for (var i=0;i<keys.length;i++){ var v=qs.get(keys[i]); if(v){ var el=document.getElementById(id); if(el) el.value=v; return; } } }
     pf("cedula",["cedula"]); pf("nombre",["nombre"]); pf("correo",["correo"]);
-    var cel = qs.get("celular") || ""; if (cel){ cel=cel.replace(/\D/g,""); if(cel.indexOf("593")===0) cel="0"+cel.slice(3); if(/^\d{10}$/.test(cel)) document.getElementById("celular").value=cel; }
+    var cel = qs.get("celular") || ""; if (cel){ cel=cel.replace(/\D/g,""); if(cel.indexOf("593")===0) cel="0"+cel.slice(3); if(/^\d{10,15}$/.test(cel)) document.getElementById("celular").value=cel; }
     pf("calle_principal",["calle_principal","calle"]); pf("numero_casa",["numero_casa","numero"]);
     pf("calle_secundaria",["calle_secundaria","calle2"]); pf("referencia_recoleccion",["referencia_recoleccion","referencia"]);
     pf("ef_lat",["lat","preLat"]); pf("ef_lon",["lon","preLon"]);
@@ -201,7 +201,7 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
       ok=ok&&cOk;
       var nOk=val("nombre").length>=3; setErr("nombre",!nOk); ok=ok&&nOk;
       var _ev=val("correo"), eOk; if(esDestino&&_ev===""){eOk=true;setErr("correo",false);} else {eOk=correoOk(_ev);setErr("correo",!eOk);} ok=ok&&eOk;
-      var _cv=val("celular"), celOk; if(esDestino&&_cv===""){celOk=true;setErr("celular",false);} else {celOk=/^\d{10}$/.test(_cv);setErr("celular",!celOk);} ok=ok&&celOk;
+      var _cv=val("celular"), celOk; if(esDestino&&_cv===""){celOk=true;setErr("celular",false);} else {celOk=/^\d{10,15}$/.test(_cv);setErr("celular",!celOk);} ok=ok&&celOk;
       if (!esOficina){
         var caOk=val("calle_principal").length>=2; setErr("calle_principal",!caOk); ok=ok&&caOk;
         var nuOk=val("numero_casa").length>=1; setErr("numero_casa",!nuOk); ok=ok&&nuOk;
