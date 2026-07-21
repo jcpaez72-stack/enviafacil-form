@@ -295,9 +295,16 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
         map=L.map('efLeaf',{zoomControl:true}).setView(DEF,16);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
         map.on('moveend',onMove);
-        tryLoc();
+        var _ec=qmap.get('ciudadEsp')||'', _ep=qmap.get('provEsp')||'';
+        if(_ec){ centerCity(_ec+(_ep?(', '+_ep):'')+', Ecuador'); } else { tryLoc(); }
       }
       setTimeout(function(){map.invalidateSize();onMove();},250);
+    }
+    function centerCity(q){
+      fetch(FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q:q,session:sess})})
+        .then(function(r){return r.json();}).then(function(d){
+          if(d.ok&&d.predictions&&d.predictions.length){ pickPlace(d.predictions[0].place_id,''); }
+        }).catch(function(){});
     }
     function closeM(){modal.classList.add('hidden');}
     function onMove(){
