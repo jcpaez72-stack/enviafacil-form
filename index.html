@@ -252,6 +252,10 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
       <div id="efLeaf" style="position:absolute;inset:0"></div>
       <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-100%);pointer-events:none;font-size:38px;line-height:1;z-index:500">📍</div>
       <button type="button" id="efMiUbic" aria-label="mi ubicación" style="position:absolute;right:14px;bottom:20px;width:46px;height:46px;border-radius:50%;background:#fff;border:0.5px solid #ddd;font-size:20px;z-index:500;cursor:pointer">🎯</button>
+      <div style="position:absolute;top:10px;left:10px;right:10px;z-index:600">
+        <input id="efSearch" type="text" autocomplete="off" placeholder="Busca ciudad, calle o referencia" style="width:100%;height:42px;border-radius:10px;border:none;padding:0 12px;font-size:14px;box-shadow:0 1px 6px rgba(0,0,0,.25);box-sizing:border-box"/>
+        <div id="efSug" style="background:#fff;border-radius:10px;margin-top:4px;box-shadow:0 2px 8px rgba(0,0,0,.2);overflow:hidden;display:none;max-height:220px;overflow-y:auto"></div>
+      </div>
     </div>
     <div style="padding:14px 16px;border-top:0.5px solid #e4e4e4">
       <div id="efCov" style="font-size:12px;margin-bottom:6px;color:#888">Mueve el mapa para ubicar el pin</div>
@@ -276,6 +280,7 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
     }
     function closeM(){modal.classList.add('hidden');}
     function onMove(){
+      var sg=document.getElementById('efSug');if(sg)sg.style.display='none';
       var c=map.getCenter();
       document.getElementById('efAddr').textContent='Ubicando…';
       document.getElementById('efCov').textContent='';
@@ -313,6 +318,38 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
       fetch('https://enviafacil-geocode.fn.jelou.ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lat:c.lat,lon:c.lng})})
         .then(function(r){return r.json();}).then(done).catch(function(){done(null);});
     }
+    var FN='https://enviafacil-geocode.fn.jelou.ai',srchT=null,sess=newSess();
+    function newSess(){return 'ef-'+Date.now()+'-'+Math.floor(Math.random()*1e6);}
+    function doSearch(q){
+      var bias=map?(map.getCenter().lat+','+map.getCenter().lng):'';
+      fetch(FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q:q,session:sess,bias:bias})})
+        .then(function(r){return r.json();}).then(function(d){
+          var sug=document.getElementById('efSug');
+          if(!d.ok||!d.predictions||!d.predictions.length){sug.style.display='none';return;}
+          sug.innerHTML='';
+          d.predictions.forEach(function(p){
+            var row=document.createElement('div');
+            row.style.cssText='padding:10px 12px;border-bottom:0.5px solid #eee;cursor:pointer';
+            row.innerHTML='<div style="font-weight:600;font-size:13px;color:#0f0f0f">'+(p.main||p.description)+'</div>'+(p.sec?'<div style="color:#888;font-size:12px">'+p.sec+'</div>':'');
+            row.addEventListener('click',function(){pickPlace(p.place_id,p.description);});
+            sug.appendChild(row);
+          });
+          sug.style.display='block';
+        }).catch(function(){var sg=document.getElementById('efSug');if(sg)sg.style.display='none';});
+    }
+    function pickPlace(pid,desc){
+      var sug=document.getElementById('efSug');sug.style.display='none';
+      document.getElementById('efSearch').value=desc;
+      fetch(FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({place_id:pid,session:sess})})
+        .then(function(r){return r.json();}).then(function(d){
+          sess=newSess();
+          if(d.ok&&d.lat&&d.lon&&map){map.setView([parseFloat(d.lat),parseFloat(d.lon)],17);}
+        }).catch(function(){});
+    }
+    (function(){var inp=document.getElementById('efSearch');if(!inp)return;
+      inp.addEventListener('input',function(){var q=inp.value.trim();clearTimeout(srchT);
+        if(q.length<3){document.getElementById('efSug').style.display='none';return;}
+        srchT=setTimeout(function(){doSearch(q);},320);});})();
     document.getElementById('efBtnMapa').addEventListener('click',openM);
     document.getElementById('efMapClose').addEventListener('click',closeM);
     document.getElementById('efMapConfirm').addEventListener('click',confirmLoc);
