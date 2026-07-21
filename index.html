@@ -38,6 +38,8 @@
   .ok-screen p{ color:var(--gris); }
   .hidden{ display:none !important; }
 </style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
   <div class="head">
@@ -91,6 +93,11 @@
         <input id="referencia_recoleccion" placeholder="Punto de referencia" />
         <div class="errmsg" id="e_referencia_recoleccion">Ingresa un punto de referencia (ej. edificio, color de casa, junto a…).</div>
         <div class="hint">Ej: edificio azul, junto al parque, casa de dos pisos…</div>
+      </div>
+      <div class="grp">
+        <button type="button" id="efBtnMapa" style="width:100%;height:46px;border-radius:12px;border:1.5px solid #E4C201;background:#FFFBEA;color:#0F0F0F;font-weight:600;font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer">📍 Seleccionar en el mapa</button>
+        <div class="hint">Ubica el pin y autocompletamos tu dirección.</div>
+        <input type="hidden" id="ef_lat"/><input type="hidden" id="ef_lon"/>
       </div>
     </div>
   </div>
@@ -192,6 +199,7 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
       if (!esOficina){
         p.calle_principal=val("calle_principal"); p.numero_casa=val("numero_casa");
         p.calle_secundaria=val("calle_secundaria"); p.referencia_recoleccion=val("referencia_recoleccion");
+        p.lat=val("ef_lat"); p.lon=val("ef_lon");
       }
       return p;
     }
@@ -234,5 +242,74 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
     });
   })();
 </script>
+
+  <div id="efMapModal" class="hidden" style="position:fixed;inset:0;z-index:99999;background:#fff;display:flex;flex-direction:column">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:0.5px solid #e4e4e4">
+      <span style="font-size:16px;font-weight:600">Seleccionar ubicación</span>
+      <span id="efMapClose" style="font-size:24px;color:#8a8a8a;cursor:pointer;line-height:1">&times;</span>
+    </div>
+    <div style="position:relative;flex:1;min-height:200px">
+      <div id="efLeaf" style="position:absolute;inset:0"></div>
+      <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-100%);pointer-events:none;font-size:38px;line-height:1;z-index:500">📍</div>
+      <button type="button" id="efMiUbic" aria-label="mi ubicación" style="position:absolute;right:14px;bottom:20px;width:46px;height:46px;border-radius:50%;background:#fff;border:0.5px solid #ddd;font-size:20px;z-index:500;cursor:pointer">🎯</button>
+    </div>
+    <div style="padding:14px 16px;border-top:0.5px solid #e4e4e4">
+      <div id="efCov" style="font-size:12px;margin-bottom:6px;color:#888">Mueve el mapa para ubicar el pin</div>
+      <div id="efAddr" style="font-size:14px;font-weight:600;margin-bottom:12px;min-height:20px;color:#0f0f0f"></div>
+      <button type="button" id="efMapConfirm" style="width:100%;height:48px;border-radius:24px;background:#FCE200;border:none;color:#0F0F0F;font-weight:600;font-size:15px;cursor:pointer">Confirmar ubicación</button>
+    </div>
+  </div>
+  <script>
+  (function(){
+    var modal=document.getElementById('efMapModal'),map=null,geoT=null;
+    var DEF=[-0.180653,-78.467834];
+    function setV(id,v){var el=document.getElementById(id);if(el&&v)el.value=v;}
+    function openM(){
+      modal.classList.remove('hidden');
+      if(!map){
+        map=L.map('efLeaf',{zoomControl:true}).setView(DEF,16);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+        map.on('moveend',onMove);
+        tryLoc();
+      }
+      setTimeout(function(){map.invalidateSize();onMove();},250);
+    }
+    function closeM(){modal.classList.add('hidden');}
+    function onMove(){
+      var c=map.getCenter();
+      document.getElementById('efAddr').textContent='Ubicando…';
+      document.getElementById('efCov').textContent='';
+      clearTimeout(geoT);geoT=setTimeout(function(){revGeo(c.lat,c.lng);},450);
+    }
+    function revGeo(lat,lon){
+      fetch('https://enviafacil-geocode.fn.jelou.ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lat:lat,lon:lon})})
+      .then(function(r){return r.json();}).then(function(d){
+        var a=document.getElementById('efAddr'),cov=document.getElementById('efCov');
+        if(d&&d.ok){
+          window._efGeo={lat:lat,lon:lon,calle:d.calle||'',sector:d.sector||'',ciudad:d.ciudad||'',prov:d.provincia||'',fmt:d.formatted||''};
+          a.textContent=d.formatted||((d.calle||'')+', '+(d.ciudad||''));
+          if(d.ciudad){cov.textContent='✅ '+d.ciudad+', '+(d.provincia||'');cov.style.color='#0f6e56';}
+          else{cov.textContent='⚠️ No pudimos identificar la zona';cov.style.color='#a00';}
+        }else{a.textContent='No pudimos leer la dirección aquí';window._efGeo=null;}
+      }).catch(function(){document.getElementById('efAddr').textContent='Sin conexión al ubicar';});
+    }
+    function tryLoc(){
+      if(!navigator.geolocation)return;
+      navigator.geolocation.getCurrentPosition(function(p){if(map)map.setView([p.coords.latitude,p.coords.longitude],16);},function(){},{timeout:6000,enableHighAccuracy:true});
+    }
+    function confirmLoc(){
+      var g=window._efGeo;if(!g){closeM();return;}
+      setV('ef_lat',String(g.lat));setV('ef_lon',String(g.lon));
+      if(g.calle)setV('calle_principal',g.calle);
+      var rf=document.getElementById('referencia_recoleccion');
+      if(rf&&!rf.value&&g.sector)rf.value=g.sector;
+      closeM();
+    }
+    document.getElementById('efBtnMapa').addEventListener('click',openM);
+    document.getElementById('efMapClose').addEventListener('click',closeM);
+    document.getElementById('efMapConfirm').addEventListener('click',confirmLoc);
+    document.getElementById('efMiUbic').addEventListener('click',tryLoc);
+  })();
+  </script>
 </body>
 </html>
