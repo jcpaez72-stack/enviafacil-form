@@ -148,6 +148,7 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
     }
     // Variante OFICINA = solo 4 campos (sin dirección)
     if (esOficina){ document.getElementById("bloque_dir").classList.add("hidden"); }
+    if (!(esDestino && !esOficina)) { var _mb=document.getElementById("efBtnMapa"); if(_mb&&_mb.parentNode){ _mb.parentNode.classList.add("hidden"); } }  // mapa: solo destinatario a domicilio
     // Cédula del destinatario = OPCIONAL (el Flow original la tenía required:false)
     if (esDestino){
       document.getElementById("l_cedula").innerHTML = 'Cédula o RUC <span class="hint" style="font-weight:400;display:inline">(opcional)</span>';
