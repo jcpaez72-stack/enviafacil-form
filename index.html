@@ -298,12 +298,20 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
       navigator.geolocation.getCurrentPosition(function(p){if(map)map.setView([p.coords.latitude,p.coords.longitude],16);},function(){},{timeout:6000,enableHighAccuracy:true});
     }
     function confirmLoc(){
-      var g=window._efGeo;if(!g){closeM();return;}
-      setV('ef_lat',String(g.lat));setV('ef_lon',String(g.lon));
-      if(g.calle)setV('calle_principal',g.calle);
-      var rf=document.getElementById('referencia_recoleccion');
-      if(rf&&!rf.value&&g.sector)rf.value=g.sector;
-      closeM();
+      if(!map){closeM();return;}
+      var c=map.getCenter(),btn=document.getElementById('efMapConfirm');
+      btn.textContent='Confirmando…';btn.disabled=true;
+      function done(d){
+        setV('ef_lat',String(c.lat));setV('ef_lon',String(c.lng));
+        if(d&&d.ok){
+          if(d.calle)setV('calle_principal',d.calle);
+          var rf=document.getElementById('referencia_recoleccion');
+          if(rf&&!rf.value&&d.sector)rf.value=d.sector;
+        }
+        btn.textContent='Confirmar ubicación';btn.disabled=false;closeM();
+      }
+      fetch('https://enviafacil-geocode.fn.jelou.ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lat:c.lat,lon:c.lng})})
+        .then(function(r){return r.json();}).then(done).catch(function(){done(null);});
     }
     document.getElementById('efBtnMapa').addEventListener('click',openM);
     document.getElementById('efMapClose').addEventListener('click',closeM);
