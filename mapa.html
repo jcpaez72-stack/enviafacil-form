@@ -164,7 +164,7 @@
     d=d||{};
     var body={ executionId:executionId, success:true, tipo:tipo,
       lat:String(c.lat), lon:String(c.lng),
-      calle_principal:d.calle||'', referencia_recoleccion:d.sector||'',
+      calle_principal:d.calle||'', calle_secundaria:d.sector||'', referencia_recoleccion:'',
       ciudad:d.ciudad||'', provincia:d.provincia||'', formatted:d.formatted||'' };
     fetch(callback,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
     .then(function(r){return r.json().catch(function(){return {};});}).then(function(out){
