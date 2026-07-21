@@ -169,12 +169,26 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
     // Cédula (10, módulo 10) o RUC (13)
     function cedulaOk(v){
       v=(v||"").replace(/\D/g,"");
-      if (v.length===13){ return /^[0-2]\d{2}\d{9}[0-9]$/.test(v) || v.length===13; } // RUC: 13 dígitos
-      if (v.length!==10) return false;
+      if (v.length===10) return _ced10(v);
+      if (v.length===13) return _rucOk(v);
+      return false;
+    }
+    function _ced10(v){
+      if(v.length!==10) return false;
       var d=v.split("").map(Number), prov=+v.slice(0,2);
-      if (prov<1||prov>24) return false;
+      if(prov<1||prov>24) return false;
       var suma=0; for(var i=0;i<9;i++){ var x=d[i]*(i%2===0?2:1); suma+=x>9?x-9:x; }
       return ((10-suma%10)%10)===d[9];
+    }
+    function _mod11(v,coef){ var s=0; for(var i=0;i<coef.length;i++) s+=(+v[i])*coef[i]; var r=11-(s%11); if(r===11)r=0; return r; }
+    function _rucOk(v){
+      if(v.length!==13) return false;
+      var prov=+v.slice(0,2); if(prov<1||prov>24) return false;
+      var t=+v[2];
+      if(t<6) return _ced10(v.slice(0,10)) && (+v.slice(10))>0;                       // natural: cédula (mód 10) + establecimiento
+      if(t===6) return _mod11(v,[3,2,7,6,5,4,3,2])===(+v[8]) || v.slice(9)==="0001";    // pública: mód 11 + salvaguarda
+      if(t===9) return _mod11(v,[4,3,2,7,6,5,4,3,2])===(+v[9]) || v.slice(10)==="001";   // jurídica: mód 11 + salvaguarda (nuevas empresas SRI)
+      return false;                                                                     // tercer dígito 7/8 no válido
     }
     function correoOk(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
     function validate(){
