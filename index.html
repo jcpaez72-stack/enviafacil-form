@@ -268,6 +268,9 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
   <script>
   (function(){
     var modal=document.getElementById('efMapModal'),map=null,geoT=null;
+    var qmap=new URLSearchParams(location.search);
+    function efNorm(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/\([^)]*\)/g,'').replace(/^[A-ZÑ ]+\s*-\s*/,'').replace(/[^A-Z0-9]/g,'');}
+    function checkCiudad(gc,gp){var ec=qmap.get('ciudadEsp')||'',ep=qmap.get('provEsp')||'';if(!ec&&!ep)return {level:'none'};var ncg=efNorm(gc),ncp=efNorm(gp),nec=efNorm(ec),nep=efNorm(ep);if(nep&&ncp&&nep!==ncp)return {level:'strong',msg:'Tu ubicación está en '+(gp||gc)+', pero tu envío es a '+(ep||ec)};if(nec&&ncg&&nec!==ncg&&ncg.indexOf(nec)<0&&nec.indexOf(ncg)<0)return {level:'soft',msg:'Ubicación en '+(gc||'')+' (tu envío es a '+ec+')'};return {level:'ok'};}
     var DEF=[-0.180653,-78.467834];
     function setV(id,v){var el=document.getElementById(id);if(el&&v)el.value=v;}
     function openM(){
@@ -283,6 +286,7 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
     function closeM(){modal.classList.add('hidden');}
     function onMove(){
       var sg=document.getElementById('efSug');if(sg)sg.style.display='none';
+      window._efForce=false;var _cb=document.getElementById('efMapConfirm');if(_cb)_cb.textContent='Confirmar ubicación';
       var c=map.getCenter();
       document.getElementById('efAddr').textContent='Ubicando…';
       document.getElementById('efCov').textContent='';
@@ -295,7 +299,10 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
         if(d&&d.ok){
           window._efGeo={lat:lat,lon:lon,calle:d.calle||'',sector:d.sector||'',ciudad:d.ciudad||'',prov:d.provincia||'',fmt:d.formatted||''};
           a.textContent=d.formatted||((d.calle||'')+', '+(d.ciudad||''));
-          if(d.ciudad){cov.textContent='✅ '+d.ciudad+', '+(d.provincia||'');cov.style.color='#0f6e56';}
+          if(d.ciudad){var _ck=checkCiudad(d.ciudad,d.provincia);
+            if(_ck.level==='strong'){cov.textContent='⛔ '+_ck.msg;cov.style.color='#a00';}
+            else if(_ck.level==='soft'){cov.textContent='⚠️ '+_ck.msg;cov.style.color='#b26a00';}
+            else{cov.textContent='✅ '+d.ciudad+', '+(d.provincia||'');cov.style.color='#0f6e56';}}
           else{cov.textContent='⚠️ No pudimos identificar la zona';cov.style.color='#a00';}
         }else{a.textContent='No pudimos leer la dirección aquí';window._efGeo=null;}
       }).catch(function(){document.getElementById('efAddr').textContent='Sin conexión al ubicar';});
@@ -309,13 +316,17 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
       var c=map.getCenter(),btn=document.getElementById('efMapConfirm');
       btn.textContent='Confirmando…';btn.disabled=true;
       function done(d){
+        if(d&&d.ok){var chk=checkCiudad(d.ciudad,d.provincia);
+          if(chk.level==='strong'&&!window._efForce){window._efForce=true;
+            var cov=document.getElementById('efCov');cov.textContent='⛔ '+chk.msg;cov.style.color='#a00';
+            btn.textContent='Continuar de todos modos';btn.disabled=false;return;}}
         setV('ef_lat',String(c.lat));setV('ef_lon',String(c.lng));
         if(d&&d.ok){
           if(d.calle)setV('calle_principal',d.calle);
           var rf=document.getElementById('referencia_recoleccion');
-          if(rf&&!rf.value&&d.sector)rf.value=d.sector;
+          if(rf&&!rf.value&&d.sector)setV('calle_secundaria',d.sector);
         }
-        btn.textContent='Confirmar ubicación';btn.disabled=false;closeM();
+        window._efForce=false;btn.textContent='Confirmar ubicación';btn.disabled=false;closeM();
       }
       fetch('https://enviafacil-geocode.fn.jelou.ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lat:c.lat,lon:c.lng})})
         .then(function(r){return r.json();}).then(done).catch(function(){done(null);});
