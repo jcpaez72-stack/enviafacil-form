@@ -72,7 +72,7 @@ async function cotizar(){
  const valor=paq?parseFloat((document.getElementById('valor').value||'0').replace(',','.')):0;
  if(paq&&!(piezas>=1)){efAviso('Indica el n\u00famero de piezas (m\u00ednimo 1).');return;}
  if(paq&&!(peso>=1)){efAviso('Indica el peso en kg (m\u00ednimo 1).');return;}
- if(paq&&peso>50*(parseInt((document.getElementById('piezas')||{}).value||'1')||1)){efAviso('El peso m\u00e1ximo es 50 kg. Para cargas mayores, cont\u00e1ctanos.');return;}if(paq&&!(valor>0)){efAviso('Indica el valor declarado del paquete (debe ser mayor a 0).');return;}
+ if(paq&&peso>50*(parseInt((document.getElementById('piezas')||{}).value||'1')||1)){efAviso('El peso m\u00e1ximo es 50 kg por pieza. Para cargas mayores, cont\u00e1ctanos.');return;}if(paq&&!(valor>0)){efAviso('Indica el valor declarado del paquete (debe ser mayor a 0).');return;}
  const contenido=paq?(document.getElementById('contenido').value||'').trim():'Documentos';
  if(paq&&contenido.length<3){efAviso('Escribe qué contiene tu paquete (mínimo 3 letras).');return;}
  const tipoLabel=paq?'Paquete':'Documento';
