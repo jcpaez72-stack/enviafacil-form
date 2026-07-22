@@ -347,6 +347,7 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
         if(d&&d.ok){
           var _cp=d.calle||'',_cs=d.sector||'';
           if(!_cp&&_cs){_cp=_cs;_cs='';}
+          if(_cs&&_cp&&_cs.trim().toLowerCase()===_cp.trim().toLowerCase())_cs='';
           if(!_cp&&d.formatted)_cp=String(d.formatted).split(',')[0].trim();
           if(_cp)setV('calle_principal',_cp);
           var rf=document.getElementById('referencia_recoleccion');

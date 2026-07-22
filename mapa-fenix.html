@@ -170,6 +170,7 @@
     d=d||{};
     var _cp=d.calle||'',_cs=d.sector||'';
     if(!_cp&&_cs){_cp=_cs;_cs='';}
+    if(_cs&&_cp&&_cs.trim().toLowerCase()===_cp.trim().toLowerCase())_cs='';
     if(!_cp&&d.formatted)_cp=String(d.formatted).split(',')[0].trim();
     var body={ executionId:executionId, success:true, tipo:tipo,
       lat:String(c.lat), lon:String(c.lng),
