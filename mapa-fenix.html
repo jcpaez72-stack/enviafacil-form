@@ -168,9 +168,12 @@
   }
   function enviar(c,d){
     d=d||{};
+    var _cp=d.calle||'',_cs=d.sector||'';
+    if(!_cp&&_cs){_cp=_cs;_cs='';}
+    if(!_cp&&d.formatted)_cp=String(d.formatted).split(',')[0].trim();
     var body={ executionId:executionId, success:true, tipo:tipo,
       lat:String(c.lat), lon:String(c.lng),
-      calle_principal:d.calle||'', calle_secundaria:d.sector||'', referencia_recoleccion:'',
+      calle_principal:_cp, calle_secundaria:_cs, referencia_recoleccion:'',
       ciudad:d.ciudad||'', provincia:d.provincia||'', formatted:d.formatted||'' };
     fetch(callback,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
     .then(function(r){return r.json().catch(function(){return {};});}).then(function(out){

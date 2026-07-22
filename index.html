@@ -345,9 +345,12 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
             btn.textContent='Continuar de todos modos';btn.disabled=false;return;}}
         setV('ef_lat',String(c.lat));setV('ef_lon',String(c.lng));
         if(d&&d.ok){
-          if(d.calle)setV('calle_principal',d.calle);
+          var _cp=d.calle||'',_cs=d.sector||'';
+          if(!_cp&&_cs){_cp=_cs;_cs='';}
+          if(!_cp&&d.formatted)_cp=String(d.formatted).split(',')[0].trim();
+          if(_cp)setV('calle_principal',_cp);
           var rf=document.getElementById('referencia_recoleccion');
-          if(rf&&!rf.value&&d.sector)setV('calle_secundaria',d.sector);
+          if(rf&&!rf.value&&_cs)setV('calle_secundaria',_cs);
         }
         window._efForce=false;btn.textContent='Confirmar ubicación';btn.disabled=false;closeM();
       }
