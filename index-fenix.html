@@ -38,6 +38,8 @@
   .ok-screen p{ color:var(--gris); }
   .hidden{ display:none !important; }
 </style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
   <div class="head">
@@ -47,6 +49,11 @@
 
   <!-- PANTALLA 1: DATOS -->
   <div class="wrap" id="scr_datos">
+      <div class="grp" id="efMapaTop">
+        <button type="button" id="efBtnMapa" style="width:100%;height:48px;border-radius:12px;border:2px solid #E4C201;background:#FFFBEA;color:#0F0F0F;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer">📍 Seleccionar ubicación en el mapa</button>
+        <div class="hint">Ubica el pin y autocompletamos tu dirección. Luego solo completa lo que falte.</div>
+        <input type="hidden" id="ef_lat"/><input type="hidden" id="ef_lon"/>
+      </div>
     <div class="seccion">Datos de quien envía</div>
     <div class="grp">
       <label id="l_cedula">Cédula (10) o RUC (13) <span class="req" id="req_cedula">*</span></label>
@@ -59,14 +66,14 @@
       <div class="errmsg" id="e_nombre">Ingresa los nombres completos.</div>
     </div>
     <div class="grp">
-      <label>Correo electrónico <span class="req">*</span></label>
+      <label id="l_correo">Correo electrónico <span class="req">*</span></label>
       <input id="correo" type="email" inputmode="email" placeholder="correo@ejemplo.com" />
       <div class="errmsg" id="e_correo">Correo no válido.</div>
     </div>
     <div class="grp">
-      <label>Celular <span class="req">*</span></label>
-      <input id="celular" inputmode="numeric" maxlength="10" placeholder="09XXXXXXXX" />
-      <div class="errmsg" id="e_celular">Celular de 10 dígitos.</div>
+      <label id="l_celular">Celular <span class="req">*</span></label>
+      <input id="celular" inputmode="numeric" maxlength="15" placeholder="09XXXXXXXX (o internacional)" />
+      <div class="errmsg" id="e_celular">Celular de 10 dígitos (Ecuador) o número internacional.</div>
     </div>
 
     <div id="bloque_dir">
@@ -126,7 +133,8 @@
     var callback = qs.get("callback") || DEFAULT_CALLBACK;
     if (!executionId) { var m = location.href.match(/[?&]executionId=([^&#]+)/); if (m) executionId = decodeURIComponent(m[1]); }
     if (callback.indexOf("executionId=") >= 0) { var cm = callback.match(/^(.*?)[?&]executionId=([^&#]+)(.*)$/); if (cm){ if(!executionId) executionId=decodeURIComponent(cm[2]); callback=cm[1]; } }
-    var EF_N=qs.get("n")||"";var EF_LOCK=(executionId&&EF_N)?("ef_"+executionId+"_"+EF_N+"_"+(qs.get("tipo")||"")):"";function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_LOCK);}catch(e){return null;}}function efLock(d){if(!EF_LOCK)return;try{localStorage.setItem(EF_LOCK,JSON.stringify(d||{}));}catch(e){}}function efShowLocked(){var d={};try{d=JSON.parse(efLocked())||{};}catch(e){}var SKIP={executionId:1,callback:1,success:1,dbgHref:1,idServicio:1};var rows="";for(var k in d){if(SKIP[k]||d[k]===""||d[k]==null)continue;rows+='<div style="display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #eee"><span style="color:#8a8a8a">'+k.replace(/_/g," ")+'</span><b style="text-align:right;max-width:60%">'+String(d[k])+'</b></div>';}var _wa=((qs.get("wa")||"593999842656").replace(/\D/g,""));document.body.innerHTML='<div style="max-width:430px;margin:0 auto;padding:44px 22px;text-align:center"><div style="font-size:52px">\u2705</div><h2 style="margin:10px 0 4px;color:#0F0F0F">Datos ya enviados</h2><p style="color:#6b6b6b;margin:0 0 16px">Esta informaci\u00f3n ya fue registrada y no se puede modificar aqu\u00ed.</p><div style="text-align:left;background:#fafafa;border:1px solid #eee;border-radius:12px;padding:12px 16px">'+rows+'</div><p style="color:#9b9b9b;font-size:13px;margin-top:14px">Para corregir algo, hazlo desde la conversaci\u00f3n de WhatsApp.</p><a href="https://wa.me/'+_wa+'" style="display:inline-block;margin-top:8px;background:#FFD100;color:#0F0F0F;font-weight:700;padding:12px 26px;border-radius:26px;text-decoration:none">Volver a WhatsApp</a></div>';}if(efLocked()){efShowLocked();}
+    var EF_N=qs.get("n")||"";var EF_LOCK=(executionId&&EF_N)?("ef_"+executionId+"_"+EF_N+"_"+(qs.get("tipo")||"")):"";var EF_EDIT=(qs.get("edit")||"");var EF_EDITLOCK=(EF_EDIT&&EF_LOCK)?(EF_LOCK+"_e"+EF_EDIT):"";function efAviso(msg){var b=document.getElementById('efAvisoBox');if(!b){b=document.createElement('div');b.id='efAvisoBox';b.style.cssText='background:#FFF3F3;border:1.5px solid #E88;color:#a00;border-radius:10px;padding:11px 13px;margin:10px 0;font-size:14px;font-weight:600';var btn=document.querySelector('button');if(btn&&btn.parentNode){btn.parentNode.insertBefore(b,btn);}else{document.body.insertBefore(b,document.body.firstChild);}}b.textContent='\u26a0\ufe0f '+msg;b.scrollIntoView({block:'center'});}
+function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_LOCK);}catch(e){return null;}}function efLock(d){if(!EF_LOCK)return;try{localStorage.setItem(EF_LOCK,JSON.stringify(d||{}));}catch(e){}}function efShowLocked(){var d={};try{d=JSON.parse(efLocked())||{};}catch(e){}var SKIP={executionId:1,callback:1,success:1,dbgHref:1,idServicio:1};var rows="";for(var k in d){if(SKIP[k]||d[k]===""||d[k]==null)continue;rows+='<div style="display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #eee"><span style="color:#8a8a8a">'+k.replace(/_/g," ")+'</span><b style="text-align:right;max-width:60%">'+String(d[k])+'</b></div>';}var _wa=((qs.get("wa")||"593999842656").replace(/\D/g,""));document.body.innerHTML='<div style="max-width:430px;margin:0 auto;padding:44px 22px;text-align:center"><div style="font-size:52px">\u2705</div><h2 style="margin:10px 0 4px;color:#0F0F0F">Datos ya enviados</h2><p style="color:#6b6b6b;margin:0 0 16px">Esta informaci\u00f3n ya fue registrada y no se puede modificar aqu\u00ed.</p><div style="text-align:left;background:#fafafa;border:1px solid #eee;border-radius:12px;padding:12px 16px">'+rows+'</div><p style="color:#9b9b9b;font-size:13px;margin-top:14px">Para corregir algo, hazlo desde la conversaci\u00f3n de WhatsApp.</p><a href="https://wa.me/'+_wa+'" style="display:inline-block;margin-top:8px;background:#FFD100;color:#0F0F0F;font-weight:700;padding:12px 26px;border-radius:26px;text-decoration:none">Volver a WhatsApp</a></div>';}if(efLocked()&&(!EF_EDIT||(EF_EDITLOCK&&localStorage.getItem(EF_EDITLOCK)))){efShowLocked();}
 
 
     // ---- Textos por variante (fiel al Flow original) ----
@@ -140,18 +148,22 @@
     }
     // Variante OFICINA = solo 4 campos (sin dirección)
     if (esOficina){ document.getElementById("bloque_dir").classList.add("hidden"); }
+    if (esOficina || qs.get("sinJoya")==="1") { var _mb=document.getElementById("efBtnMapa"); if(_mb&&_mb.parentNode){ _mb.parentNode.classList.add("hidden"); } }  // mapa: rem+des (no oficina)
     // Cédula del destinatario = OPCIONAL (el Flow original la tenía required:false)
     if (esDestino){
       document.getElementById("l_cedula").innerHTML = 'Cédula o RUC <span class="hint" style="font-weight:400;display:inline">(opcional)</span>';
+      var _lc=document.getElementById("l_correo"); if(_lc) _lc.innerHTML='Correo electrónico <span class="hint" style="font-weight:400;display:inline">(opcional)</span>';
+      var _lcel=document.getElementById("l_celular"); if(_lcel) _lcel.innerHTML='Celular <span class="hint" style="font-weight:400;display:inline">(opcional)</span>';
       var _rq=document.getElementById("req_cedula"); if(_rq) _rq.style.display="none";
     }
 
     // ---- PREFILL (cuando viene del pin/geocode o datos previos) ----
     function pf(id, keys){ for (var i=0;i<keys.length;i++){ var v=qs.get(keys[i]); if(v){ var el=document.getElementById(id); if(el) el.value=v; return; } } }
     pf("cedula",["cedula"]); pf("nombre",["nombre"]); pf("correo",["correo"]);
-    var cel = qs.get("celular") || ""; if (cel){ cel=cel.replace(/\D/g,""); if(cel.indexOf("593")===0) cel="0"+cel.slice(3); document.getElementById("celular").value=cel; }
+    var cel = qs.get("celular") || ""; if (cel){ cel=cel.replace(/\D/g,""); if(cel.indexOf("593")===0) cel="0"+cel.slice(3); if(/^\d{10,15}$/.test(cel)) document.getElementById("celular").value=cel; }
     pf("calle_principal",["calle_principal","calle"]); pf("numero_casa",["numero_casa","numero"]);
     pf("calle_secundaria",["calle_secundaria","calle2"]); pf("referencia_recoleccion",["referencia_recoleccion","referencia"]);
+    pf("ef_lat",["lat","preLat"]); pf("ef_lon",["lon","preLon"]);
 
     // ---- Validación ----
     function val(id){ var el=document.getElementById(id); return el ? el.value.trim() : ""; }
@@ -159,12 +171,26 @@
     // Cédula (10, módulo 10) o RUC (13)
     function cedulaOk(v){
       v=(v||"").replace(/\D/g,"");
-      if (v.length===13){ return /^[0-2]\d{2}\d{9}[0-9]$/.test(v) || v.length===13; } // RUC: 13 dígitos
-      if (v.length!==10) return false;
+      if (v.length===10) return _ced10(v);
+      if (v.length===13) return _rucOk(v);
+      return false;
+    }
+    function _ced10(v){
+      if(v.length!==10) return false;
       var d=v.split("").map(Number), prov=+v.slice(0,2);
-      if (prov<1||prov>24) return false;
+      if(prov<1||prov>24) return false;
       var suma=0; for(var i=0;i<9;i++){ var x=d[i]*(i%2===0?2:1); suma+=x>9?x-9:x; }
       return ((10-suma%10)%10)===d[9];
+    }
+    function _mod11(v,coef){ var s=0; for(var i=0;i<coef.length;i++) s+=(+v[i])*coef[i]; var r=11-(s%11); if(r===11)r=0; return r; }
+    function _rucOk(v){
+      if(v.length!==13) return false;
+      var prov=+v.slice(0,2); if(prov<1||prov>24) return false;
+      var t=+v[2];
+      if(t<6) return _ced10(v.slice(0,10)) && (+v.slice(10))>0;                       // natural: cédula (mód 10) + establecimiento
+      if(t===6) return _mod11(v,[3,2,7,6,5,4,3,2])===(+v[8]) || (+v.slice(9))>0;        // pública: mód 11, salvaguarda por estructura (SRI emite RUC que no cumplen mód 11)
+      if(t===9) return _mod11(v,[4,3,2,7,6,5,4,3,2])===(+v[9]) || (+v.slice(10))>0;      // jurídica: mód 11, salvaguarda por estructura (SRI emite RUC que no cumplen mód 11)
+      return false;                                                                     // tercer dígito 7/8 no válido
     }
     function correoOk(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
     function validate(){
@@ -174,8 +200,8 @@
       else { cOk=cedulaOk(cVal); setErr("cedula",!cOk); }
       ok=ok&&cOk;
       var nOk=val("nombre").length>=3; setErr("nombre",!nOk); ok=ok&&nOk;
-      var eOk=correoOk(val("correo")); setErr("correo",!eOk); ok=ok&&eOk;
-      var celOk=/^\d{10}$/.test(val("celular")); setErr("celular",!celOk); ok=ok&&celOk;
+      var _ev=val("correo"), eOk; if(esDestino&&_ev===""){eOk=true;setErr("correo",false);} else {eOk=correoOk(_ev);setErr("correo",!eOk);} ok=ok&&eOk;
+      var _cv=val("celular"), celOk; if(esDestino&&_cv===""){celOk=true;setErr("celular",false);} else {celOk=/^\d{10,15}$/.test(_cv);setErr("celular",!celOk);} ok=ok&&celOk;
       if (!esOficina){
         var caOk=val("calle_principal").length>=2; setErr("calle_principal",!caOk); ok=ok&&caOk;
         var nuOk=val("numero_casa").length>=1; setErr("numero_casa",!nuOk); ok=ok&&nuOk;
@@ -191,6 +217,7 @@
       if (!esOficina){
         p.calle_principal=val("calle_principal"); p.numero_casa=val("numero_casa");
         p.calle_secundaria=val("calle_secundaria"); p.referencia_recoleccion=val("referencia_recoleccion");
+        p.lat=val("ef_lat"); p.lon=val("ef_lon");
       }
       return p;
     }
@@ -218,7 +245,7 @@
       try{
         var resp=await fetch(PROXY,{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) });
         var out={}; try{ out=await resp.json(); }catch(e){}
-        if (!resp.ok || out.ok===false) throw new Error("proxy "+(out.status||resp.status));efLock(payloadDatos());
+        if (!resp.ok || out.ok===false) throw new Error("proxy "+(out.status||resp.status));efLock(payloadDatos());if(EF_EDITLOCK){try{localStorage.setItem(EF_EDITLOCK,"1");}catch(e){}}
         document.getElementById("scr_conf").classList.add("hidden");
         document.querySelector(".barra").style.display="none";
         document.querySelector(".head").style.display="none";
@@ -228,10 +255,142 @@
         else setTimeout(function(){ try{window.close();}catch(e){} },1200);
       }catch(e){
         btn.disabled=false; btn.textContent="Confirmar";
-        alert("No pudimos enviar los datos. Revisa tu conexión e intenta de nuevo.");
+        efAviso("No pudimos enviar los datos. Revisa tu conexión e intenta de nuevo.");
       }
     });
   })();
 </script>
+
+  <div id="efMapModal" class="hidden" style="position:fixed;inset:0;z-index:99999;background:#fff;display:flex;flex-direction:column">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:0.5px solid #e4e4e4">
+      <span style="font-size:16px;font-weight:600">Seleccionar ubicación</span>
+      <span id="efMapClose" style="font-size:24px;color:#8a8a8a;cursor:pointer;line-height:1">&times;</span>
+    </div>
+    <div style="position:relative;flex:1;min-height:200px">
+      <div id="efLeaf" style="position:absolute;inset:0"></div>
+      <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-100%);pointer-events:none;font-size:38px;line-height:1;z-index:500">📍</div>
+      <button type="button" id="efMiUbic" aria-label="mi ubicación" style="position:absolute;right:14px;bottom:20px;width:46px;height:46px;border-radius:50%;background:#fff;border:0.5px solid #ddd;font-size:20px;z-index:500;cursor:pointer">🎯</button>
+      <div style="position:absolute;top:10px;left:10px;right:10px;z-index:600">
+        <input id="efSearch" type="text" autocomplete="off" placeholder="Busca ciudad, calle o referencia" style="width:100%;height:42px;border-radius:10px;border:none;padding:0 12px;font-size:14px;box-shadow:0 1px 6px rgba(0,0,0,.25);box-sizing:border-box"/>
+        <div id="efSug" style="background:#fff;border-radius:10px;margin-top:4px;box-shadow:0 2px 8px rgba(0,0,0,.2);overflow:hidden;display:none;max-height:220px;overflow-y:auto"></div>
+      </div>
+    </div>
+    <div style="padding:14px 16px;border-top:0.5px solid #e4e4e4">
+      <div id="efCov" style="font-size:12px;margin-bottom:6px;color:#888">Mueve el mapa para ubicar el pin</div>
+      <div id="efAddr" style="font-size:14px;font-weight:600;margin-bottom:12px;min-height:20px;color:#0f0f0f"></div>
+      <button type="button" id="efMapConfirm" style="width:100%;height:48px;border-radius:24px;background:#FCE200;border:none;color:#0F0F0F;font-weight:600;font-size:15px;cursor:pointer">Confirmar ubicación</button>
+    </div>
+  </div>
+  <script>
+  (function(){
+    var modal=document.getElementById('efMapModal'),map=null,geoT=null;
+    var qmap=new URLSearchParams(location.search);
+    function efNorm(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/\([^)]*\)/g,'').replace(/^[A-ZÑ ]+\s*-\s*/,'').replace(/[^A-Z0-9]/g,'');}
+    function checkCiudad(gc,gp){var ec=qmap.get('ciudadEsp')||'',ep=qmap.get('provEsp')||'';if(!ec&&!ep)return {level:'none'};var ncg=efNorm(gc),ncp=efNorm(gp),nec=efNorm(ec),nep=efNorm(ep);if(nep&&ncp&&nep!==ncp)return {level:'strong',msg:'Tu ubicación está en '+(gp||gc)+', pero tu envío es a '+(ep||ec)};if(nec&&ncg&&nec!==ncg&&ncg.indexOf(nec)<0&&nec.indexOf(ncg)<0)return {level:'soft',msg:'Ubicación en '+(gc||'')+' (tu envío es a '+ec+')'};return {level:'ok'};}
+    var DEF=[-0.180653,-78.467834];
+    function setV(id,v){var el=document.getElementById(id);if(el&&v)el.value=v;}
+    function openM(){
+      modal.classList.remove('hidden');
+      if(!map){
+        map=L.map('efLeaf',{zoomControl:true}).setView(DEF,16);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+        map.on('moveend',onMove);
+        var _ec=qmap.get('ciudadEsp')||'', _ep=qmap.get('provEsp')||'';
+        if(_ec){ centerCity(_ec+(_ep?(', '+_ep):'')+', Ecuador'); } else { tryLoc(); }
+      }
+      setTimeout(function(){map.invalidateSize();onMove();},250);
+    }
+    function centerCity(q){
+      fetch(FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q:q,session:sess})})
+        .then(function(r){return r.json();}).then(function(d){
+          if(d.ok&&d.predictions&&d.predictions.length){ pickPlace(d.predictions[0].place_id,''); }
+        }).catch(function(){});
+    }
+    function closeM(){modal.classList.add('hidden');}
+    function onMove(){
+      var sg=document.getElementById('efSug');if(sg)sg.style.display='none';
+      window._efForce=false;var _cb=document.getElementById('efMapConfirm');if(_cb)_cb.textContent='Confirmar ubicación';
+      var c=map.getCenter();
+      document.getElementById('efAddr').textContent='Ubicando…';
+      document.getElementById('efCov').textContent='';
+      clearTimeout(geoT);geoT=setTimeout(function(){revGeo(c.lat,c.lng);},450);
+    }
+    function revGeo(lat,lon){
+      fetch('https://enviafacil-geocode.fn.jelou.ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lat:lat,lon:lon})})
+      .then(function(r){return r.json();}).then(function(d){
+        var a=document.getElementById('efAddr'),cov=document.getElementById('efCov');
+        if(d&&d.ok){
+          window._efGeo={lat:lat,lon:lon,calle:d.calle||'',sector:d.sector||'',ciudad:d.ciudad||'',prov:d.provincia||'',fmt:d.formatted||''};
+          a.textContent=d.formatted||((d.calle||'')+', '+(d.ciudad||''));
+          if(d.ciudad){var _ck=checkCiudad(d.ciudad,d.provincia);
+            if(_ck.level==='strong'){cov.textContent='⛔ '+_ck.msg;cov.style.color='#a00';}
+            else if(_ck.level==='soft'){cov.textContent='⚠️ '+_ck.msg;cov.style.color='#b26a00';}
+            else{cov.textContent='✅ '+d.ciudad+', '+(d.provincia||'');cov.style.color='#0f6e56';}}
+          else{cov.textContent='⚠️ No pudimos identificar la zona';cov.style.color='#a00';}
+        }else{a.textContent='No pudimos leer la dirección aquí';window._efGeo=null;}
+      }).catch(function(){document.getElementById('efAddr').textContent='Sin conexión al ubicar';});
+    }
+    function tryLoc(){
+      if(!navigator.geolocation)return;
+      navigator.geolocation.getCurrentPosition(function(p){if(map)map.setView([p.coords.latitude,p.coords.longitude],16);},function(){},{timeout:6000,enableHighAccuracy:true});
+    }
+    function confirmLoc(){
+      if(!map){closeM();return;}
+      var c=map.getCenter(),btn=document.getElementById('efMapConfirm');
+      btn.textContent='Confirmando…';btn.disabled=true;
+      function done(d){
+        if(d&&d.ok){var chk=checkCiudad(d.ciudad,d.provincia);
+          if(chk.level==='strong'&&!window._efForce){window._efForce=true;
+            var cov=document.getElementById('efCov');cov.textContent='⛔ '+chk.msg;cov.style.color='#a00';
+            btn.textContent='Continuar de todos modos';btn.disabled=false;return;}}
+        setV('ef_lat',String(c.lat));setV('ef_lon',String(c.lng));
+        if(d&&d.ok){
+          if(d.calle)setV('calle_principal',d.calle);
+          var rf=document.getElementById('referencia_recoleccion');
+          if(rf&&!rf.value&&d.sector)setV('calle_secundaria',d.sector);
+        }
+        window._efForce=false;btn.textContent='Confirmar ubicación';btn.disabled=false;closeM();
+      }
+      fetch('https://enviafacil-geocode.fn.jelou.ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lat:c.lat,lon:c.lng})})
+        .then(function(r){return r.json();}).then(done).catch(function(){done(null);});
+    }
+    var FN='https://enviafacil-geocode.fn.jelou.ai',srchT=null,sess=newSess();
+    function newSess(){return 'ef-'+Date.now()+'-'+Math.floor(Math.random()*1e6);}
+    function doSearch(q){
+      var bias=map?(map.getCenter().lat+','+map.getCenter().lng):'';
+      fetch(FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q:q,session:sess,bias:bias})})
+        .then(function(r){return r.json();}).then(function(d){
+          var sug=document.getElementById('efSug');
+          if(!d.ok||!d.predictions||!d.predictions.length){sug.style.display='none';return;}
+          sug.innerHTML='';
+          d.predictions.forEach(function(p){
+            var row=document.createElement('div');
+            row.style.cssText='padding:10px 12px;border-bottom:0.5px solid #eee;cursor:pointer';
+            row.innerHTML='<div style="font-weight:600;font-size:13px;color:#0f0f0f">'+(p.main||p.description)+'</div>'+(p.sec?'<div style="color:#888;font-size:12px">'+p.sec+'</div>':'');
+            row.addEventListener('click',function(){pickPlace(p.place_id,p.description);});
+            sug.appendChild(row);
+          });
+          sug.style.display='block';
+        }).catch(function(){var sg=document.getElementById('efSug');if(sg)sg.style.display='none';});
+    }
+    function pickPlace(pid,desc){
+      var sug=document.getElementById('efSug');sug.style.display='none';
+      document.getElementById('efSearch').value=desc;
+      fetch(FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({place_id:pid,session:sess})})
+        .then(function(r){return r.json();}).then(function(d){
+          sess=newSess();
+          if(d.ok&&d.lat&&d.lon&&map){map.setView([parseFloat(d.lat),parseFloat(d.lon)],17);}
+        }).catch(function(){});
+    }
+    (function(){var inp=document.getElementById('efSearch');if(!inp)return;
+      inp.addEventListener('input',function(){var q=inp.value.trim();clearTimeout(srchT);
+        if(q.length<3){document.getElementById('efSug').style.display='none';return;}
+        srchT=setTimeout(function(){doSearch(q);},320);});})();
+    document.getElementById('efBtnMapa').addEventListener('click',openM);
+    document.getElementById('efMapClose').addEventListener('click',closeM);
+    document.getElementById('efMapConfirm').addEventListener('click',confirmLoc);
+    document.getElementById('efMiUbic').addEventListener('click',tryLoc);
+  })();
+  </script>
 </body>
 </html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>Ubicación · EnvíaFácil</title>
+<style>
+  :root{ --laar:#FCE200; --laarD:#E4C201; --ink:#0F0F0F; --mut:#6b6b6b; }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; height:100%; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; color:var(--ink); }
+  #scr{ display:flex; flex-direction:column; height:100vh; }
+  .head{ display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:0.5px solid #e4e4e4; }
+  .head b{ font-size:16px; font-weight:600; }
+  #maparea{ position:relative; flex:1; min-height:200px; }
+  #leaf{ position:absolute; inset:0; }
+  #pin{ position:absolute; left:50%; top:50%; transform:translate(-50%,-100%); pointer-events:none; font-size:38px; line-height:1; z-index:500; }
+  #fab{ position:absolute; right:14px; bottom:20px; width:46px; height:46px; border-radius:50%; background:#fff; border:0.5px solid #ddd; font-size:20px; z-index:500; cursor:pointer; }
+  #searchbox{ position:absolute; top:10px; left:10px; right:10px; z-index:600; }
+  #search{ width:100%; height:42px; border-radius:10px; border:none; padding:0 12px; font-size:14px; box-shadow:0 1px 6px rgba(0,0,0,.25); }
+  #sug{ background:#fff; border-radius:10px; margin-top:4px; box-shadow:0 2px 8px rgba(0,0,0,.2); overflow:hidden; display:none; max-height:220px; overflow-y:auto; }
+  .foot{ padding:14px 16px; border-top:0.5px solid #e4e4e4; }
+  #cov{ font-size:12px; margin-bottom:6px; color:#888; }
+  #addr{ font-size:14px; font-weight:600; margin-bottom:12px; min-height:20px; }
+  #confirm{ width:100%; height:48px; border-radius:24px; background:var(--laar); border:none; color:var(--ink); font-weight:700; font-size:15px; cursor:pointer; }
+  #ok{ display:none; text-align:center; padding:70px 24px; }
+  #ok .c{ font-size:56px; } #ok h2{ margin:12px 0 6px; } #ok p{ color:var(--mut); }
+  #ok a{ display:inline-block; margin-top:10px; background:var(--laar); color:var(--ink); font-weight:700; padding:12px 26px; border-radius:26px; text-decoration:none; }
+  .hidden{ display:none !important; }
+</style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+  <div id="scr">
+    <div class="head"><b>Seleccionar ubicación</b><span id="close" style="font-size:24px;color:#8a8a8a;cursor:pointer;line-height:1">&times;</span></div>
+    <div id="maparea">
+      <div id="leaf"></div>
+      <div id="pin">📍</div>
+      <button type="button" id="fab" aria-label="mi ubicación">🎯</button>
+      <div id="searchbox">
+        <input id="search" type="text" autocomplete="off" placeholder="Busca ciudad, calle o referencia"/>
+        <div id="sug"></div>
+      </div>
+    </div>
+    <div class="foot">
+      <div id="cov">Mueve el mapa o busca para ubicar el pin</div>
+      <div id="addr"></div>
+      <button type="button" id="confirm">Confirmar ubicación</button>
+    </div>
+  </div>
+  <div id="ok">
+    <div class="c">✅</div>
+    <h2>¡Ubicación registrada!</h2>
+    <p>Vuelve al chat de WhatsApp para continuar con tu envío.</p>
+    <a id="okwa" href="#">Volver a WhatsApp</a>
+  </div>
+
+<script>
+(function(){
+  var FN='https://enviafacil-geocode.fn.jelou.ai';
+  var PROXY='https://enviafacil-callback.fn.jelou.ai';
+  var qs=new URLSearchParams(location.search);
+  var tipo=(qs.get('tipo')||'destinatario').toLowerCase();
+  var executionId=qs.get('executionId')||'';
+  var callback=qs.get('callback')||PROXY;
+  if(!executionId){var m=location.href.match(/[?&]executionId=([^&#]+)/);if(m)executionId=decodeURIComponent(m[1]);}
+  if(callback.indexOf('executionId=')>=0){var cm=callback.match(/^(.*?)[?&]executionId=([^&#]+)(.*)$/);if(cm){if(!executionId)executionId=decodeURIComponent(cm[2]);callback=cm[1];}}
+  var wa=(qs.get('wa')||'').replace(/\D/g,'');
+  document.getElementById('okwa').href = wa ? ('https://wa.me/'+wa) : '#';
+  var EF_N=qs.get('n')||'';var EF_LOCK=(executionId&&EF_N)?('ef_'+executionId+'_'+EF_N+'_'+tipo):'';
+  var EF_EDIT=(qs.get('edit')||'');var EF_EDITLOCK=(EF_EDIT&&EF_LOCK)?(EF_LOCK+'_e'+EF_EDIT):'';
+  function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_LOCK);}catch(e){return null;}}
+  function efLock(d){if(!EF_LOCK)return;try{localStorage.setItem(EF_LOCK,JSON.stringify(d||{}));}catch(e){}}
+  function efShowLocked(){document.getElementById('scr').classList.add('hidden');var ok=document.getElementById('ok');var h=ok.querySelector('h2'),p=ok.querySelector('p');if(h)h.textContent='Ubicación ya registrada';if(p)p.textContent='Esta ubicación ya fue enviada. Para cambiarla, hazlo desde el chat de WhatsApp.';ok.style.display='block';}
+
+  var DEF=[-0.180653,-78.467834], map=null, geoT=null, srchT=null, sess=newSess(), lastGeo=null;
+  function newSess(){return 'ef-'+Date.now()+'-'+Math.floor(Math.random()*1e6);}
+  function setTxt(id,t){var e=document.getElementById(id);if(e)e.textContent=t;}
+
+  // ---- control de ciudad ----
+  function efNorm(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/\([^)]*\)/g,'').replace(/^[A-ZÑ ]+\s*-\s*/,'').replace(/[^A-Z0-9]/g,'');}
+  function checkCiudad(gc,gp){
+    var ec=qs.get('ciudadEsp')||'',ep=qs.get('provEsp')||'';
+    if(!ec&&!ep)return {level:'none'};
+    var ncg=efNorm(gc),ncp=efNorm(gp),nec=efNorm(ec),nep=efNorm(ep);
+    if(nep&&ncp&&nep!==ncp)return {level:'strong',msg:'Tu ubicación está en '+(gp||gc)+', pero tu envío es a '+(ep||ec)};
+    if(nec&&ncg&&nec!==ncg&&ncg.indexOf(nec)<0&&nec.indexOf(ncg)<0)return {level:'soft',msg:'Ubicación en '+(gc||'')+' (tu envío es a '+ec+')'};
+    return {level:'ok'};
+  }
+
+  function initMap(){
+    if(efLocked()&&(!EF_EDIT||(EF_EDITLOCK&&localStorage.getItem(EF_EDITLOCK)))){efShowLocked();return;}
+    map=L.map('leaf',{zoomControl:true}).setView(DEF,16);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+    map.on('moveend',onMove);
+    // centrar en la ciudad esperada, si viene
+    var ec=qs.get('ciudadEsp')||'', ep=qs.get('provEsp')||'';
+    if(ec){ fwd(ec+(ep?(', '+ep):'')+', Ecuador', true); } else { tryLoc(); }
+    setTimeout(function(){map.invalidateSize();onMove();},250);
+  }
+  function onMove(){
+    var sg=document.getElementById('sug');if(sg)sg.style.display='none';
+    window._force=false; setTxt('confirm','Confirmar ubicación');
+    var c=map.getCenter();
+    setTxt('addr','Ubicando…'); setTxt('cov','');
+    clearTimeout(geoT); geoT=setTimeout(function(){revGeo(c.lat,c.lng);},450);
+  }
+  function revGeo(lat,lon){
+    fetch(FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lat:lat,lon:lon})})
+    .then(function(r){return r.json();}).then(function(d){
+      var cov=document.getElementById('cov');
+      if(d&&d.ok){
+        lastGeo={lat:lat,lon:lon,calle:d.calle||'',sector:d.sector||'',ciudad:d.ciudad||'',prov:d.provincia||'',fmt:d.formatted||''};
+        setTxt('addr', d.formatted||((d.calle||'')+', '+(d.ciudad||'')));
+        if(d.ciudad){var ck=checkCiudad(d.ciudad,d.provincia);
+          if(ck.level==='strong'){cov.textContent='⛔ '+ck.msg;cov.style.color='#a00';}
+          else if(ck.level==='soft'){cov.textContent='⚠️ '+ck.msg;cov.style.color='#b26a00';}
+          else{cov.textContent='✅ '+d.ciudad+', '+(d.provincia||'');cov.style.color='#0f6e56';}}
+        else{cov.textContent='⚠️ No pudimos identificar la zona';cov.style.color='#a00';}
+      } else { setTxt('addr','No pudimos leer la dirección aquí'); lastGeo=null; }
+    }).catch(function(){ setTxt('addr','Sin conexión al ubicar'); });
+  }
+  function tryLoc(){
+    if(!navigator.geolocation)return;
+    navigator.geolocation.getCurrentPosition(function(p){if(map)map.setView([p.coords.latitude,p.coords.longitude],16);},function(){},{timeout:6000,enableHighAccuracy:true});
+  }
+  // ---- búsqueda (Places) ----
+  function fwd(q, center){
+    fetch(FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q:q,session:sess})})
+    .then(function(r){return r.json();}).then(function(d){
+      if(center){ if(d.ok&&d.predictions&&d.predictions.length){ pickPlace(d.predictions[0].place_id,''); } return; }
+      var sug=document.getElementById('sug');
+      if(!d.ok||!d.predictions||!d.predictions.length){sug.style.display='none';return;}
+      sug.innerHTML='';
+      d.predictions.forEach(function(p){
+        var row=document.createElement('div');
+        row.style.cssText='padding:10px 12px;border-bottom:0.5px solid #eee;cursor:pointer';
+        row.innerHTML='<div style="font-weight:600;font-size:13px">'+(p.main||p.description)+'</div>'+(p.sec?'<div style="color:#888;font-size:12px">'+p.sec+'</div>':'');
+        row.addEventListener('click',function(){pickPlace(p.place_id,p.description);});
+        sug.appendChild(row);
+      });
+      sug.style.display='block';
+    }).catch(function(){});
+  }
+  function pickPlace(pid,desc){
+    var sug=document.getElementById('sug');sug.style.display='none';
+    if(desc)document.getElementById('search').value=desc;
+    fetch(FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({place_id:pid,session:sess})})
+    .then(function(r){return r.json();}).then(function(d){ sess=newSess();
+      if(d.ok&&d.lat&&d.lon&&map){map.setView([parseFloat(d.lat),parseFloat(d.lon)],17);}
+    }).catch(function(){});
+  }
+  // ---- confirmar -> callback ----
+  function confirmLoc(){
+    if(!map)return;
+    var c=map.getCenter(), btn=document.getElementById('confirm');
+    btn.textContent='Confirmando…'; btn.disabled=true;
+    fetch(FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lat:c.lat,lon:c.lng})})
+    .then(function(r){return r.json();}).then(function(d){
+      if(d&&d.ok){
+        var ck=checkCiudad(d.ciudad,d.provincia);
+        if(ck.level==='strong'&&!window._force){ window._force=true;
+          var cov=document.getElementById('cov');cov.textContent='⛔ '+ck.msg;cov.style.color='#a00';
+          btn.textContent='Continuar de todos modos';btn.disabled=false;return; }
+      }
+      enviar(c,d);
+    }).catch(function(){ enviar(c,null); });
+  }
+  function enviar(c,d){
+    d=d||{};
+    var body={ executionId:executionId, success:true, tipo:tipo,
+      lat:String(c.lat), lon:String(c.lng),
+      calle_principal:d.calle||'', calle_secundaria:d.sector||'', referencia_recoleccion:'',
+      ciudad:d.ciudad||'', provincia:d.provincia||'', formatted:d.formatted||'' };
+    fetch(callback,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+    .then(function(r){return r.json().catch(function(){return {};});}).then(function(out){
+      efLock(body);if(EF_EDITLOCK){try{localStorage.setItem(EF_EDITLOCK,'1');}catch(e){}}
+      document.getElementById('scr').classList.add('hidden');
+      document.getElementById('ok').style.display='block';
+      if(wa) setTimeout(function(){location.href='https://wa.me/'+wa;},900);
+    }).catch(function(){
+      var btn=document.getElementById('confirm');btn.textContent='Confirmar ubicación';btn.disabled=false;
+      setTxt('cov','No pudimos enviar. Revisa tu conexión.');document.getElementById('cov').style.color='#a00';
+    });
+  }
+
+  document.getElementById('search').addEventListener('input',function(){
+    var q=this.value.trim();clearTimeout(srchT);
+    if(q.length<3){document.getElementById('sug').style.display='none';return;}
+    srchT=setTimeout(function(){fwd(q,false);},320);
+  });
+  document.getElementById('fab').addEventListener('click',tryLoc);
+  document.getElementById('confirm').addEventListener('click',confirmLoc);
+  document.getElementById('close').addEventListener('click',function(){ if(wa)location.href='https://wa.me/'+wa; });
+  initMap();
+})();
+</script>
+</body>
+</html>
