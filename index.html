@@ -251,8 +251,8 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
         document.querySelector(".head").style.display="none";
         document.getElementById("ok").style.display="block";
         var wa=(qs.get("wa")||"").replace(/\D/g,"");
-        if (wa) setTimeout(function(){ window.location.href="https://wa.me/"+wa; },5000);
-        else setTimeout(function(){ try{window.close();}catch(e){} },5000);
+        if (wa) setTimeout(function(){ window.location.href="https://wa.me/"+wa; },900);
+        else setTimeout(function(){ try{window.close();}catch(e){} },1200);
       }catch(e){
         btn.disabled=false; btn.textContent="Confirmar";
         efAviso("No pudimos enviar los datos. Revisa tu conexión e intenta de nuevo.");
