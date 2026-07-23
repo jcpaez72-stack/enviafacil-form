@@ -181,7 +181,7 @@
       efLock(body);if(EF_EDITLOCK){try{localStorage.setItem(EF_EDITLOCK,'1');}catch(e){}}
       document.getElementById('scr').classList.add('hidden');
       document.getElementById('ok').style.display='block';
-      if(wa) setTimeout(function(){location.href='https://wa.me/'+wa;},900);
+      if(wa) setTimeout(function(){location.href='https://wa.me/'+wa;},5000);
     }).catch(function(){
       var btn=document.getElementById('confirm');btn.textContent='Confirmar ubicación';btn.disabled=false;
       setTxt('cov','No pudimos enviar. Revisa tu conexión.');document.getElementById('cov').style.color='#a00';
