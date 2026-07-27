@@ -1,165 +1,318 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>Multi envíos · EnvíaFácil</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-  :root{--amar:#FFC400;--amarS:#FFF8E1;--bg:#f2f2f2;--tx:#0F0F0F;--mut:#6B7280;--bd:#E3E3E3;--ok:#0F9D58;--mor:#7c6fdd;--morS:#EEEDFE;--morT:#3C3489}
-  *{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
-  body{margin:0;background:var(--bg);color:var(--tx)}
-  .hdr{background:var(--amar);padding:14px 18px;position:sticky;top:0;z-index:5}
-  .hdr h1{font-size:18px;margin:0;font-weight:700}
-  .hdr p{font-size:12.5px;margin:3px 0 0;color:#4a3f00}
-  .pg{font-size:11px;font-weight:700;color:#4a3f00;background:rgba(255,255,255,.55);display:inline-block;padding:2px 9px;border-radius:6px;margin-top:6px}
-  .body{padding:16px;max-width:520px;margin:0 auto}
-  .map{width:100%;background:var(--amarS);border:2px solid var(--amar);border-radius:11px;padding:12px;font-weight:600;text-align:center;font-size:14.5px;cursor:pointer}
-  .maphint{font-size:12px;color:var(--mut);margin:6px 2px 12px}
-  .sec{font-size:11.5px;font-weight:700;color:var(--mut);letter-spacing:.5px;margin:14px 0 6px}
-  label{font-size:13.5px;font-weight:600;display:block;margin:10px 0 4px}
-  .opt{font-weight:400;color:var(--mut);font-size:12px}.req{color:#E24B4A}
-  input{width:100%;padding:11px 13px;border:1px solid var(--bd);border-radius:9px;font-size:14.5px;background:#fff}
-  .prov{margin-top:6px;background:var(--morS);border:1px solid #AFA9EC;border-radius:8px;padding:7px 11px;font-size:12.5px;color:var(--morT)}
-  .seg{display:flex;gap:8px}
-  .seg .op{flex:1;border:1.5px solid var(--bd);border-radius:10px;padding:11px;text-align:center;font-weight:600;font-size:14px;cursor:pointer;background:#fff}
-  .seg .op.sel{border-color:var(--amar);background:var(--amarS)}
-  .cta{width:100%;background:var(--amar);border:0;border-radius:11px;padding:14px;font-size:15.5px;font-weight:700;margin-top:18px;cursor:pointer}
-  .cta.ok{background:var(--ok);color:#fff}.cta.ghost{background:#fff;border:1.5px solid var(--bd);margin-top:8px}.cta.mor{background:var(--morS);border:2px solid var(--mor);color:var(--morT)}
-  .row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--bd);font-size:14px}
-  .row .k{color:var(--mut)}.row .v{font-weight:600;text-align:right}
-  .banner{background:var(--morS);border:1px solid #AFA9EC;color:var(--morT);border-radius:9px;padding:11px;font-size:13.5px;margin-bottom:10px}
-  .err{color:#E24B4A;font-size:12px;margin-top:4px;display:none}
-  #modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;z-index:20;align-items:flex-end}
-  #modalCard{background:#fff;width:100%;max-width:520px;margin:0 auto;border-radius:16px 16px 0 0;padding:14px;max-height:88vh;overflow:auto}
-  #efMap{height:300px;border-radius:10px;margin:8px 0}
-  #payout{white-space:pre-wrap;background:#0b132b;color:#7CFC98;padding:12px;border-radius:10px;font-size:11px;font-family:monospace;overflow:auto;max-height:300px}
+:root{--laar:#FCE200;--laarD:#E4C201;--ink:#0F0F0F;--mut:#6b6b6b;--bg:#f5f5f5;--card:#fff;--line:#e4e4e4;--err:#dc2626;--mor:#7c6fdd;--morS:#EEEDFE;--morT:#3C3489}
+*{box-sizing:border-box;margin:0;font-family:-apple-system,"Segoe UI",Roboto,sans-serif}
+body{background:var(--bg);color:var(--ink);padding:14px 14px 96px;max-width:460px;margin:0 auto}
+.head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.logo{width:42px;height:42px;border-radius:12px;background:var(--laar);display:flex;align-items:center;justify-content:center;font-size:22px}
+.head h1{font-size:17px}.head p{font-size:12px;color:var(--mut);margin-top:2px}
+.prog{display:flex;gap:6px;margin-bottom:12px}
+.prog .dot{flex:1;height:5px;border-radius:3px;background:#e4e4e4}
+.prog .dot.on{background:var(--laar)}
+.card{background:var(--card);border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(20,60,70,.06);margin-bottom:12px}
+.step{font-size:11px;color:#8a7500;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px}
+.seccion{font-size:12px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.4px;margin:14px 0 10px}
+.lbl,label{font-size:13px;font-weight:600;margin-bottom:8px;display:block}
+label .req{color:var(--err)} label .op{font-weight:400;color:var(--mut);font-size:11.5px}
+.tipos{display:flex;gap:10px}
+.tipo{flex:1;border:2px solid var(--line);border-radius:14px;padding:16px 8px;text-align:center;cursor:pointer;transition:.15s;background:#fff}
+.tipo .ic{font-size:30px}.tipo .t{font-size:14px;font-weight:600;margin-top:6px}
+.tipo.sel{border-color:var(--laar);background:#FFFBE0;box-shadow:0 0 0 3px rgba(252,226,0,.3)}
+.fld{margin-bottom:14px;position:relative}
+input,select{width:100%;padding:12px 13px;border:1.5px solid var(--line);border-radius:11px;font-size:15px;outline:none;background:#fff}
+input:focus{border-color:var(--laar)}
+input.bad,input.invalid{border-color:#e11d48;background:#fff5f5}
+.errp,.errmsg{color:#e11d48;font-size:12px;margin-top:4px;display:none}
+.sug{position:absolute;left:0;right:0;top:100%;z-index:9;background:#fff;border:1px solid var(--line);border-radius:12px;margin-top:4px;max-height:230px;overflow:auto;box-shadow:0 6px 20px rgba(0,0,0,.12);display:none}
+.sug.show{display:block}
+.sug div{padding:10px 13px;font-size:14px;cursor:pointer;border-bottom:1px solid #f0f5f6}
+.sug div:hover{background:#FFFBE0}.sug .pv{font-size:11px;color:var(--mut)}
+.sug .empty{color:var(--mut);cursor:default}
+.chosen{display:flex;align-items:center;gap:8px;padding:11px 13px;background:#FFFBE0;border:1.5px solid var(--laar);border-radius:11px;font-size:14px;font-weight:600}
+.chosen .pv{font-size:11px;color:var(--mut);font-weight:400}
+.chosen .x{margin-left:auto;color:#8a7500;cursor:pointer;font-weight:700}
+.row{display:flex;gap:10px;align-items:flex-end}.row .fld{flex:1}
+.hint{font-size:11px;color:var(--mut);margin-top:4px}
+.mapbtn{width:100%;height:48px;border-radius:12px;border:2px solid var(--laarD);background:#FFFBEA;color:var(--ink);font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
+.barra{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:12px 14px}
+.barra .inner{max-width:460px;margin:0 auto;display:flex;gap:10px}
+.btn{width:100%;padding:15px;border:none;border-radius:13px;background:var(--laar);color:var(--ink);font-size:16px;font-weight:700;cursor:pointer}
+.btn:disabled{background:#efe6a8;cursor:not-allowed}
+.btn.sec{background:#fff;border:1.5px solid var(--line)}
+.btn.ok{background:#0F9D58;color:#fff}
+.add{width:100%;background:var(--morS);border:2px dashed var(--mor);color:var(--morT);border-radius:13px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:10px}
+.banner{background:var(--morS);border:1px solid #AFA9EC;color:var(--morT);border-radius:11px;padding:12px;font-size:13.5px;margin-bottom:12px}
+.conf-item{padding:11px 0;border-bottom:1px solid var(--line)}
+.conf-item .k{font-size:12px;color:var(--mut)}
+.conf-item .v{font-size:15px;font-weight:600;margin-top:2px;word-break:break-word}
+.hidden{display:none!important}
 </style>
 </head>
 <body>
-<div class="hdr"><h1 id="hT">📦📦 Multi envíos</h1><p id="hS">Un solo retiro, varios destinos</p><span class="pg" id="hPg" style="display:none"></span></div>
-<div class="body" id="app"></div>
+<div id="app"></div>
+<div class="barra"><div class="inner" id="barra"></div></div>
 
-<div id="modal"><div id="modalCard">
-  <div style="display:flex;justify-content:space-between;align-items:center"><b>Elige la ubicación</b><span onclick="cerrarMapa()" style="cursor:pointer;font-size:18px">✕</span></div>
-  <div id="efMap"></div>
-  <div style="font-size:12px;color:#6B7280">Arrastra el pin. Guardamos lat/lon.</div>
-  <button class="cta" onclick="usarUbic()">Usar esta ubicación</button>
-</div></div>
+<!-- MODAL MAPA (copiado de index.html) -->
+<div id="efMapModal" class="hidden" style="position:fixed;inset:0;z-index:99999;background:#fff;display:flex;flex-direction:column">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:0.5px solid #e4e4e4">
+    <span style="font-size:16px;font-weight:600">Seleccionar ubicación</span>
+    <span id="efMapClose" style="font-size:24px;color:#8a8a8a;cursor:pointer;line-height:1">&times;</span>
+  </div>
+  <div style="position:relative;flex:1;min-height:200px">
+    <div id="efLeaf" style="position:absolute;inset:0"></div>
+    <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-100%);pointer-events:none;font-size:38px;line-height:1;z-index:500">📍</div>
+    <button type="button" id="efMiUbic" aria-label="mi ubicación" style="position:absolute;right:14px;bottom:20px;width:46px;height:46px;border-radius:50%;background:#fff;border:0.5px solid #ddd;font-size:20px;z-index:500;cursor:pointer">🎯</button>
+    <div style="position:absolute;top:10px;left:10px;right:10px;z-index:600">
+      <input id="efSearch" type="text" autocomplete="off" placeholder="Busca ciudad, calle o referencia" style="width:100%;height:42px;border-radius:10px;border:none;padding:0 12px;font-size:14px;box-shadow:0 1px 6px rgba(0,0,0,.25);box-sizing:border-box"/>
+      <div id="efSug" style="background:#fff;border-radius:10px;margin-top:4px;box-shadow:0 2px 8px rgba(0,0,0,.2);overflow:hidden;display:none;max-height:220px;overflow-y:auto"></div>
+    </div>
+  </div>
+  <div style="padding:14px 16px;border-top:0.5px solid #e4e4e4">
+    <div id="efCov" style="font-size:12px;margin-bottom:6px;color:#888">Mueve el mapa para ubicar el pin</div>
+    <div id="efAddr" style="font-size:14px;font-weight:600;margin-bottom:12px;min-height:20px;color:#0f0f0f"></div>
+    <button type="button" id="efMapConfirm" style="width:100%;height:48px;border-radius:24px;background:#FCE200;border:none;color:#0F0F0F;font-weight:600;font-size:15px;cursor:pointer">Confirmar ubicación</button>
+  </div>
+</div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
-var CAT={"QUITO":"PICHINCHA","GUAYAQUIL":"GUAYAS","CUENCA":"AZUAY","MACHALA":"EL ORO","AMBATO":"TUNGURAHUA","MANTA":"MANABI","PORTOVIEJO":"MANABI","LOJA":"LOJA","SANTO DOMINGO":"SANTO DOMINGO DE LOS TSACHILAS","IBARRA":"IMBABURA","RIOBAMBA":"CHIMBORAZO","QUEVEDO":"LOS RIOS","DURAN":"GUAYAS","SAMBORONDON":"GUAYAS","ESMERALDAS":"ESMERALDAS","BABAHOYO":"LOS RIOS","LATACUNGA":"COTOPAXI","TULCAN":"CARCHI"};
-var app=document.getElementById("app");
-var remitente={}, destinos=[], cur=null, mapCtx=null, leaflet=null, marker=null;
-function prov(c){return CAT[(c||"").trim().toUpperCase()]||"";}
-function setH(t,s,pg){document.getElementById("hT").textContent=t;document.getElementById("hS").textContent=s;var e=document.getElementById("hPg");if(pg){e.style.display="inline-block";e.textContent=pg}else e.style.display="none";}
-function g(id){var e=document.getElementById(id);return e?e.value.trim():"";}
-function H(x){app.innerHTML=x;window.scrollTo(0,0);}
+const CAT=[["ABDON CALDERON (LA UNION)", "201001003112", "AZUAY"], ["ASUNCION (GIRON)", "201001003108", "AZUAY"], ["BAÑOS", "201001003098", "AZUAY"], ["Baños Cuenca", "201001003035", "AZUAY"], ["BELLAVISTA (CUENCA)", "201001003081", "AZUAY"], ["CAMILO PONCE ENRIQUEZ", "201001003094", "AZUAY"], ["CAÑARIBAMBA", "201001003078", "AZUAY"], ["CHAULLABAMBA", "201001003016", "AZUAY"], ["Checa (Jidcay)", "201001003036", "AZUAY"], ["Chiquintad", "201001003037", "AZUAY"], ["CHORDELEG", "201001003006", "AZUAY"], ["CHUMBLIN", "201001003110", "AZUAY"], ["CUCHIL (CUTCHIL)", "201001003097", "AZUAY"], ["CUENCA", "201001003011", "AZUAY"], ["CUMBE", "201001003017", "AZUAY"], ["EL BATAN", "201001003082", "AZUAY"], ["EL CABO", "201001003079", "AZUAY"], ["EL CARMEN DE PIJILI (SANTA ISABEL)", "201001003113", "AZUAY"], ["EL SAGRARIO (CUENCA)", "201001003083", "AZUAY"], ["EL VECINO", "201001003084", "AZUAY"], ["Firma", "201001003039", "AZUAY"], ["GIL RAMIREZ DAVALOS", "201001003085", "AZUAY"], ["GIRON", "201001003002", "AZUAY"], ["GUACHAPALA", "201001003045", "AZUAY"], ["GUALACEO", "201001003003", "AZUAY"], ["HERMANO MIGUEL", "201001003091", "AZUAY"], ["HUAYNACAPAC", "201001003086", "AZUAY"], ["LA UNION (CHORDELEG)", "201001003100", "AZUAY"], ["Llacao", "201001003021", "AZUAY"], ["LUIS CORDERO VEGA", "201001003104", "AZUAY"], ["MACHANGARA", "201001003087", "AZUAY"], ["MONAY", "201001003099", "AZUAY"], ["Nulti", "201001003022", "AZUAY"], ["NULTI", "201001003115", "AZUAY"], ["OÑA", "201001016002", "AZUAY"], ["Paccha", "201001003023", "AZUAY"], ["PAUTE", "201001003004", "AZUAY"], ["PONCE ENRIQUEZ", "201001009013", "AZUAY"], ["PRINCIPAL", "201001003093", "AZUAY"], ["REMIGIO CRESPO TORAL (GULAG)", "201001003102", "AZUAY"], ["RICAURTE", "201001003118", "AZUAY"], ["RICAURTE CUENCA", "201001003020", "AZUAY"], ["SAN BLAS (CUENCA)", "201001003088", "AZUAY"], ["SAN FELIPE DE OÑA CABECERA CANTONAL", "201001003095", "AZUAY"], ["San Fernando", "201001003024", "AZUAY"], ["SAN GERARDO", "201001003109", "AZUAY"], ["San Joaquín", "201001003025", "AZUAY"], ["San Juan Cuenca", "201001003034", "AZUAY"], ["SAN SALVADOR DE CAÑARIBAMBA", "201001003114", "AZUAY"], ["SAN SEBASTIAN (CUENCA)", "201001003089", "AZUAY"], ["SANTA ANA (CUENCA)", "201001003120", "AZUAY"], ["SANTA ISABEL", "201001003005", "AZUAY"], ["SANTA ISABEL (CHAGUARURCO)", "201001003111", "AZUAY"], ["Sayausi", "201001003040", "AZUAY"], ["Sidcay", "201001003026", "AZUAY"], ["SIG SIG", "201001003007", "AZUAY"], ["SIGSIG", "201001003105", "AZUAY"], ["Simón Bolívar (Cab. en Gañanzol)", "201001003027", "AZUAY"], ["Sinincay", "201001003028", "AZUAY"], ["Sosudel", "201001003038", "AZUAY"], ["SUCRE (CUENCA)", "201001003117", "AZUAY"], ["SUSCAL", "201001005008", "AZUAY"], ["SUSUDEL", "201001003096", "AZUAY"], ["TARQUI", "201001014026", "AZUAY"], ["Tarqui Cuenca", "201001003033", "AZUAY"], ["Tomebamba", "201001003029", "AZUAY"], ["TOTORACOCHA", "201001003015", "AZUAY"], ["Turi", "201001003030", "AZUAY"], ["VALLE (CUENCA)", "201001003107", "AZUAY"], ["Victoria del Portete (Irquis)", "201001003031", "AZUAY"], ["YANUNCAY", "201001003090", "AZUAY"], ["YUNGUILLA", "201001003018", "AZUAY"], ["ZHIDMAD", "201001003103", "AZUAY"], ["ZONA FRANCA", "201001003019", "AZUAY"], ["ANGEL POLIBIO CHAVES", "201001004028", "BOLIVAR"], ["CHILLANES", "201001004005", "BOLIVAR"], ["ECHEANDIA", "201001004002", "BOLIVAR"], ["GABRIEL IGNACIO VEINTIMILLA", "201001004029", "BOLIVAR"], ["GUANUJO", "201001004036", "BOLIVAR"], ["GUARANDA", "201001004001", "BOLIVAR"], ["SALINAS (GUARANDA)", "201001004037", "BOLIVAR"], ["SALINAS DE GUARANDA", "201001004011", "BOLIVAR"], ["SAN JOSE DE CHIMBO", "201001004003", "BOLIVAR"], ["SAN MIGUEL DE BOLIVAR", "201001004006", "BOLIVAR"], ["AZOGUES", "201001005001", "CAÑAR"], ["BIBLIAN", "201001005004", "CAÑAR"], ["CAÑAR", "201001005003", "CAÑAR"], ["COJITAMBO", "201001005007", "CAÑAR"], ["DELEG", "201001005006", "CAÑAR"], ["EL TAMBO", "201001003009", "CAÑAR"], ["LA TRONCAL", "201001005002", "CAÑAR"], ["BOLIVAR", "201001006006", "CARCHI"], ["CRISTOBAL COLON", "201001006036", "CARCHI"], ["EL ANGEL", "201001006003", "CARCHI"], ["GONZALEZ SUAREZ (TULCAN)", "201001006035", "CARCHI"], ["HUACA", "201001006005", "CARCHI"], ["JULIO ANDRADE", "201001002041", "CARCHI"], ["JULIO ANDRADE (OREJUELA)", "201001006037", "CARCHI"], ["MIRA", "201001006002", "CARCHI"], ["SAN GABRIEL", "201001006004", "CARCHI"], ["TULCAN", "201001006001", "CARCHI"], ["ALAUSI", "201001008002", "CHIMBORAZO"], ["ALAUSI CUMANDA", "201001008062", "CHIMBORAZO"], ["CAJABAMBA", "201001008005", "CHIMBORAZO"], ["CALPI", "201001008063", "CHIMBORAZO"], ["CHAMBO", "201001004008", "CHIMBORAZO"], ["CHUNCHI", "201001008003", "CHIMBORAZO"], ["COLTA", "201001008008", "CHIMBORAZO"], ["Cumanda Chimborazo", "201001008012", "CHIMBORAZO"], ["GUAMOTE", "201001008007", "CHIMBORAZO"], ["GUANO", "201001008004", "CHIMBORAZO"], ["LA MATRIZ (GUANO)", "201001008067", "CHIMBORAZO"], ["LICAN", "201001008010", "CHIMBORAZO"], ["LIZARZABURU", "201001008056", "CHIMBORAZO"], ["MALDONADO (RIOBAMBA)", "201001008072", "CHIMBORAZO"], ["RIOBAMBA", "201001008001", "CHIMBORAZO"], ["VELASCO", "201001008058", "CHIMBORAZO"], ["VELOZ", "201001008059", "CHIMBORAZO"], ["YARUQUIES", "201001008011", "CHIMBORAZO"], ["BELISARIO QUEVEDO (GUANAILIN)", "201001007068", "COTOPAXI"], ["BELISARIO QUEVEDO (LATACUNGA)", "201001007012", "COTOPAXI"], ["EL CARMEN (COTOPAXI)", "201001007031", "COTOPAXI"], ["ELOY ALFARO (SAN FELIPE)", "201001007055", "COTOPAXI"], ["GUAITACAMA (GUAYTACAMA)", "201001007060", "COTOPAXI"], ["GUAYTACAMA", "201001007009", "COTOPAXI"], ["LA MATRIZ (LATACUNGA)", "201001007056", "COTOPAXI"], ["LASSO", "201001007007", "COTOPAXI"], ["LATACUNGA", "201001007001", "COTOPAXI"], ["Mulalao", "201001007015", "COTOPAXI"], ["MULALO", "201001007010", "COTOPAXI"], ["PASTOCALLE", "201001007008", "COTOPAXI"], ["PUJILI", "201001007004", "COTOPAXI"], ["SALCEDO", "201001007002", "COTOPAXI"], ["SAN BUENAVENTURA", "201001007057", "COTOPAXI"], ["SAN BUENAVENTURA BELLAVISTA.", "201001007013", "COTOPAXI"], ["SAN JUAN DE PASTOCALLE", "201001007062", "COTOPAXI"], ["SAN MIGUEL", "201001007069", "COTOPAXI"], ["SAQUISILI", "201001007003", "COTOPAXI"], ["Tanicuchchi", "201001007014", "COTOPAXI"], ["TANICUCHI", "201001007011", "COTOPAXI"], ["ARENILLAS", "201001009006", "EL ORO"], ["BELLAVISTA (SANTA ROSA)", "201001009083", "EL ORO"], ["BOLIVAR (PASAJE)", "201001009077", "EL ORO"], ["ECUADOR", "201001009085", "EL ORO"], ["EL CAMBIO", "201001009011", "EL ORO"], ["EL GUABO", "201001009008", "EL ORO"], ["EL PARAISO (HUAQUILLAS)", "201001009072", "EL ORO"], ["EL RETIRO", "201001009075", "EL ORO"], ["HUAQUILLAS", "201001009007", "EL ORO"], ["La Avanzada", "201001009019", "EL ORO"], ["LA IBERIA", "201001009012", "EL ORO"], ["LA LIBERTAD (ARENILLAS)", "201001009094", "EL ORO"], ["La Peaña", "201001009017", "EL ORO"], ["LA PROVIDENCIA", "201001009076", "EL ORO"], ["Loma De Franco", "201001009018", "EL ORO"], ["MACHALA", "201001009001", "EL ORO"], ["MILTON REYES", "201001009073", "EL ORO"], ["OCHOA LEON (MATRIZ)", "201001009079", "EL ORO"], ["PASAJE", "201001009002", "EL ORO"], ["PIÑAS", "201001009004", "EL ORO"], ["PORTOVELO", "201001009003", "EL ORO"], ["PUERTO JELI", "201001009080", "EL ORO"], ["SANTA ROSA", "201001009009", "EL ORO"], ["SARACAY", "201001009082", "EL ORO"], ["TORATA", "201001009081", "EL ORO"], ["UNION LOJANA", "201001009074", "EL ORO"], ["ZARUMA", "201001009005", "EL ORO"], ["5 DE AGOSTO", "201001010081", "ESMERALDAS"], ["ATACAMES", "201001010003", "ESMERALDAS"], ["BARTOLOME RUIZ (CESAR FRANCO CARRION)", "201001010080", "ESMERALDAS"], ["ESMERALDAS", "201001010001", "ESMERALDAS"], ["LA UNION", "201001010011", "ESMERALDAS"], ["LA VILLEGAS", "201001010086", "ESMERALDAS"], ["LUIS TELLO (LAS PALMAS)", "201001010082", "ESMERALDAS"], ["QUININDE", "201001010008", "ESMERALDAS"], ["ROSA ZARATE (QUININDE)", "201001010085", "ESMERALDAS"], ["SIMON PLATA TORRES", "201001010083", "ESMERALDAS"], ["TACHINA", "201001010016", "ESMERALDAS"], ["TONSUPA", "201001010004", "ESMERALDAS"], ["VALLE HERMOSO (LA CONCORDIA)", "201001010093", "ESMERALDAS"], ["VICHE", "201001010013", "ESMERALDAS"], ["VUELTA LARGA", "201001010084", "ESMERALDAS"], ["BELLAVISTA (SANTA CRUZ)", "201001020012", "GALAPAGOS"], ["EL PROGRESO", "201001020011", "GALAPAGOS"], ["PUERTO AYORA", "201001020004", "GALAPAGOS"], ["PUERTO BAQUERIZO MORENO", "201001020001", "GALAPAGOS"], ["SAN CRISTOBAL", "201001020003", "GALAPAGOS"], ["SANTA CRUZ", "201001020002", "GALAPAGOS"], ["ALFREDO BAQUERIZO MORENO (JUJAN)", "201001002101", "GUAYAS"], ["AYACUCHO (GUAYAQUIL)", "201001002107", "GUAYAS"], ["BALAO", "201001002014", "GUAYAS"], ["BALZAR", "201001002016", "GUAYAS"], ["BANIFE", "201001002118", "GUAYAS"], ["BASE TAURA", "201001002048", "GUAYAS"], ["BOCA DE CAÑA", "201001002065", "GUAYAS"], ["BOCANA", "201001002129", "GUAYAS"], ["BOLICHE", "201001002067", "GUAYAS"], ["BOLIVAR (SAGRARIO)", "201001002108", "GUAYAS"], ["BUCAY", "201001002037", "GUAYAS"], ["CANDILEJOS", "201001002130", "GUAYAS"], ["CARBO (CONCEPCION)", "201001002109", "GUAYAS"], ["CENTRAL", "201001002131", "GUAYAS"], ["CERECITA", "201001002027", "GUAYAS"], ["CHIVERIA", "201001002054", "GUAYAS"], ["CHONGON", "201001002032", "GUAYAS"], ["COLIMES", "201001002029", "GUAYAS"], ["COLORADAL", "201001002055", "GUAYAS"], ["CORONEL MARCELINO MARIDUEÑA (SAN CARLOS)", "201001002105", "GUAYAS"], ["CRNEL.LORENZO DE GARAICOA (PEDREGAL)", "201001002104", "GUAYAS"], ["CUMANDA", "201001010010", "GUAYAS"], ["Cumanda Milagro", "201001002078", "GUAYAS"], ["Data De Playas", "201001002077", "GUAYAS"], ["DAULE", "201001002009", "GUAYAS"], ["DURAN", "201001002002", "GUAYAS"], ["EL DESEO", "201001002049", "GUAYAS"], ["EL RECREO", "201001002096", "GUAYAS"], ["EL ROSARIO (EL EMPALME)", "201001002137", "GUAYAS"], ["EL TRIUNFO", "201001002007", "GUAYAS"], ["Eloy Alfaro Durán", "201001002076", "GUAYAS"], ["EMILIANO CAICEDO MARCOS", "201001002119", "GUAYAS"], ["FEBRES CORDERO", "201001002110", "GUAYAS"], ["GARCIA MORENO (GUAYAQUIL)", "201001002111", "GUAYAS"], ["GENERAL ELIZALDE (BUCAY)", "201001002106", "GUAYAS"], ["GENERAL VERNAZA", "201001002056", "GUAYAS"], ["General Villamil (Playas)", "201001002075", "GUAYAS"], ["GRAL. VERNAZA (DOS ESTEROS)", "201001002134", "GUAYAS"], ["GUAYAQUIL", "201001002001", "GUAYAS"], ["GUAYAS (PUEBLO NUEVO)", "201001002081", "GUAYAS"], ["Ingenio San Carlos", "201001002074", "GUAYAS"], ["ISIDRO AYORA", "201001002025", "GUAYAS"], ["ISIDRO AYORA (SOLEDAD)", "201001002122", "GUAYAS"], ["JESUS MARIA", "201001002100", "GUAYAS"], ["JUAN GOMEZ RENDON (PROGRESO)", "201001002094", "GUAYAS"], ["JUJAN", "201001002018", "GUAYAS"], ["JUNQUILLAL", "201001002136", "GUAYAS"], ["LA AURORA (SATELITE)", "201001002117", "GUAYAS"], ["LA MARAVILLA", "201001002057", "GUAYAS"], ["La Puntilla", "201001002072", "GUAYAS"], ["LA PUNTILLA (SATELITE)", "201001002127", "GUAYAS"], ["LA VICTORIA (ÑAUZA)", "201001002135", "GUAYAS"], ["LAS ANIMAS", "201001002058", "GUAYAS"], ["LAUREL", "201001002030", "GUAYAS"], ["LETAMENDI", "201001002112", "GUAYAS"], ["limonal", "201001002071", "GUAYAS"], ["LOMAS DE SARGENTILLO", "201001002024", "GUAYAS"], ["LORENZO DE GARAICOA", "201001002050", "GUAYAS"], ["LOS LOJAS (ENRIQUE BAQUERIZO MORENO)", "201001002123", "GUAYAS"], ["LOS TINTOS", "201001002059", "GUAYAS"], ["MANUEL J. CALLE", "201001002053", "GUAYAS"], ["MARCELINO MARIDUEÑA", "201001001030", "GUAYAS"], ["MARISCAL SUCRE", "201001002051", "GUAYAS"], ["MARISCAL SUCRE (HUAQUES)", "201001002102", "GUAYAS"], ["MATILDE ESTHER", "201001002064", "GUAYAS"], ["MILAGRO", "201001002003", "GUAYAS"], ["NARANJAL", "201001002015", "GUAYAS"], ["NARANJITO", "201001002033", "GUAYAS"], ["NARCISA DE JESUS", "201001002099", "GUAYAS"], ["NOBOL", "201001002021", "GUAYAS"], ["NUEVE DE OCTUBRE", "201001002113", "GUAYAS"], ["OLMEDO (SAN ALEJO)", "201001002090", "GUAYAS"], ["PADRE JUAN BAUTISTA AGUIRRE", "201001002120", "GUAYAS"], ["PALESTINA", "201001002022", "GUAYAS"], ["PARAISO", "201001002132", "GUAYAS"], ["PASCUALES", "201001002020", "GUAYAS"], ["PEDRO CARBO", "201001002040", "GUAYAS"], ["PETRILLO", "201001002060", "GUAYAS"], ["PIEDRAHITA (NOBOL)", "201001002124", "GUAYAS"], ["PLAYAS", "201001002005", "GUAYAS"], ["PLAYAS (GRAL. VILLAMIL)", "201001002115", "GUAYAS"], ["POSORJA", "201001002035", "GUAYAS"], ["PROGRESO", "201001002042", "GUAYAS"], ["PUENTE LUCIA", "201001002061", "GUAYAS"], ["PUERTO INCA", "201001002028", "GUAYAS"], ["ROBERTO ASTUDILLO", "201001002052", "GUAYAS"], ["ROCA", "201001002091", "GUAYAS"], ["ROCAFUERTE (GUAYAQUIL)", "201001002138", "GUAYAS"], ["SABANILLA", "201001002062", "GUAYAS"], ["SALITRE", "201001002031", "GUAYAS"], ["SAMBORONDON", "201001002019", "GUAYAS"], ["SAMBORONDON (Pueblo)", "201001002066", "GUAYAS"], ["San Antonio (Playas)", "201001002070", "GUAYAS"], ["SAN JACINTO", "201001002139", "GUAYAS"], ["SAN JACINTO DE YAGUACHI", "201001002080", "GUAYAS"], ["SAN MATEO (SALITRE (URBINA JADO))", "201001002133", "GUAYAS"], ["SANTA CLARA", "201001002142", "GUAYAS"], ["SANTA LUCIA", "201001002023", "GUAYAS"], ["SIMON BOLIVAR", "201001002038", "GUAYAS"], ["SUCRE (GUAYAQUIL)", "201001002140", "GUAYAS"], ["TARIFA", "201001002063", "GUAYAS"], ["TARQUI (GUAYAQUIL)", "201001002141", "GUAYAS"], ["TENGUEL", "201001002017", "GUAYAS"], ["TRES POSTES", "201001013020", "GUAYAS"], ["URDANETA", "201001002114", "GUAYAS"], ["VALLE DE LA VIRGEN", "201001002125", "GUAYAS"], ["Velasco Ibarra (El Empalme)", "201001002069", "GUAYAS"], ["VICENTE PIEDRAHITA", "201001002121", "GUAYAS"], ["XIMENA", "201001002092", "GUAYAS"], ["YAGUACHI", "201001002006", "GUAYAS"], ["ANDRADE MARIN", "201001011021", "IMBABURA"], ["ANDRADE MARIN (LOURDES)", "201001011062", "IMBABURA"], ["ANTONIO ANTE", "201001011022", "IMBABURA"], ["ATUNTAQUI", "201001011001", "IMBABURA"], ["CARANQUI", "201001011018", "IMBABURA"], ["CHALTURA", "201001011023", "IMBABURA"], ["CHORLAVI", "201001011020", "IMBABURA"], ["COTACACHI", "201001011006", "IMBABURA"], ["DR. MIGUEL EGAS CABEZAS (PEGUCHE)", "201001011070", "IMBABURA"], ["EUGENIO ESPEJO (CALPAQUI)", "201001011060", "IMBABURA"], ["GONZALEZ SUAREZ (OTAVALO)", "201001011012", "IMBABURA"], ["IBARRA", "201001011005", "IMBABURA"], ["IMBAYA (SAN LUIS DE COBUENDO)", "201001011069", "IMBABURA"], ["LA DOLOROSA DEL PRIORATO", "201001011059", "IMBABURA"], ["NATABUELA", "201001011025", "IMBABURA"], ["OTAVALO", "201001011002", "IMBABURA"], ["PEGUCHE", "201001011013", "IMBABURA"], ["PERUGACHI", "201001011030", "IMBABURA"], ["PIMAMPIRO", "201001011003", "IMBABURA"], ["QUIROGA", "201001011014", "IMBABURA"], ["Quiroga Otavalo", "201001011032", "IMBABURA"], ["SAGRARIO", "201001011065", "IMBABURA"], ["SAN ANTONIO (IBARRA)", "201001011075", "IMBABURA"], ["SAN ANTONIO IBARRA", "201001001027", "IMBABURA"], ["SAN FRANCISCO (COTACACHI)", "201001011066", "IMBABURA"], ["SAN FRANCISCO (IBARRA)", "201001011074", "IMBABURA"], ["SAN FRANCISCO DE NATABUELA", "201001011063", "IMBABURA"], ["SAN JOSE", "201001011026", "IMBABURA"], ["SAN JOSE DE CHALTURA", "201001011064", "IMBABURA"], ["San Miguel de Ibarra", "201001011031", "IMBABURA"], ["SAN PABLO IMBABURA", "201001011010", "IMBABURA"], ["SAN RAFAEL (OTAVALO)", "201001011073", "IMBABURA"], ["SAN ROQUE", "201001011011", "IMBABURA"], ["SANTA BERTHA", "201001011028", "IMBABURA"], ["TIERRA BLANCA", "201001011029", "IMBABURA"], ["URCUQUI", "201001011004", "IMBABURA"], ["URCUQUI CABECERA CANTONAL", "201001011058", "IMBABURA"], ["YAGUARCOCHA", "201001011019", "IMBABURA"], ["Calvas", "201001012017", "LOJA"], ["CARIAMANGA", "201001012004", "LOJA"], ["CATACOCHA", "201001012005", "LOJA"], ["CATAMAYO", "201001012002", "LOJA"], ["CATAMAYO (LA TOMA)", "201001012043", "LOJA"], ["CELICA", "201001012011", "LOJA"], ["COLAISACA", "201001012038", "LOJA"], ["EL SAGRARIO (LOJA)", "201001012024", "LOJA"], ["GENERAL ELOY ALFARO (SAN SEBASTIAN)", "201001012070", "LOJA"], ["GONZANAMA", "201001012010", "LOJA"], ["LARAMA", "201001012073", "LOJA"], ["LOJA", "201001012001", "LOJA"], ["LOURDES", "201001012076", "LOJA"], ["MACARA", "201001019003", "LOJA"], ["MACARA (LOJA)", "201001012072", "LOJA"], ["MACARA (MANUEL ENRIQUE RENGEL SUQUILANDA)", "201001012071", "LOJA"], ["MALACATOS", "201001012006", "LOJA"], ["MALACATOS (VALLADOLID)", "201001012032", "LOJA"], ["Paltas", "201001012016", "LOJA"], ["SAN JOSE (CATAMAYO)", "201001012124", "LOJA"], ["San Lucas", "201001012015", "LOJA"], ["San Pedro de La Bendita", "201001012014", "LOJA"], ["San Pedro de Vilcabamba", "201001012013", "LOJA"], ["SAN SEBASTIAN (LOJA)", "201001012025", "LOJA"], ["SARAGURO", "201001012009", "LOJA"], ["SUCRE (LOJA)", "201001012113", "LOJA"], ["URDANETA (PAQUISHAPA)", "201001012098", "LOJA"], ["VALLE (LOJA)", "201001012026", "LOJA"], ["VILCABAMBA", "201001012007", "LOJA"], ["VILCABAMBA (VICTORIA)", "201001012034", "LOJA"], ["7 DE AGOSTO", "201001013048", "LOS RIOS"], ["BABA", "201001013013", "LOS RIOS"], ["BABAHOYO", "201001013001", "LOS RIOS"], ["BARREIRO", "201001013040", "LOS RIOS"], ["BUENA FE", "201001013005", "LOS RIOS"], ["CALUMA", "201001004007", "LOS RIOS"], ["CARACOL", "201001013041", "LOS RIOS"], ["CATARAMA", "201001012003", "LOS RIOS"], ["CLEMENTE BAQUERIZO", "201001013043", "LOS RIOS"], ["DR. CAMILO PONCE", "201001013044", "LOS RIOS"], ["EL EMPALME", "201001002011", "LOS RIOS"], ["EL SALTO", "201001013056", "LOS RIOS"], ["Guare", "201001013027", "LOS RIOS"], ["ISLA BEJUCAL", "201001011009", "LOS RIOS"], ["ISLA DE BEJUCAL", "201001013021", "LOS RIOS"], ["La Esperanza", "201001013026", "LOS RIOS"], ["La Julia", "201001013025", "LOS RIOS"], ["LA MANA", "201001007005", "LOS RIOS"], ["LA UNION (BABAHOYO)", "201001013042", "LOS RIOS"], ["La Unión (Valencia)", "201001013024", "LOS RIOS"], ["MOCACHE", "201001013007", "LOS RIOS"], ["MONTALVO (LOS RIOS)", "201001013009", "LOS RIOS"], ["PALENQUE", "201001002036", "LOS RIOS"], ["PATRICIA PILAR", "201001013010", "LOS RIOS"], ["PUEBLO VIEJO", "201001013012", "LOS RIOS"], ["PUEBLOVIEJO", "201001013045", "LOS RIOS"], ["QUEVEDO", "201001013002", "LOS RIOS"], ["QUINSALOMA", "201001013019", "LOS RIOS"], ["RICAURTE LOS RIOS", "201001013016", "LOS RIOS"], ["SAN CAMILO", "201001013014", "LOS RIOS"], ["SAN CARLOS", "201001013015", "LOS RIOS"], ["San Jacinto de Buena Fe", "201001013023", "LOS RIOS"], ["SAN JUAN", "201001013008", "LOS RIOS"], ["San Juan Babahoyo", "201001013022", "LOS RIOS"], ["SIETE DE OCTUBRE", "201001013046", "LOS RIOS"], ["VALENCIA", "201001013004", "LOS RIOS"], ["VENTANAS", "201001013003", "LOS RIOS"], ["VENUS DEL RIO QUEVEDO", "201001013047", "LOS RIOS"], ["VINCES", "201001013006", "LOS RIOS"], ["12 DE MARZO", "201001014078", "MANABI"], ["18 DE OCTUBRE", "201001014082", "MANABI"], ["24 DE MAYO", "201001001032", "MANABI"], ["4 DE DICIEMBRE", "201001014093", "MANABI"], ["ABDONCALDERON(SANFRANCISCO)", "201001014136", "MANABI"], ["ALAHUELA", "201001014036", "MANABI"], ["ALHAJUELA (BAJO GRANDE)", "201001014109", "MANABI"], ["ANDRESDEVERA", "201001014129", "MANABI"], ["ANGEL PEDRO GILER (LA ESTANCILLA)", "201001014106", "MANABI"], ["ANIBALSANANDRES", "201001014131", "MANABI"], ["ARQ.SIXTODURANBALLEN", "201001014133", "MANABI"], ["AYACUCHO (SANTA ANA)", "201001014141", "MANABI"], ["BACHILLERO", "201001014105", "MANABI"], ["BAHIA DE CARAQUEZ", "201001014003", "MANABI"], ["BELLAVISTA (24 DE MAYO)", "201001014132", "MANABI"], ["CALCETA", "201001014016", "MANABI"], ["CALDERON DE PORTOVIEJO", "201001014031", "MANABI"], ["CANOA (SAN VICENTE)", "201001014066", "MANABI"], ["CANUTO", "201001014032", "MANABI"], ["CHARAPOTO", "201001014015", "MANABI"], ["CHIRIJOS", "201001014111", "MANABI"], ["CHONE", "201001014004", "MANABI"], ["COLON", "201001014011", "MANABI"], ["colorado", "201001014044", "MANABI"], ["CRUCITA", "201001014010", "MANABI"], ["DR.MIGUELMORANLUCIO", "201001014127", "MANABI"], ["EL CARMEN", "201001014005", "MANABI"], ["EL COLORADO", "201001014086", "MANABI"], ["ELOY ALFARO (MANTA)", "201001014130", "MANABI"], ["ESTANCILLA", "201001014033", "MANABI"], ["FLAVIO ALFARO", "201001014021", "MANABI"], ["FRANCISCO PACHECO", "201001014081", "MANABI"], ["GENERAL ELOY ALFARO", "201001014087", "MANABI"], ["HONORATOVASQUEZ(CAB.ENVASQUEZ)", "201001014117", "MANABI"], ["JAMA", "201001014024", "MANABI"], ["JARAMIJO", "201001014013", "MANABI"], ["JIPIJAPA", "201001014006", "MANABI"], ["JUNIN", "201001014009", "MANABI"], ["LA DELICIA KM. 29", "201001014035", "MANABI"], ["LEONIDAS PLAZA", "201001014027", "MANABI"], ["LEONIDAS PROAÑO", "201001014088", "MANABI"], ["LEONIDASPLAZAGUTIERREZ", "201001014135", "MANABI"], ["LODANA", "201001014114", "MANABI"], ["LOS ESTEROS", "201001014084", "MANABI"], ["MACHALILLA", "201001014097", "MANABI"], ["MANTA", "201001014001", "MANABI"], ["MANUEL INOCENCIO PARRALES Y GUALE", "201001014075", "MANABI"], ["MONTECRISTI", "201001014020", "MANABI"], ["NUEVO ISRAEL", "201001017009", "MANABI"], ["OLMEDO", "201001014019", "MANABI"], ["PAJAN", "201001014014", "MANABI"], ["PEDERNALES", "201001010009", "MANABI"], ["PICHINCHA MANABI", "201001014007", "MANABI"], ["PICOAZA (DENTRO DEL PERIMETRO URBANO)", "201001014037", "MANABI"], ["PORTOVIEJO", "201001014002", "MANABI"], ["PUERTO CAYO", "201001014029", "MANABI"], ["PUERTO DE CAYO", "201001014098", "MANABI"], ["PUERTO LOPEZ", "201001014022", "MANABI"], ["PUERTOLOPEZ", "201001014134", "MANABI"], ["RICAURTE MANABI", "201001014040", "MANABI"], ["RIO CHICO (DENTRO DEL PERIMETRO URBANO)", "201001014039", "MANABI"], ["RIOCHICO(RIOCHICO)", "201001014137", "MANABI"], ["ROCAFUERTE", "201001014012", "MANABI"], ["SAN ANTONIO DE CHONE", "201001014034", "MANABI"], ["SAN LORENZO DE JIPIJAPA", "201001014076", "MANABI"], ["SAN MATEO (MANTA)", "201001014073", "MANABI"], ["SAN PABLO", "201001014128", "MANABI"], ["SAN PLACIDO (DENTRO DEL PERIMETRO URBANO)", "201001014038", "MANABI"], ["SAN VICENTE", "201001014018", "MANABI"], ["SANPLACIDO", "201001014138", "MANABI"], ["SANTA ANA (PORTOVIEJO)", "201001014008", "MANABI"], ["SANTA ANA DE VUELTA LARGA", "201001014115", "MANABI"], ["SANTA RITA (CHONE)", "201001014083", "MANABI"], ["SIMONBOLIVAR", "201001014140", "MANABI"], ["Sucre", "201001014042", "MANABI"], ["Tarqui Manabi", "201001014041", "MANABI"], ["TOSAGUA", "201001014017", "MANABI"], ["ZAPALLO", "201001014102", "MANABI"], ["GUALAQUIZA", "201001015002", "MORONA SANTIAGO"], ["MACAS", "201001015001", "MORONA SANTIAGO"], ["PALORA (METZERA)", "201001015043", "MORONA SANTIAGO"], ["SUCUA", "201001017007", "MORONA SANTIAGO"], ["ARCHIDONA", "201001016003", "NAPO"], ["AROSEMENA TOLA", "201001016006", "NAPO"], ["BAEZA", "201001016039", "NAPO"], ["Carlos Julio Arosemena", "201001016009", "NAPO"], ["Carlos Julio Arosemena Tola", "201001016008", "NAPO"], ["EL CHACO", "201001017012", "NAPO"], ["MISAHUALLI", "201001016005", "NAPO"], ["PTO. NAPO", "201001016004", "NAPO"], ["PUERTO MISAHUALLI", "201001016041", "NAPO"], ["Puerto Napo", "201001016007", "NAPO"], ["SARDINAS", "201001016022", "NAPO"], ["TENA", "201001016001", "NAPO"], ["EL COCA", "201001017002", "ORELLANA"], ["FRANCISCO DE ORELLANA", "201001017001", "ORELLANA"], ["INES ARANGO (CAB. EN WESTERN)", "201001017042", "ORELLANA"], ["LA JOYA DE LOS SACHAS", "201001017006", "ORELLANA"], ["LORETO", "201001017016", "ORELLANA"], ["PUERTO FRANCISCO DE ORELLANA (EL COCA)", "201001017045", "ORELLANA"], ["SAN LUIS DE ARMENIA", "201001017046", "ORELLANA"], ["SAN SEBASTIAN DEL COCA", "201001017047", "ORELLANA"], ["PALORA", "201001018002", "PASTAZA"], ["PUYO", "201001018001", "PASTAZA"], ["SHELL", "201001017004", "PASTAZA"], ["ALANGASI", "201001001031", "PICHINCHA"], ["ALOAG", "201001001019", "PICHINCHA"], ["ALOAG (MEJIA)", "201001001141", "PICHINCHA"], ["ALOASI", "201001001046", "PICHINCHA"], ["AMAGUAÑA", "201001001018", "PICHINCHA"], ["ASCAZUBI", "201001001062", "PICHINCHA"], ["ASCAZUBI (CAYAMBE)", "201001001082", "PICHINCHA"], ["ATAHUALPA (QUITO)", "201001001140", "PICHINCHA"], ["AYORA", "201001001042", "PICHINCHA"], ["AZCASUBI VIA AL QUINCHE", "201001001043", "PICHINCHA"], ["BELISARIO QUEVEDO (QUITO)", "201001001134", "PICHINCHA"], ["CALACALI", "201001001022", "PICHINCHA"], ["CALDERON", "201001001024", "PICHINCHA"], ["CANGAHUA", "201001001072", "PICHINCHA"], ["CARCELEN", "201001001084", "PICHINCHA"], ["CAYAMBE", "201001001002", "PICHINCHA"], ["CENTRO HISTORICO", "201001001085", "PICHINCHA"], ["CHAVEZPAMBA", "201001001111", "PICHINCHA"], ["CHECA", "201001001063", "PICHINCHA"], ["CHILIBULO", "201001001088", "PICHINCHA"], ["CHILLOGALLO", "201001001016", "PICHINCHA"], ["CHIMBACALLE", "201001001089", "PICHINCHA"], ["COCHAPAMBA (QUITO)", "201001001086", "PICHINCHA"], ["COMITE DEL PUEBLO", "201001001087", "PICHINCHA"], ["CONOCOTO", "201001001033", "PICHINCHA"], ["COTOCOLLAO", "201001001034", "PICHINCHA"], ["COTOGCHOA", "201001001118", "PICHINCHA"], ["CUMBAYA", "201001001009", "PICHINCHA"], ["CUTUGLAHUA", "201001001125", "PICHINCHA"], ["CUZUBAMBA", "201001001061", "PICHINCHA"], ["El Chaupi", "201001001071", "PICHINCHA"], ["EL CONDADO", "201001001090", "PICHINCHA"], ["EL QUINCHE", "201001001007", "PICHINCHA"], ["GUAMANI", "201001001091", "PICHINCHA"], ["Guangopolo", "201001001070", "PICHINCHA"], ["GUAYLLABAMBA", "201001001014", "PICHINCHA"], ["IÑAQUITO", "201001001092", "PICHINCHA"], ["ITCHIMBIA", "201001001093", "PICHINCHA"], ["JIPIJAPA (QUITO)", "201001001135", "PICHINCHA"], ["JUAN MONTALVO", "201001001045", "PICHINCHA"], ["KENNEDY", "201001001094", "PICHINCHA"], ["LA ARGELIA", "201001001095", "PICHINCHA"], ["LA ARMENIA", "201001001047", "PICHINCHA"], ["LA CONCEPCION", "201001001096", "PICHINCHA"], ["LA ECUATORIANA", "201001001097", "PICHINCHA"], ["LA ESPERANZA (PEDRO MONCAYO)", "201001001143", "PICHINCHA"], ["LA FERROVIARIA", "201001001098", "PICHINCHA"], ["LA LIBERTAD (QUITO)", "201001001136", "PICHINCHA"], ["LA MAGDALENA", "201001001099", "PICHINCHA"], ["LA MENA", "201001001100", "PICHINCHA"], ["LA MERCED (QUITO)", "201001001139", "PICHINCHA"], ["LLANO CHICO", "201001001048", "PICHINCHA"], ["LLANO GRANDE", "201001001049", "PICHINCHA"], ["MACHACHI", "201001001008", "PICHINCHA"], ["MALCHINGUI", "201001001131", "PICHINCHA"], ["MARISCAL SUCRE (QUITO)", "201001001137", "PICHINCHA"], ["Mejía", "201001001069", "PICHINCHA"], ["MIRAVALLE", "201001001051", "PICHINCHA"], ["MITAD DEL MUNDO", "201001001021", "PICHINCHA"], ["MONJAS", "201001002043", "PICHINCHA"], ["NANEGALITO", "201001001029", "PICHINCHA"], ["NAYON", "201001001112", "PICHINCHA"], ["OLMEDO (PESILLO)", "201001001073", "PICHINCHA"], ["ORQUIDEAS", "201001001052", "PICHINCHA"], ["Otón", "201001001067", "PICHINCHA"], ["PEDRO MONCAYO", "201001001035", "PICHINCHA"], ["PEDRO V. MALDONADO", "201001001012", "PICHINCHA"], ["PEDRO VICENTE MALDONADO", "201001001113", "PICHINCHA"], ["PERUCHO", "201001001122", "PICHINCHA"], ["PIFO", "201001001025", "PICHINCHA"], ["PINTAG", "201001001036", "PICHINCHA"], ["POMASQUI", "201001001028", "PICHINCHA"], ["PONCEANO", "201001001101", "PICHINCHA"], ["PUELLARO", "201001001126", "PICHINCHA"], ["PUEMBO", "201001001026", "PICHINCHA"], ["PUENGASI", "201001001102", "PICHINCHA"], ["PUERTO QUITO", "201001001013", "PICHINCHA"], ["PUSUQUI", "201001001041", "PICHINCHA"], ["QUITO", "201001001001", "PICHINCHA"], ["QUITUMBE", "201001001103", "PICHINCHA"], ["Rumiñahui", "201001001066", "PICHINCHA"], ["Rumipamba", "201001001065", "PICHINCHA"], ["SAN ANTONIO DE PICHINCHA", "201001001053", "PICHINCHA"], ["SAN BARTOLO", "201001001104", "PICHINCHA"], ["SAN ISIDRO DEL INCA", "201001001105", "PICHINCHA"], ["SAN JOSE DE MINAS", "201001001079", "PICHINCHA"], ["SAN JOSE DE MORAN", "201001001054", "PICHINCHA"], ["SAN JUAN (QUITO)", "201001001138", "PICHINCHA"], ["SAN MIGUEL DE LOS BANCOS", "201001001010", "PICHINCHA"], ["SAN PEDRO DE TABOADA", "201001001117", "PICHINCHA"], ["SAN RAFAEL", "201001001006", "PICHINCHA"], ["SANGOLQUI", "201001001005", "PICHINCHA"], ["SANTA ROSA DE CUZUBAMBA", "201001001083", "PICHINCHA"], ["SOLANDA", "201001001106", "PICHINCHA"], ["TABABELA", "201001001056", "PICHINCHA"], ["TABACUNDO", "201001001003", "PICHINCHA"], ["TAMBILLO", "201001021003", "PICHINCHA"], ["TAMBILLO (MEJIA)", "201001001142", "PICHINCHA"], ["TOCACHI", "201001001132", "PICHINCHA"], ["TUMBACO", "201001001020", "PICHINCHA"], ["TUPIGACHI", "201001001133", "PICHINCHA"], ["TURUBAMBA", "201001001107", "PICHINCHA"], ["UYUMBICHO", "201001001057", "PICHINCHA"], ["VALLE DE LOS CHILLOS", "201001001039", "PICHINCHA"], ["YARUQUI", "201001001037", "PICHINCHA"], ["ZAMBISA", "201001001058", "PICHINCHA"], ["Zambiza", "201001001064", "PICHINCHA"], ["ANCON", "201001002034", "SANTA ELENA"], ["ANCONCITO", "201001002046", "SANTA ELENA"], ["AYANGUE", "201001023018", "SANTA ELENA"], ["BALLENITA", "201001014023", "SANTA ELENA"], ["CADEATE", "201001023008", "SANTA ELENA"], ["CAPAES", "201001023009", "SANTA ELENA"], ["CARLOS ESPINOZA LARREA", "201001023024", "SANTA ELENA"], ["El Tambo Santa Elena", "201001023020", "SANTA ELENA"], ["GRAL. ALBERTO ENRIQUEZ GALLO", "201001023025", "SANTA ELENA"], ["JOSE LUIS TAMAYO (MUEY)", "201001023028", "SANTA ELENA"], ["LA LIBERTAD", "201001002013", "SANTA ELENA"], ["LA LIBERTAD (LA LIBERTAD)", "201001023032", "SANTA ELENA"], ["LIBERTADOR BOLIVAR", "201001023010", "SANTA ELENA"], ["MANGLARALTO", "201001023011", "SANTA ELENA"], ["MAR BRAVO", "201001023004", "SANTA ELENA"], ["MONTAÑITA", "201001023003", "SANTA ELENA"], ["MONTEVERDE", "201001023012", "SANTA ELENA"], ["MUEY", "201001023005", "SANTA ELENA"], ["OLON", "201001023006", "SANTA ELENA"], ["PALMAR", "201001023013", "SANTA ELENA"], ["PROSPERIDAD", "201001023014", "SANTA ELENA"], ["PUERTO SANTA ROSA", "201001023007", "SANTA ELENA"], ["PUNTA BARANDUA", "201001023015", "SANTA ELENA"], ["PUNTA BLANCA", "201001023002", "SANTA ELENA"], ["PUNTA CARNERO", "201001023001", "SANTA ELENA"], ["Punta Centinela", "201001023019", "SANTA ELENA"], ["SALINAS", "201001002004", "SANTA ELENA"], ["SALINAS (SALINAS)", "201001023030", "SANTA ELENA"], ["SAN JOSE DE ANCON", "201001023029", "SANTA ELENA"], ["SAN PABLO SANTA ELENA", "201001023017", "SANTA ELENA"], ["SAN PEDRO", "201001011007", "SANTA ELENA"], ["SANTA ELENA", "201001002010", "SANTA ELENA"], ["SANTA ELENA (SANTA ELENA)", "201001023034", "SANTA ELENA"], ["SANTA ROSA SANTA ELENA", "201001023021", "SANTA ELENA"], ["SIMON BOLIVAR (JULIO MORENO)", "201001023027", "SANTA ELENA"], ["VALDIVIA", "201001023016", "SANTA ELENA"], ["VICENTE ROCAFUERTE", "201001023026", "SANTA ELENA"], ["ABRAHAM CALAZACON", "201001024013", "SANTO DOMINGO DE LOS TSACHILAS"], ["BOMBOLI", "201001024014", "SANTO DOMINGO DE LOS TSACHILAS"], ["CHIGUILPE", "201001024015", "SANTO DOMINGO DE LOS TSACHILAS"], ["KM 14 QUEVEDO", "201001024004", "SANTO DOMINGO DE LOS TSACHILAS"], ["KM 24 QUEVEDO", "201001024005", "SANTO DOMINGO DE LOS TSACHILAS"], ["KM 38.5 QUEVEDO", "201001024006", "SANTO DOMINGO DE LOS TSACHILAS"], ["KM 41 QUEVEDO", "201001024007", "SANTO DOMINGO DE LOS TSACHILAS"], ["LA CONCORDIA", "201001001011", "SANTO DOMINGO DE LOS TSACHILAS"], ["LAS VILLEGAS", "201001001060", "SANTO DOMINGO DE LOS TSACHILAS"], ["LUZ DE AMERICA", "201001024008", "SANTO DOMINGO DE LOS TSACHILAS"], ["MONTERREY", "201001001059", "SANTO DOMINGO DE LOS TSACHILAS"], ["RIO TOACHI", "201001024016", "SANTO DOMINGO DE LOS TSACHILAS"], ["RIO VERDE (SANTO DOMINGO)", "201001024017", "SANTO DOMINGO DE LOS TSACHILAS"], ["SAN JACINTO DEL BUA", "201001024003", "SANTO DOMINGO DE LOS TSACHILAS"], ["SAN PABLO DE CHILA", "201001024021", "SANTO DOMINGO DE LOS TSACHILAS"], ["SANTO DOMINGO", "201001001004", "SANTO DOMINGO DE LOS TSACHILAS"], ["SANTO DOMINGO DE LOS COLORADOS", "201001024022", "SANTO DOMINGO DE LOS TSACHILAS"], ["VALLE HERMOSO", "201001001040", "SANTO DOMINGO DE LOS TSACHILAS"], ["ZARACAY", "201001024019", "SANTO DOMINGO DE LOS TSACHILAS"], ["EL ENO", "201001022038", "SUCUMBIOS"], ["LAGO AGRIO", "201001017003", "SUCUMBIOS"], ["NUEVA LOJA", "201001022001", "SUCUMBIOS"], ["SAN PEDRO DE LOS COFANES", "201001022036", "SUCUMBIOS"], ["SHUSHUFINDI", "201001022002", "SUCUMBIOS"], ["SIETE DE JULIO", "201001022037", "SUCUMBIOS"], ["AMBATO", "20100101901", "TUNGURAHUA"], ["ATAHUALPA (CHISALATA)", "201001019051", "TUNGURAHUA"], ["ATOCHA FICOA", "201001019043", "TUNGURAHUA"], ["AUGUSTO N. MARTINEZ (MUNDUGLEO)", "201001019052", "TUNGURAHUA"], ["BAÑOS DE AGUA SANTA", "20100101902", "TUNGURAHUA"], ["Betínez (Pachanlica)", "201001019014", "TUNGURAHUA"], ["CELIANO MONGE", "201001019044", "TUNGURAHUA"], ["CEVALLOS", "201001019005", "TUNGURAHUA"], ["CIUDAD NUEVA", "201001019061", "TUNGURAHUA"], ["GARCIA MORENO (CHUMAQUI)", "201001019059", "TUNGURAHUA"], ["GUAMBALO (HUAMBALO)", "201001019064", "TUNGURAHUA"], ["HUACHI CHICO", "201001019045", "TUNGURAHUA"], ["HUACHI GRANDE", "201001019053", "TUNGURAHUA"], ["HUACHI LORETO", "201001019046", "TUNGURAHUA"], ["HUAMBALO", "201001019011", "TUNGURAHUA"], ["IZAMBA", "201001019054", "TUNGURAHUA"], ["LA MERCED (AMBATO)", "201001019068", "TUNGURAHUA"], ["LA PENINSULA", "201001019047", "TUNGURAHUA"], ["MATRIZ", "201001019048", "TUNGURAHUA"], ["MOCHA", "201001019007", "TUNGURAHUA"], ["MONTALVO (TUNGURAHUA)", "201001019071", "TUNGURAHUA"], ["PATATE", "201001003008", "TUNGURAHUA"], ["PELILEO", "201001019004", "TUNGURAHUA"], ["PELILEO GRANDE", "201001019057", "TUNGURAHUA"], ["PICAIGUA", "201001019055", "TUNGURAHUA"], ["PILLARO", "201001019006", "TUNGURAHUA"], ["PISHILATA", "201001019049", "TUNGURAHUA"], ["QUERO", "201001019008", "TUNGURAHUA"], ["SALASACA", "201001019060", "TUNGURAHUA"], ["SAN BARTOLOME DE PINLLOG", "201001019056", "TUNGURAHUA"], ["SAN FRANCISCO (AMBATO)", "201001019050", "TUNGURAHUA"], ["San Pedro De Pelileo", "201001019013", "TUNGURAHUA"], ["SANTA ROSA (AMBATO)", "201001019069", "TUNGURAHUA"], ["TISALEO", "201001019009", "TUNGURAHUA"], ["TOTORAS", "201001019070", "TUNGURAHUA"], ["Ulba", "201001019012", "TUNGURAHUA"], ["CENTINELA DEL CONDOR", "201001021006", "ZAMORA CHINCHIPE"], ["CUMBARATZA", "201001021007", "ZAMORA CHINCHIPE"], ["EL LIMON", "201001021013", "ZAMORA CHINCHIPE"], ["EL PANGUI", "201001021036", "ZAMORA CHINCHIPE"], ["LOS ENCUENTROS", "201001021037", "ZAMORA CHINCHIPE"], ["PACHICUTZA", "201001021040", "ZAMORA CHINCHIPE"], ["PANGUI", "201001021005", "ZAMORA CHINCHIPE"], ["PANGUINTZA", "201001021044", "ZAMORA CHINCHIPE"], ["SABANILLA (ZAMORA)", "201001021051", "ZAMORA CHINCHIPE"], ["TIMBARA", "201001021016", "ZAMORA CHINCHIPE"], ["YANTZAZA", "201001015003", "ZAMORA CHINCHIPE"], ["YANTZAZA (YANZATZA)", "201001021034", "ZAMORA CHINCHIPE"], ["ZAMORA", "201001021001", "ZAMORA CHINCHIPE"], ["ZUMBI", "201001021017", "ZAMORA CHINCHIPE"]];
+var qs=new URLSearchParams(location.search);
+var executionId=qs.get("executionId")||"";
+if(!executionId){var m0=location.href.match(/[?&]executionId=([^&#]+)/);if(m0)executionId=decodeURIComponent(m0[1]);}
+var WA=(qs.get("wa")||"593999842656").replace(/\D/g,"");
+var PROXY="https://enviafacil-callback.fn.jelou.ai";
 
-/* ---------- MAPA ---------- */
-function abrirMapa(target){mapCtx=target;document.getElementById("modal").style.display="flex";
-  setTimeout(function(){ if(!leaflet){ leaflet=L.map("efMap").setView([-1.8312,-78.1834],6);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"OSM"}).addTo(leaflet);
-    marker=L.marker([-1.8312,-78.1834],{draggable:true}).addTo(leaflet);
-  } leaflet.invalidateSize(); },250);}
-function cerrarMapa(){document.getElementById("modal").style.display="none";}
-function usarUbic(){var ll=marker.getLatLng(); if(mapCtx==="rem"){remitente.lat=ll.lat.toFixed(6);remitente.lon=ll.lng.toFixed(6);} else {cur.lat=ll.lat.toFixed(6);cur.lon=ll.lng.toFixed(6);} cerrarMapa();
-  var b=document.getElementById(mapCtx==="rem"?"mapBtnRem":"mapBtnDest"); if(b) b.innerHTML="✅ Ubicación marcada ("+ll.lat.toFixed(4)+", "+ll.lng.toFixed(4)+")";}
+// ===== estado =====
+var estado={remitente:null,envios:[],idx:0};
+var sel={Ret:null,Des:null};
+function nuevoEnvio(){return {tipo:null,idServicio:null,ciudad:null,piezas:1,peso:null,valor:null,contenido:"",dest:{}};}
 
-/* ---------- PÁGINAS ---------- */
-function pRem(){setH("📍 Remitente","De dónde retiramos · una sola vez");H(
- '<div class="map" id="mapBtnRem" onclick="abrirMapa(\'rem\')">'+(remitente.lat?'✅ Ubicación marcada ('+remitente.lat+', '+remitente.lon+')':'📍 Seleccionar ubicación en el mapa')+'</div><div class="maphint">Ubica el pin de tu dirección de retiro.</div>'
- +'<div class="sec">CIUDAD DE RETIRO</div><label>Ciudad <span class="req">*</span></label><input id="rem_ciudad" list="ciu" value="'+(remitente.ciudad||"")+'" oninput="pv(\'rem_ciudad\',\'rem_prov\')"><datalist id="ciu"></datalist><div class="prov" id="rem_prov" style="'+(prov(remitente.ciudad)?"":"display:none")+'">Provincia: <b>'+prov(remitente.ciudad)+'</b></div>'
- +'<div class="sec">DATOS DEL REMITENTE</div>'
- +'<label>Cédula o RUC <span class="opt">(opcional)</span></label><input id="rem_ced" value="'+(remitente.ced||"")+'">'
- +'<label>Nombres completos <span class="req">*</span></label><input id="rem_nom" value="'+(remitente.nom||"")+'">'
- +'<label>Correo <span class="opt">(opcional)</span></label><input id="rem_cor" value="'+(remitente.cor||"")+'">'
- +'<label>Celular <span class="req">*</span></label><input id="rem_cel" value="'+(remitente.cel||"")+'">'
- +'<label>Calle principal <span class="req">*</span></label><input id="rem_c1" value="'+(remitente.c1||"")+'">'
- +'<label>Número de casa <span class="req">*</span></label><input id="rem_nc" value="'+(remitente.nc||"")+'">'
- +'<label>Calle secundaria <span class="req">*</span></label><input id="rem_c2" value="'+(remitente.c2||"")+'">'
- +'<label>Referencia <span class="req">*</span></label><input id="rem_ref" value="'+(remitente.ref||"")+'">'
- +'<button class="cta" onclick="saveRem()">Continuar →</button>');
- fillCiu();}
-function saveRem(){remitente.ciudad=g("rem_ciudad");remitente.ced=g("rem_ced");remitente.nom=g("rem_nom");remitente.cor=g("rem_cor");remitente.cel=g("rem_cel");remitente.c1=g("rem_c1");remitente.nc=g("rem_nc");remitente.c2=g("rem_c2");remitente.ref=g("rem_ref");remitente.prov=prov(remitente.ciudad);
-  cur={tipo:"Paquete"};nuevoDestino();}
+// ===== ciudad autocomplete (copiado de datos-envio.html) =====
+function norm(s){return String(s||'').normalize('NFKD').replace(/[̀-ͯ]/g,'').toUpperCase();}
+function search(k){var q=norm((document.getElementById('q'+k)||{}).value||'');var box=document.getElementById('sug'+k);if(!box)return;
+ if(q.length<2){box.classList.remove('show');return;}
+ var hits=CAT.filter(function(c){return norm(c[0]).includes(q)||norm(c[2]).includes(q);}).sort(function(a,b){var A=norm(a[0]).indexOf(q),B=norm(b[0]).indexOf(q);if(A<0)A=99;if(B<0)B=99;return A-B;}).slice(0,30);
+ if(!hits.length){box.innerHTML='<div class="empty">Sin resultados</div>';box.classList.add('show');return;}
+ box.innerHTML=hits.map(function(c){return '<div onclick="choose(\''+k+'\',\''+c[1]+'\','+JSON.stringify(c[0]).replace(/"/g,'&quot;')+',\''+c[2]+'\')"><span style="font-weight:600">'+c[0]+'</span> <span style="font-weight:600;color:#7a6a00">· '+c[2]+'</span></div>';}).join('');
+ box.classList.add('show');}
+function choose(k,code,name,prov){sel[k]={code:code,name:name,prov:prov};var s=document.getElementById('sug'+k);if(s)s.classList.remove('show');
+ var qi=document.getElementById('q'+k);if(qi)qi.classList.add('hidden');
+ document.getElementById('ch'+k).innerHTML='<div class="chosen">✅ '+name+' <span class="pv">('+prov+')</span><span class="x" onclick="clr(\''+k+'\')">✕</span></div>';recheck();}
+function clr(k){sel[k]=null;var ch=document.getElementById('ch'+k);if(ch)ch.innerHTML='';var i=document.getElementById('q'+k);if(i){i.classList.remove('hidden');i.value='';}recheck();}
+function ciudadHTML(k,label,ph){
+ if(sel[k]){return '<div class="fld"><label class="lbl">'+label+'</label><input id="q'+k+'" class="hidden" placeholder="'+ph+'" autocomplete="off" oninput="search(\''+k+'\')"><div id="sug'+k+'" class="sug"></div><div id="ch'+k+'"><div class="chosen">✅ '+sel[k].name+' <span class="pv">('+sel[k].prov+')</span><span class="x" onclick="clr(\''+k+'\')">✕</span></div></div></div>';}
+ return '<div class="fld"><label class="lbl">'+label+'</label><input id="q'+k+'" placeholder="'+ph+'" autocomplete="off" oninput="search(\''+k+'\')" onfocus="search(\''+k+'\')"><div id="sug'+k+'" class="sug"></div><div id="ch'+k+'"></div></div>';}
 
-function nuevoDestino(){cur.idx=destinos.length+1;pEnvio();}
-function pEnvio(){setH("Datos del envío","Destino "+cur.idx,"Página 1 de 2");
- var paq='<label>Peso (kg) <span class="req">*</span></label><input id="e_peso" value="'+(cur.peso||"")+'"><label>Valor declarado ($) <span class="req">*</span></label><input id="e_val" value="'+(cur.val||"")+'"><label>Piezas <span class="req">*</span></label><input id="e_pz" value="'+(cur.pz||"")+'">';
- var doc='<div class="prov" style="background:#E1F5EE;border-color:#9FE1CB;color:#0F6E56">📄 Documento: peso y valor fijos (2 kg / $0).</div>';
- H('<div class="sec">¿QUÉ ENVÍAS?</div><div class="seg"><div class="op '+(cur.tipo==="Paquete"?"sel":"")+'" onclick="setT(\'Paquete\')">📦 Paquete</div><div class="op '+(cur.tipo==="Documento"?"sel":"")+'" onclick="setT(\'Documento\')">📄 Documento</div></div>'
- +'<div style="margin-top:12px">'+(cur.tipo==="Paquete"?paq:doc)+'</div>'
- +'<div class="sec">CIUDAD DE DESTINO</div><label>Ciudad <span class="req">*</span></label><input id="e_ciudad" list="ciu" value="'+(cur.ciudad||"")+'" oninput="pv(\'e_ciudad\',\'e_prov\')"><datalist id="ciu"></datalist><div class="prov" id="e_prov" style="'+(prov(cur.ciudad)?"":"display:none")+'">Provincia: <b>'+prov(cur.ciudad)+'</b></div>'
- +'<button class="cta" onclick="saveEnvio()">Continuar →</button>');
- fillCiu();}
-function setT(t){cur.tipo=t;saveEnvioSoft();pEnvio();}
-function saveEnvioSoft(){if(document.getElementById("e_peso")){cur.peso=g("e_peso");cur.val=g("e_val");cur.pz=g("e_pz");}cur.ciudad=g("e_ciudad");}
-function saveEnvio(){saveEnvioSoft();cur.prov=prov(cur.ciudad);pDest();}
+// ===== validación cédula/RUC + correo (copiado de index.html) =====
+function _ced10(v){if(v.length!==10)return false;var d=v.split("").map(Number),prov=+v.slice(0,2);if(prov<1||prov>24)return false;var suma=0;for(var i=0;i<9;i++){var x=d[i]*(i%2===0?2:1);suma+=x>9?x-9:x;}return ((10-suma%10)%10)===d[9];}
+function _mod11(v,coef){var s=0;for(var i=0;i<coef.length;i++)s+=(+v[i])*coef[i];var r=11-(s%11);if(r===11)r=0;return r;}
+function _rucOk(v){if(v.length!==13)return false;var prov=+v.slice(0,2);if(prov<1||prov>24)return false;var t=+v[2];if(t<6)return _ced10(v.slice(0,10))&&(+v.slice(10))>0;if(t===6)return _mod11(v,[3,2,7,6,5,4,3,2])===(+v[8])||(+v.slice(9))>0;if(t===9)return _mod11(v,[4,3,2,7,6,5,4,3,2])===(+v[9])||(+v.slice(10))>0;return false;}
+function cedulaOk(v){v=(v||"").replace(/\D/g,"");if(v.length===10)return _ced10(v);if(v.length===13)return _rucOk(v);return false;}
+function correoOk(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);}
 
-function pDest(){setH("Datos del destinatario","Destino "+cur.idx,"Página 2 de 2");H(
- '<div class="map" id="mapBtnDest" onclick="abrirMapa(\'dest\')">'+(cur.lat?'✅ Ubicación marcada ('+cur.lat+', '+cur.lon+')':'📍 Seleccionar ubicación en el mapa')+'</div><div class="maphint">Ubica el pin de la dirección de entrega.</div>'
- +'<div class="sec">DATOS DE QUIEN RECIBE</div>'
- +'<label>Cédula o RUC <span class="opt">(opcional)</span></label><input id="d_ced" value="'+(cur.ced||"")+'">'
- +'<label>Nombres completos <span class="req">*</span></label><input id="d_nom" value="'+(cur.nom||"")+'">'
- +'<label>Correo <span class="opt">(opcional)</span></label><input id="d_cor" value="'+(cur.cor||"")+'">'
- +'<label>Celular <span class="opt">(opcional)</span></label><input id="d_cel" value="'+(cur.cel||"")+'">'
- +'<label>Calle principal <span class="req">*</span></label><input id="d_c1" value="'+(cur.c1||"")+'">'
- +'<label>Número de casa <span class="req">*</span></label><input id="d_nc" value="'+(cur.nc||"")+'">'
- +'<label>Calle secundaria <span class="req">*</span></label><input id="d_c2" value="'+(cur.c2||"")+'">'
- +'<label>Referencia <span class="req">*</span></label><input id="d_ref" value="'+(cur.ref||"")+'">'
- +'<button class="cta" onclick="saveDest()">Continuar →</button>');}
-function saveDest(){cur.ced=g("d_ced");cur.nom=g("d_nom");cur.cor=g("d_cor");cur.cel=g("d_cel");cur.c1=g("d_c1");cur.nc=g("d_nc");cur.c2=g("d_c2");cur.ref=g("d_ref");pRes();}
+// ===== helpers de render =====
+function app(h){document.getElementById('app').innerHTML=h;window.scrollTo(0,0);}
+function barra(h){document.getElementById('barra').innerHTML=h;}
+function val(id){var el=document.getElementById(id);return el?el.value.trim():"";}
+function setErr(id,bad){var el=document.getElementById(id);if(!el)return;el.classList.toggle("invalid",bad);var e=document.getElementById("e_"+id);if(e)e.style.display=bad?"block":"none";}
+var _recheck=function(){};function recheck(){try{_recheck();}catch(e){}}
 
-function pRes(){setH("Resumen · Destino "+cur.idx,"Revisa antes de confirmar");H(
- '<div class="banner">📋 <b>Revisa que todo esté correcto.</b> Si está bien, confirma. Si no, edítalo.</div>'
- +'<div class="row"><span class="k">Tipo</span><span class="v">'+cur.tipo+(cur.tipo==="Paquete"?" · "+(cur.peso||"?")+" kg · $"+(cur.val||"?"):" · 2 kg")+'</span></div>'
- +'<div class="row"><span class="k">Destino</span><span class="v">'+(cur.ciudad||"?")+" ("+(cur.prov||"?")+')</span></div>'
- +'<div class="row"><span class="k">Recibe</span><span class="v">'+(cur.nom||"?")+'</span></div>'
- +'<div class="row"><span class="k">Dirección</span><span class="v">'+(cur.c1||"")+" "+(cur.nc||"")+'</span></div>'
- +'<div class="row"><span class="k">Ubicación</span><span class="v">'+(cur.lat?"marcada":"—")+'</span></div>'
- +'<button class="cta ok" onclick="confirmar()">✅ Confirmar</button>'
- +'<button class="cta ghost" onclick="pEnvio()">✏️ Editar</button>');}
-function confirmar(){destinos.push(cur);pOtro();}
+// bloque persona (markup y orden IGUAL a index.html), role: 'rem' | 'dest'
+function personaHTML(role,d){d=d||{};var dest=(role==='dest');
+ var cedLbl=dest?'Cédula o RUC <span class="op">(opcional)</span>':'Cédula (10) o RUC (13) <span class="req">*</span>';
+ var corLbl=dest?'Correo electrónico <span class="op">(opcional)</span>':'Correo electrónico <span class="req">*</span>';
+ var celLbl=dest?'Celular <span class="op">(opcional)</span>':'Celular <span class="req">*</span>';
+ var dirTit=dest?'Dirección de entrega':'Dirección de recolección';
+ var refLbl=dest?'Referencia de entrega <span class="req">*</span>':'Referencia de recolección <span class="req">*</span>';
+ return '<div class="fld"><button type="button" class="mapbtn" onclick="efOpenMapa()">📍 Seleccionar ubicación en el mapa</button>'
+  +'<div class="hint">Ubica el pin y autocompletamos la dirección. Luego completa lo que falte.</div>'
+  +'<input type="hidden" id="ef_lat" value="'+(d.lat||'')+'"><input type="hidden" id="ef_lon" value="'+(d.lon||'')+'"></div>'
+  +'<div class="seccion">'+(dest?'Datos de quien recibe':'Datos de quien envía')+'</div>'
+  +'<div class="fld"><label>'+cedLbl+'</label><input id="cedula" inputmode="numeric" maxlength="13" placeholder="10 dígitos (cédula) o 13 (RUC)" value="'+(d.cedula||'')+'"><div class="errmsg" id="e_cedula">Ingresa una cédula (10) o RUC (13) válido.</div></div>'
+  +'<div class="fld"><label>Nombres completos <span class="req">*</span></label><input id="nombre" placeholder="Nombres y apellidos" value="'+(d.nombre||'')+'"><div class="errmsg" id="e_nombre">Ingresa los nombres completos.</div></div>'
+  +'<div class="fld"><label>'+corLbl+'</label><input id="correo" type="email" inputmode="email" placeholder="correo@ejemplo.com" value="'+(d.correo||'')+'"><div class="errmsg" id="e_correo">Correo no válido.</div></div>'
+  +'<div class="fld"><label>'+celLbl+'</label><input id="celular" inputmode="numeric" maxlength="15" placeholder="09XXXXXXXX" value="'+(d.celular||'')+'"><div class="errmsg" id="e_celular">Celular de 10 dígitos (o internacional).</div></div>'
+  +'<div class="seccion">'+dirTit+'</div>'
+  +'<div class="fld"><label>Calle principal <span class="req">*</span></label><input id="calle_principal" placeholder="Av. / Calle principal" value="'+(d.calle_principal||'')+'"><div class="errmsg" id="e_calle_principal">Ingresa la calle principal.</div></div>'
+  +'<div class="fld"><label>Número de casa <span class="req">*</span></label><input id="numero_casa" placeholder="N° de casa" value="'+(d.numero_casa||'')+'"><div class="errmsg" id="e_numero_casa">Ingresa el número de casa.</div></div>'
+  +'<div class="fld"><label>Calle secundaria <span class="req">*</span></label><input id="calle_secundaria" placeholder="Calle secundaria" value="'+(d.calle_secundaria||'')+'"><div class="errmsg" id="e_calle_secundaria">Ingresa la calle secundaria.</div></div>'
+  +'<div class="fld"><label>'+refLbl+'</label><input id="referencia" placeholder="Punto de referencia" value="'+(d.referencia||'')+'"><div class="errmsg" id="e_referencia">Ingresa un punto de referencia.</div><div class="hint">Ej: edificio azul, junto al parque…</div></div>';}
 
-function pOtro(){setH("Destino "+cur.idx+" confirmado ✅","Llevas "+destinos.length+" destino(s)");H(
- '<div class="banner">✅ <b>Destino '+cur.idx+' agregado</b> — '+cur.ciudad+' · '+cur.tipo+'.</div>'
- +'<button class="cta mor" onclick="cur={tipo:\'Paquete\'};nuevoDestino()">➕ Agregar otro destino</button>'
- +'<button class="cta ok" onclick="pTotal()" style="margin-top:10px">✅ Terminar</button>');}
+function leerPersona(){return {cedula:val("cedula"),nombre:val("nombre"),correo:val("correo"),celular:val("celular"),calle_principal:val("calle_principal"),numero_casa:val("numero_casa"),calle_secundaria:val("calle_secundaria"),referencia:val("referencia"),lat:val("ef_lat"),lon:val("ef_lon")};}
+function validarPersona(role){var dest=(role==='dest');var ok=true;
+ var cVal=val("cedula");if(dest&&cVal===""){setErr("cedula",false);}else{var c=cedulaOk(cVal);setErr("cedula",!c);ok=ok&&c;}
+ var nOk=val("nombre").length>=3;setErr("nombre",!nOk);ok=ok&&nOk;
+ var ev=val("correo");if(dest&&ev===""){setErr("correo",false);}else{var e=correoOk(ev);setErr("correo",!e);ok=ok&&e;}
+ var cv=val("celular");if(dest&&cv===""){setErr("celular",false);}else{var ce=/^\d{10,15}$/.test(cv);setErr("celular",!ce);ok=ok&&ce;}
+ var a=val("calle_principal").length>=2;setErr("calle_principal",!a);ok=ok&&a;
+ var b=val("numero_casa").length>=1;setErr("numero_casa",!b);ok=ok&&b;
+ var s=val("calle_secundaria").length>=1;setErr("calle_secundaria",!s);ok=ok&&s;
+ var r=val("referencia").length>=3;setErr("referencia",!r);ok=ok&&r;
+ return ok;}
 
-function pTotal(){setH("Revisa tu multienvío","Un retiro · "+destinos.length+" destino(s)");
- var lst=destinos.map(function(d,i){return '<div class="row"><span class="k">Destino '+(i+1)+'</span><span class="v">'+d.ciudad+' ('+d.prov+') · '+d.tipo+'</span></div>';}).join("");
- H('<div class="banner">📋 Todo listo. Confirma y enviamos.</div>'
- +'<div class="row"><span class="k">Retiro</span><span class="v">'+remitente.nom+' · '+remitente.ciudad+'</span></div>'+lst
- +'<button class="cta ok" onclick="enviar()">✅ Confirmar y enviar</button>'
- +'<button class="cta ghost" onclick="pEnvio()">✏️ Editar destinos</button>');}
+function prog(n){var t=['Remitente','Envío','Destinatario','Resumen'];return '<div class="prog">'+t.map(function(_,i){return '<div class="dot'+(i<=n?' on':'')+'"></div>';}).join('')+'</div>';}
 
-function enviar(){
- var payload={ remitente:{ ciudad:remitente.ciudad, provincia:remitente.prov, nombre:remitente.nom, cedula:remitente.ced, celular:remitente.cel, correo:remitente.cor, calle1:remitente.c1, nCalle:remitente.nc, calle2:remitente.c2, referencia:remitente.ref, lat:remitente.lat, lon:remitente.lon },
-   envios: destinos.map(function(d){return { tipo:d.tipo, peso:d.tipo==="Documento"?2:Number(d.peso||0), valor:d.tipo==="Documento"?0:Number(d.val||0), piezas:d.tipo==="Documento"?1:Number(d.pz||1), ciudadDestino:d.ciudad, provinciaDestino:d.prov, destinatario:{nombre:d.nom,cedula:d.ced,celular:d.cel,correo:d.cor,calle1:d.c1,nCalle:d.nc,calle2:d.c2,referencia:d.ref,lat:d.lat,lon:d.lon} };}) };
- var qs=new URLSearchParams(location.search);
- var executionId=qs.get("executionId")||""; if(!executionId){var m=location.href.match(/[?&]executionId=([^&#]+)/);if(m)executionId=decodeURIComponent(m[1]);}
- var callback=qs.get("callback")||"https://enviafacil-callback.fn.jelou.ai";
- var wa=(qs.get("wa")||"").replace(/\D/g,"");
- if(!executionId){ // modo suelto (sin bot) → mostrar payload para verificar
-   setH("Payload de prueba","Esto es lo que se enviaría al bot");
-   H('<div class="banner">🧪 MODO PRUEBA (sin bot) — este es el payload. Abierto desde el bot, se envía al callback y regresa a WhatsApp.</div>'
-   +'<div id="payout">'+JSON.stringify(payload,null,2)+'</div>'
-   +'<button class="cta" onclick="pRem2()">↺ Reiniciar prueba</button>'); return; }
- setH("Enviando…","Un momento"); H('<div class="banner">Enviando tu multienvío… ⏳</div>');
- var body=Object.assign({executionId:executionId,success:true},payload);
- fetch(callback,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})
-  .then(function(r){return r.json().catch(function(){return {};});})
-  .then(function(out){ if(out&&out.ok===false) throw new Error("callback");
-    H('<div class="banner" style="background:#E1F5EE;border-color:#9FE1CB;color:#0F6E56">✅ ¡Multienvío enviado! Regresando a WhatsApp…</div>');
-    if(wa) setTimeout(function(){location.href="https://wa.me/"+wa;},900); else setTimeout(function(){try{window.close();}catch(e){}},1200);
-  }).catch(function(){ H('<div class="banner" style="background:#FCEBEB;border-color:#F09595;color:#A32D2D">No pudimos enviar. Revisa tu conexión e intenta de nuevo.</div><button class="cta" onclick="pTotal()">Reintentar</button>'); });
-}
-function pRem2(){remitente={};destinos=[];cur=null;pRem();}
+// ===== PANTALLA 0: REMITENTE (solo ciudad de retiro + datos del remitente) =====
+function scrRemitente(){sel.Des=null;var d=estado.remitente||{};if(estado.remitente&&estado.remitente.ciudad)sel.Ret=estado.remitente.ciudad;
+ app('<div class="head"><div class="logo">📦</div><div><h1>Multi envíos</h1><p>Un solo retiro · varios destinos</p></div></div>'
+  +prog(0)
+  +'<div class="card"><div class="step">Remitente · de dónde retiramos</div>'
+  +ciudadHTML('Ret','📍 Ciudad de retiro','Escribe tu ciudad...')
+  +personaHTML('rem',d)+'</div>');
+ barra('<button class="btn" id="btn">Continuar</button>');
+ _recheck=function(){document.getElementById('btn').disabled=!sel.Ret;};recheck();
+ document.getElementById('btn').onclick=function(){
+   if(!sel.Ret){efAviso('Elige la ciudad de retiro.');return;}
+   if(!validarPersona('rem'))return;
+   estado.remitente=Object.assign({ciudad:sel.Ret},leerPersona());
+   if(!estado.envios.length)estado.envios.push(nuevoEnvio());
+   estado.idx=0;scrEnvio(0);
+ };}
 
-function pv(inId,boxId){var c=g(inId),p=prov(c);var b=document.getElementById(boxId);if(b){b.style.display=p?"block":"none";b.innerHTML='Provincia: <b>'+p+'</b>';}}
-function fillCiu(){var dls=document.querySelectorAll("#ciu");dls.forEach(function(dl){dl.innerHTML=Object.keys(CAT).map(function(c){return '<option value="'+c+'">';}).join("");});}
-pRem();
+// ===== PANTALLA 1 (por destino): DATOS DEL ENVÍO =====
+function scrEnvio(i){var e=estado.envios[i];sel.Des=e.ciudad||null;sel.Ret=estado.remitente?estado.remitente.ciudad:null;
+ app('<div class="head"><div class="logo">📦</div><div><h1>Destino '+(i+1)+'</h1><p>Página 1 · Datos del envío</p></div></div>'
+  +prog(1)
+  +'<div class="card"><div class="step">¿Qué vas a enviar?</div><div class="tipos">'
+  +'<div class="tipo" data-tipo="documento" data-id="201202002001002" onclick="pickTipo(this)"><div class="ic">📄</div><div class="t">Documento</div></div>'
+  +'<div class="tipo" data-tipo="paquete" data-id="201202002002013" onclick="pickTipo(this)"><div class="ic">📦</div><div class="t">Paquete</div></div></div>'
+  +'<div id="fld_piezas" class="fld hidden" style="margin-top:14px"><label class="lbl">📦 Número de piezas</label><input id="piezas" type="number" inputmode="numeric" min="1" max="100" value="'+(e.piezas||1)+'"></div>'
+  +'<div id="paqFields" class="hidden"><div class="row"><div class="fld"><label class="lbl">⚖️ Peso (kg) — máx 50/pieza</label><input id="peso" type="text" inputmode="decimal" placeholder="1 a 50 kg" value="'+(e.peso||'')+'" oninput="chkPeso()"><div id="pesoerr" class="errp">⚠️ El peso máximo es 50 kg por pieza.</div></div>'
+  +'<div class="fld"><label class="lbl">💵 Valor declarado</label><input id="valor" type="number" inputmode="numeric" min="0" placeholder="USD" value="'+(e.valor||'')+'"></div></div>'
+  +'<div class="fld"><label class="lbl">📦 Tipo de contenido <span class="req">*</span></label><input id="contenido" type="text" maxlength="60" placeholder="Escribe qué contiene (ej. ropa, zapatos)" value="'+(e.contenido||'')+'"><div class="hint">Descríbelo tú mismo, no uses términos genéricos.</div></div></div>'
+  +ciudadHTML('Des','🎯 Ciudad de destino','Escribe la ciudad destino...')
+  +'</div>');
+ barra('<button class="btn sec" id="atras" style="flex:0 0 40%">Atrás</button><button class="btn" id="btn">Continuar</button>');
+ // restaurar tipo elegido
+ if(e.tipo){var tile=document.querySelector('.tipo[data-tipo="'+e.tipo+'"]');if(tile)pickTipo(tile);}
+ _recheck=function(){document.getElementById('btn').disabled=!(window._selTipo&&sel.Des);};recheck();
+ document.getElementById('atras').onclick=function(){window._selTipo=null;if(i===0)scrRemitente();else scrMas();};
+ document.getElementById('btn').onclick=function(){
+   if(!window._selTipo){efAviso('Elige Documento o Paquete.');return;}
+   if(!sel.Des){efAviso('Elige la ciudad de destino.');return;}
+   var paq=window._selTipo.tipo==='paquete';
+   var piezas=paq?parseInt(val('piezas')||'1',10):1;
+   var peso=paq?parseFloat((val('peso')||'0').replace(',','.')):2;
+   var valor=paq?parseFloat((val('valor')||'0').replace(',','.')):0;
+   var contenido=paq?val('contenido'):'Documentos';
+   if(paq&&!(piezas>=1)){efAviso('Indica el número de piezas (mínimo 1).');return;}
+   if(paq&&!(peso>=1)){efAviso('Indica el peso en kg (mínimo 1).');return;}
+   if(paq&&peso>50*piezas){efAviso('El peso máximo es 50 kg por pieza.');return;}
+   if(paq&&!(valor>0)){efAviso('Indica el valor declarado (mayor a 0).');return;}
+   if(paq&&contenido.length<3){efAviso('Escribe qué contiene (mínimo 3 letras).');return;}
+   e.tipo=window._selTipo.tipo;e.idServicio=window._selTipo.id;e.ciudad=sel.Des;
+   e.piezas=piezas;e.peso=peso;e.valor=valor;e.contenido=contenido;
+   window._selTipo=null;scrDest(i);
+ };}
+function pickTipo(el){document.querySelectorAll('.tipo').forEach(function(t){t.classList.remove('sel');});el.classList.add('sel');
+ window._selTipo={tipo:el.dataset.tipo,id:el.dataset.id};var paq=el.dataset.tipo==='paquete';
+ document.getElementById('paqFields').classList.toggle('hidden',!paq);document.getElementById('fld_piezas').classList.toggle('hidden',!paq);recheck();}
+function chkPeso(){var el=document.getElementById('peso');if(!el)return;var v=parseFloat((el.value||'0').replace(',','.'));var pz=parseInt((document.getElementById('piezas')||{}).value||'1')||1;var bad=v>50*pz;el.classList.toggle('bad',bad);var e=document.getElementById('pesoerr');if(e)e.style.display=bad?'block':'none';}
+
+// ===== PANTALLA 2 (por destino): DATOS DEL DESTINATARIO =====
+function scrDest(i){var e=estado.envios[i];sel.Ret=estado.remitente?estado.remitente.ciudad:null;
+ app('<div class="head"><div class="logo">📦</div><div><h1>Destino '+(i+1)+'</h1><p>Página 2 · Datos del destinatario</p></div></div>'
+  +prog(2)+'<div class="card">'+personaHTML('dest',e.dest)+'</div>');
+ barra('<button class="btn sec" id="atras" style="flex:0 0 40%">Atrás</button><button class="btn" id="btn">Continuar</button>');
+ _recheck=function(){};
+ document.getElementById('atras').onclick=function(){e.dest=leerPersona();scrEnvio(i);};
+ document.getElementById('btn').onclick=function(){if(!validarPersona('dest'))return;e.dest=leerPersona();scrResumen(i);};}
+
+// ===== PANTALLA 3 (por destino): RESUMEN + CONFIRMAR/EDITAR =====
+function itm(k,v){return v?'<div class="conf-item"><div class="k">'+k+'</div><div class="v">'+String(v).replace(/</g,'&lt;')+'</div></div>':'';}
+function scrResumen(i){var e=estado.envios[i];var d=e.dest;var dir=d.calle_principal+' '+d.numero_casa+(d.calle_secundaria?' y '+d.calle_secundaria:'');
+ var tipoL=e.tipo==='paquete'?'Paquete':'Documento';
+ app('<div class="head"><div class="logo">📦</div><div><h1>Destino '+(i+1)+'</h1><p>Revisa y confirma</p></div></div>'
+  +prog(3)
+  +'<div class="banner">📋 <b>Revisa que todo esté correcto.</b> Si está bien, confirma. Si no, edítalo.</div>'
+  +'<div class="card"><div class="step">Envío</div>'
+  +itm('Tipo',tipoL)+itm('Ciudad de destino',e.ciudad.name+' ('+e.ciudad.prov+')')
+  +(e.tipo==='paquete'?itm('Piezas',e.piezas)+itm('Peso',e.peso+' kg')+itm('Valor declarado','$'+e.valor)+itm('Contenido',e.contenido):'')
+  +'</div>'
+  +'<div class="card"><div class="step">Destinatario</div>'
+  +itm('Cédula / RUC',d.cedula)+itm('Nombres',d.nombre)+itm('Correo',d.correo)+itm('Celular',d.celular)
+  +itm('Dirección de entrega',dir)+itm('Referencia',d.referencia)+'</div>');
+ barra('<button class="btn sec" id="editar" style="flex:0 0 40%">✏️ Editar</button><button class="btn ok" id="btn">✅ Confirmar destino</button>');
+ document.getElementById('editar').onclick=function(){scrEnvio(i);};
+ document.getElementById('btn').onclick=function(){e.confirmado=true;scrMas();};}
+
+// ===== PANTALLA MÁS: ¿otro destino o terminar? =====
+function scrMas(){var n=estado.envios.filter(function(e){return e.confirmado;}).length;
+ var lst=estado.envios.map(function(e,i){if(!e.confirmado)return '';return '<div class="conf-item"><div class="k">Destino '+(i+1)+'</div><div class="v">'+e.ciudad.name+' ('+e.ciudad.prov+') · '+(e.tipo==='paquete'?'Paquete':'Documento')+' · '+e.dest.nombre+'</div></div>';}).join('');
+ app('<div class="head"><div class="logo">📦</div><div><h1>Multi envíos</h1><p>'+n+' destino(s) listo(s)</p></div></div>'
+  +'<div class="card"><div class="step">Destinos confirmados</div>'+lst+'</div>'
+  +'<div class="add" onclick="agregarDestino()">➕ Agregar otro destino</div>');
+ barra('<button class="btn ok" id="btn">✅ Terminar y enviar ('+n+')</button>');
+ document.getElementById('btn').onclick=enviar;}
+function agregarDestino(){estado.envios.push(nuevoEnvio());estado.idx=estado.envios.length-1;window._selTipo=null;sel.Des=null;scrEnvio(estado.idx);}
+
+// ===== ENVIAR (callback) =====
+function payload(){var r=estado.remitente;
+ return {executionId:executionId,success:true,
+  remitente:{ciudad:r.ciudad.name,ciudadCodigo:r.ciudad.code,provincia:r.ciudad.prov,cedula:r.cedula,nombre:r.nombre,correo:r.correo,celular:r.celular,calle_principal:r.calle_principal,numero_casa:r.numero_casa,calle_secundaria:r.calle_secundaria,referencia:r.referencia,lat:r.lat,lon:r.lon},
+  envios:estado.envios.filter(function(e){return e.confirmado;}).map(function(e){var d=e.dest;return {idServicio:e.idServicio,tipo:e.tipo==='paquete'?'Paquete':'Documento',ciudad:e.ciudad.name,ciudadCodigo:e.ciudad.code,provincia:e.ciudad.prov,piezas:e.piezas,peso:e.peso,valor:e.valor,contenido:e.contenido,cedula:d.cedula,nombre:d.nombre,correo:d.correo,celular:d.celular,calle_principal:d.calle_principal,numero_casa:d.numero_casa,calle_secundaria:d.calle_secundaria,referencia:d.referencia,lat:d.lat,lon:d.lon};})};}
+function enviar(){var body=payload();
+ if(!executionId){document.body.innerHTML='<div style="padding:24px;max-width:460px;margin:0 auto"><h2>✅ Vista de prueba (sin bot)</h2><p style="color:#6b6b6b">Este es el JSON que se enviaría al bot:</p><pre style="background:#111;color:#0f0;padding:14px;border-radius:10px;overflow:auto;font-size:12px">'+JSON.stringify(body,null,2)+'</pre></div>';return;}
+ document.body.innerHTML='<div style="text-align:center;padding:70px 22px"><div style="font-size:56px">⏳</div><h2 style="margin-top:8px">Enviando tu multienvío…</h2></div>';
+ fetch(PROXY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+  .then(function(r){return r.json().catch(function(){return {};});}).then(function(){
+    document.body.innerHTML='<div style="text-align:center;padding:70px 22px"><div style="font-size:56px">✅</div><h2 style="margin-top:8px">¡Listo!</h2><p style="color:#6b6b6b;margin-top:8px">Tu multienvío está en WhatsApp 📦<br><span style="font-size:13px;color:#9b9b9b">Cerrando…</span></p></div>';
+    setTimeout(function(){window.location.href='https://wa.me/'+WA;},1500);
+  }).catch(function(){document.body.innerHTML='<div style="text-align:center;padding:70px 22px"><div style="font-size:56px">⚠️</div><h2 style="margin-top:8px">No se pudo enviar</h2><p style="color:#6b6b6b;margin-top:8px">Inténtalo de nuevo.</p></div>';});}
+
+function efAviso(msg){var old=document.getElementById('efAvisoBox');if(old)old.remove();var b=document.createElement('div');b.id='efAvisoBox';b.style.cssText='position:fixed;left:14px;right:14px;bottom:74px;background:#FFF3F3;border:1.5px solid #E88;color:#a00;border-radius:10px;padding:11px 13px;font-size:14px;font-weight:600;z-index:5000;max-width:432px;margin:0 auto;text-align:center';b.textContent='⚠️ '+msg;document.body.appendChild(b);setTimeout(function(){if(b)b.remove();},3500);}
+
+scrRemitente();
+</script>
+
+<!-- MAPA: lógica (copiada de index.html), expone efOpenMapa() =====-->
+<script>
+(function(){
+  var modal=document.getElementById('efMapModal'),map=null,geoT=null;
+  var DEF=[-0.180653,-78.467834];
+  function setV(id,v){var el=document.getElementById(id);if(el&&v)el.value=v;}
+  function openM(){modal.classList.remove('hidden');
+    if(!map){map=L.map('efLeaf',{zoomControl:true}).setView(DEF,16);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+      map.on('moveend',onMove);tryLoc();}
+    setTimeout(function(){map.invalidateSize();onMove();},250);}
+  window.efOpenMapa=openM;
+  function closeM(){modal.classList.add('hidden');}
+  function onMove(){var sg=document.getElementById('efSug');if(sg)sg.style.display='none';var c=map.getCenter();
+    document.getElementById('efAddr').textContent='Ubicando…';document.getElementById('efCov').textContent='';
+    clearTimeout(geoT);geoT=setTimeout(function(){revGeo(c.lat,c.lng);},450);}
+  function revGeo(lat,lon){fetch('https://enviafacil-geocode.fn.jelou.ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lat:lat,lon:lon})})
+    .then(function(r){return r.json();}).then(function(d){var a=document.getElementById('efAddr'),cov=document.getElementById('efCov');
+      if(d&&d.ok){window._efGeo={lat:lat,lon:lon,calle:d.calle||'',sector:d.sector||'',ciudad:d.ciudad||'',prov:d.provincia||''};
+        a.textContent=d.formatted||((d.calle||'')+', '+(d.ciudad||''));
+        if(d.ciudad){cov.textContent='✅ '+d.ciudad+', '+(d.provincia||'');cov.style.color='#0f6e56';}else{cov.textContent='⚠️ No pudimos identificar la zona';cov.style.color='#a00';}
+      }else{a.textContent='No pudimos leer la dirección aquí';window._efGeo=null;}
+    }).catch(function(){document.getElementById('efAddr').textContent='Sin conexión al ubicar';});}
+  function tryLoc(){if(!navigator.geolocation)return;navigator.geolocation.getCurrentPosition(function(p){if(map)map.setView([p.coords.latitude,p.coords.longitude],16);},function(){},{timeout:6000,enableHighAccuracy:true});}
+  function confirmLoc(){if(!map){closeM();return;}var c=map.getCenter(),btn=document.getElementById('efMapConfirm');btn.textContent='Confirmando…';btn.disabled=true;
+    function done(d){setV('ef_lat',String(c.lat));setV('ef_lon',String(c.lng));
+      if(d&&d.ok){var _cp=d.calle||'',_cs=d.sector||'';if(!_cp&&_cs){_cp=_cs;_cs='';}if(_cs&&_cp&&_cs.trim().toLowerCase()===_cp.trim().toLowerCase())_cs='';if(!_cp&&d.formatted)_cp=String(d.formatted).split(',')[0].trim();if(_cp)setV('calle_principal',_cp);if(_cs)setV('calle_secundaria',_cs);}
+      btn.textContent='Confirmar ubicación';btn.disabled=false;closeM();}
+    fetch('https://enviafacil-geocode.fn.jelou.ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lat:c.lat,lon:c.lng})}).then(function(r){return r.json();}).then(done).catch(function(){done(null);});}
+  var FN='https://enviafacil-geocode.fn.jelou.ai',srchT=null,sess='ef-'+Date.now()+'-'+Math.floor(Math.random()*1e6);
+  function doSearch(q){var bias=map?(map.getCenter().lat+','+map.getCenter().lng):'';
+    fetch(FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q:q,session:sess,bias:bias})}).then(function(r){return r.json();}).then(function(d){var sug=document.getElementById('efSug');
+      if(!d.ok||!d.predictions||!d.predictions.length){sug.style.display='none';return;}sug.innerHTML='';
+      d.predictions.forEach(function(p){var row=document.createElement('div');row.style.cssText='padding:10px 12px;border-bottom:0.5px solid #eee;cursor:pointer';row.innerHTML='<div style="font-weight:600;font-size:13px">'+(p.main||p.description)+'</div>'+(p.sec?'<div style="color:#888;font-size:12px">'+p.sec+'</div>':'');row.addEventListener('click',function(){pickPlace(p.place_id,p.description);});sug.appendChild(row);});
+      sug.style.display='block';}).catch(function(){var sg=document.getElementById('efSug');if(sg)sg.style.display='none';});}
+  function pickPlace(pid,desc){var sug=document.getElementById('efSug');sug.style.display='none';document.getElementById('efSearch').value=desc;
+    fetch(FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({place_id:pid,session:sess})}).then(function(r){return r.json();}).then(function(d){sess='ef-'+Date.now()+'-'+Math.floor(Math.random()*1e6);if(d.ok&&d.lat&&d.lon&&map){map.setView([parseFloat(d.lat),parseFloat(d.lon)],17);}}).catch(function(){});}
+  (function(){var inp=document.getElementById('efSearch');if(!inp)return;inp.addEventListener('input',function(){var q=inp.value.trim();clearTimeout(srchT);if(q.length<3){document.getElementById('efSug').style.display='none';return;}srchT=setTimeout(function(){doSearch(q);},320);});})();
+  document.getElementById('efMapClose').addEventListener('click',closeM);
+  document.getElementById('efMapConfirm').addEventListener('click',confirmLoc);
+  document.getElementById('efMiUbic').addEventListener('click',tryLoc);
+})();
 </script>
 </body>
 </html>
