@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multi envíos · EnvíaFácil</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+  :root{--amar:#FFC400;--amarS:#FFF8E1;--bg:#f2f2f2;--tx:#0F0F0F;--mut:#6B7280;--bd:#E3E3E3;--ok:#0F9D58;--mor:#7c6fdd;--morS:#EEEDFE;--morT:#3C3489}
+  *{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  body{margin:0;background:var(--bg);color:var(--tx)}
+  .hdr{background:var(--amar);padding:14px 18px;position:sticky;top:0;z-index:5}
+  .hdr h1{font-size:18px;margin:0;font-weight:700}
+  .hdr p{font-size:12.5px;margin:3px 0 0;color:#4a3f00}
+  .pg{font-size:11px;font-weight:700;color:#4a3f00;background:rgba(255,255,255,.55);display:inline-block;padding:2px 9px;border-radius:6px;margin-top:6px}
+  .body{padding:16px;max-width:520px;margin:0 auto}
+  .map{width:100%;background:var(--amarS);border:2px solid var(--amar);border-radius:11px;padding:12px;font-weight:600;text-align:center;font-size:14.5px;cursor:pointer}
+  .maphint{font-size:12px;color:var(--mut);margin:6px 2px 12px}
+  .sec{font-size:11.5px;font-weight:700;color:var(--mut);letter-spacing:.5px;margin:14px 0 6px}
+  label{font-size:13.5px;font-weight:600;display:block;margin:10px 0 4px}
+  .opt{font-weight:400;color:var(--mut);font-size:12px}.req{color:#E24B4A}
+  input{width:100%;padding:11px 13px;border:1px solid var(--bd);border-radius:9px;font-size:14.5px;background:#fff}
+  .prov{margin-top:6px;background:var(--morS);border:1px solid #AFA9EC;border-radius:8px;padding:7px 11px;font-size:12.5px;color:var(--morT)}
+  .seg{display:flex;gap:8px}
+  .seg .op{flex:1;border:1.5px solid var(--bd);border-radius:10px;padding:11px;text-align:center;font-weight:600;font-size:14px;cursor:pointer;background:#fff}
+  .seg .op.sel{border-color:var(--amar);background:var(--amarS)}
+  .cta{width:100%;background:var(--amar);border:0;border-radius:11px;padding:14px;font-size:15.5px;font-weight:700;margin-top:18px;cursor:pointer}
+  .cta.ok{background:var(--ok);color:#fff}.cta.ghost{background:#fff;border:1.5px solid var(--bd);margin-top:8px}.cta.mor{background:var(--morS);border:2px solid var(--mor);color:var(--morT)}
+  .row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--bd);font-size:14px}
+  .row .k{color:var(--mut)}.row .v{font-weight:600;text-align:right}
+  .banner{background:var(--morS);border:1px solid #AFA9EC;color:var(--morT);border-radius:9px;padding:11px;font-size:13.5px;margin-bottom:10px}
+  .err{color:#E24B4A;font-size:12px;margin-top:4px;display:none}
+  #modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;z-index:20;align-items:flex-end}
+  #modalCard{background:#fff;width:100%;max-width:520px;margin:0 auto;border-radius:16px 16px 0 0;padding:14px;max-height:88vh;overflow:auto}
+  #efMap{height:300px;border-radius:10px;margin:8px 0}
+  #payout{white-space:pre-wrap;background:#0b132b;color:#7CFC98;padding:12px;border-radius:10px;font-size:11px;font-family:monospace;overflow:auto;max-height:300px}
+</style>
+</head>
+<body>
+<div class="hdr"><h1 id="hT">📦📦 Multi envíos</h1><p id="hS">Un solo retiro, varios destinos</p><span class="pg" id="hPg" style="display:none"></span></div>
+<div class="body" id="app"></div>
+
+<div id="modal"><div id="modalCard">
+  <div style="display:flex;justify-content:space-between;align-items:center"><b>Elige la ubicación</b><span onclick="cerrarMapa()" style="cursor:pointer;font-size:18px">✕</span></div>
+  <div id="efMap"></div>
+  <div style="font-size:12px;color:#6B7280">Arrastra el pin. Guardamos lat/lon.</div>
+  <button class="cta" onclick="usarUbic()">Usar esta ubicación</button>
+</div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+var CAT={"QUITO":"PICHINCHA","GUAYAQUIL":"GUAYAS","CUENCA":"AZUAY","MACHALA":"EL ORO","AMBATO":"TUNGURAHUA","MANTA":"MANABI","PORTOVIEJO":"MANABI","LOJA":"LOJA","SANTO DOMINGO":"SANTO DOMINGO DE LOS TSACHILAS","IBARRA":"IMBABURA","RIOBAMBA":"CHIMBORAZO","QUEVEDO":"LOS RIOS","DURAN":"GUAYAS","SAMBORONDON":"GUAYAS","ESMERALDAS":"ESMERALDAS","BABAHOYO":"LOS RIOS","LATACUNGA":"COTOPAXI","TULCAN":"CARCHI"};
+var app=document.getElementById("app");
+var remitente={}, destinos=[], cur=null, mapCtx=null, leaflet=null, marker=null;
+function prov(c){return CAT[(c||"").trim().toUpperCase()]||"";}
+function setH(t,s,pg){document.getElementById("hT").textContent=t;document.getElementById("hS").textContent=s;var e=document.getElementById("hPg");if(pg){e.style.display="inline-block";e.textContent=pg}else e.style.display="none";}
+function g(id){var e=document.getElementById(id);return e?e.value.trim():"";}
+function H(x){app.innerHTML=x;window.scrollTo(0,0);}
+
+/* ---------- MAPA ---------- */
+function abrirMapa(target){mapCtx=target;document.getElementById("modal").style.display="flex";
+  setTimeout(function(){ if(!leaflet){ leaflet=L.map("efMap").setView([-1.8312,-78.1834],6);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"OSM"}).addTo(leaflet);
+    marker=L.marker([-1.8312,-78.1834],{draggable:true}).addTo(leaflet);
+  } leaflet.invalidateSize(); },250);}
+function cerrarMapa(){document.getElementById("modal").style.display="none";}
+function usarUbic(){var ll=marker.getLatLng(); if(mapCtx==="rem"){remitente.lat=ll.lat.toFixed(6);remitente.lon=ll.lng.toFixed(6);} else {cur.lat=ll.lat.toFixed(6);cur.lon=ll.lng.toFixed(6);} cerrarMapa();
+  var b=document.getElementById(mapCtx==="rem"?"mapBtnRem":"mapBtnDest"); if(b) b.innerHTML="✅ Ubicación marcada ("+ll.lat.toFixed(4)+", "+ll.lng.toFixed(4)+")";}
+
+/* ---------- PÁGINAS ---------- */
+function pRem(){setH("📍 Remitente","De dónde retiramos · una sola vez");H(
+ '<div class="map" id="mapBtnRem" onclick="abrirMapa(\'rem\')">'+(remitente.lat?'✅ Ubicación marcada ('+remitente.lat+', '+remitente.lon+')':'📍 Seleccionar ubicación en el mapa')+'</div><div class="maphint">Ubica el pin de tu dirección de retiro.</div>'
+ +'<div class="sec">CIUDAD DE RETIRO</div><label>Ciudad <span class="req">*</span></label><input id="rem_ciudad" list="ciu" value="'+(remitente.ciudad||"")+'" oninput="pv(\'rem_ciudad\',\'rem_prov\')"><datalist id="ciu"></datalist><div class="prov" id="rem_prov" style="'+(prov(remitente.ciudad)?"":"display:none")+'">Provincia: <b>'+prov(remitente.ciudad)+'</b></div>'
+ +'<div class="sec">DATOS DEL REMITENTE</div>'
+ +'<label>Cédula o RUC <span class="opt">(opcional)</span></label><input id="rem_ced" value="'+(remitente.ced||"")+'">'
+ +'<label>Nombres completos <span class="req">*</span></label><input id="rem_nom" value="'+(remitente.nom||"")+'">'
+ +'<label>Correo <span class="opt">(opcional)</span></label><input id="rem_cor" value="'+(remitente.cor||"")+'">'
+ +'<label>Celular <span class="req">*</span></label><input id="rem_cel" value="'+(remitente.cel||"")+'">'
+ +'<label>Calle principal <span class="req">*</span></label><input id="rem_c1" value="'+(remitente.c1||"")+'">'
+ +'<label>Número de casa <span class="req">*</span></label><input id="rem_nc" value="'+(remitente.nc||"")+'">'
+ +'<label>Calle secundaria <span class="req">*</span></label><input id="rem_c2" value="'+(remitente.c2||"")+'">'
+ +'<label>Referencia <span class="req">*</span></label><input id="rem_ref" value="'+(remitente.ref||"")+'">'
+ +'<button class="cta" onclick="saveRem()">Continuar →</button>');
+ fillCiu();}
+function saveRem(){remitente.ciudad=g("rem_ciudad");remitente.ced=g("rem_ced");remitente.nom=g("rem_nom");remitente.cor=g("rem_cor");remitente.cel=g("rem_cel");remitente.c1=g("rem_c1");remitente.nc=g("rem_nc");remitente.c2=g("rem_c2");remitente.ref=g("rem_ref");remitente.prov=prov(remitente.ciudad);
+  cur={tipo:"Paquete"};nuevoDestino();}
+
+function nuevoDestino(){cur.idx=destinos.length+1;pEnvio();}
+function pEnvio(){setH("Datos del envío","Destino "+cur.idx,"Página 1 de 2");
+ var paq='<label>Peso (kg) <span class="req">*</span></label><input id="e_peso" value="'+(cur.peso||"")+'"><label>Valor declarado ($) <span class="req">*</span></label><input id="e_val" value="'+(cur.val||"")+'"><label>Piezas <span class="req">*</span></label><input id="e_pz" value="'+(cur.pz||"")+'">';
+ var doc='<div class="prov" style="background:#E1F5EE;border-color:#9FE1CB;color:#0F6E56">📄 Documento: peso y valor fijos (2 kg / $0).</div>';
+ H('<div class="sec">¿QUÉ ENVÍAS?</div><div class="seg"><div class="op '+(cur.tipo==="Paquete"?"sel":"")+'" onclick="setT(\'Paquete\')">📦 Paquete</div><div class="op '+(cur.tipo==="Documento"?"sel":"")+'" onclick="setT(\'Documento\')">📄 Documento</div></div>'
+ +'<div style="margin-top:12px">'+(cur.tipo==="Paquete"?paq:doc)+'</div>'
+ +'<div class="sec">CIUDAD DE DESTINO</div><label>Ciudad <span class="req">*</span></label><input id="e_ciudad" list="ciu" value="'+(cur.ciudad||"")+'" oninput="pv(\'e_ciudad\',\'e_prov\')"><datalist id="ciu"></datalist><div class="prov" id="e_prov" style="'+(prov(cur.ciudad)?"":"display:none")+'">Provincia: <b>'+prov(cur.ciudad)+'</b></div>'
+ +'<button class="cta" onclick="saveEnvio()">Continuar →</button>');
+ fillCiu();}
+function setT(t){cur.tipo=t;saveEnvioSoft();pEnvio();}
+function saveEnvioSoft(){if(document.getElementById("e_peso")){cur.peso=g("e_peso");cur.val=g("e_val");cur.pz=g("e_pz");}cur.ciudad=g("e_ciudad");}
+function saveEnvio(){saveEnvioSoft();cur.prov=prov(cur.ciudad);pDest();}
+
+function pDest(){setH("Datos del destinatario","Destino "+cur.idx,"Página 2 de 2");H(
+ '<div class="map" id="mapBtnDest" onclick="abrirMapa(\'dest\')">'+(cur.lat?'✅ Ubicación marcada ('+cur.lat+', '+cur.lon+')':'📍 Seleccionar ubicación en el mapa')+'</div><div class="maphint">Ubica el pin de la dirección de entrega.</div>'
+ +'<div class="sec">DATOS DE QUIEN RECIBE</div>'
+ +'<label>Cédula o RUC <span class="opt">(opcional)</span></label><input id="d_ced" value="'+(cur.ced||"")+'">'
+ +'<label>Nombres completos <span class="req">*</span></label><input id="d_nom" value="'+(cur.nom||"")+'">'
+ +'<label>Correo <span class="opt">(opcional)</span></label><input id="d_cor" value="'+(cur.cor||"")+'">'
+ +'<label>Celular <span class="opt">(opcional)</span></label><input id="d_cel" value="'+(cur.cel||"")+'">'
+ +'<label>Calle principal <span class="req">*</span></label><input id="d_c1" value="'+(cur.c1||"")+'">'
+ +'<label>Número de casa <span class="req">*</span></label><input id="d_nc" value="'+(cur.nc||"")+'">'
+ +'<label>Calle secundaria <span class="req">*</span></label><input id="d_c2" value="'+(cur.c2||"")+'">'
+ +'<label>Referencia <span class="req">*</span></label><input id="d_ref" value="'+(cur.ref||"")+'">'
+ +'<button class="cta" onclick="saveDest()">Continuar →</button>');}
+function saveDest(){cur.ced=g("d_ced");cur.nom=g("d_nom");cur.cor=g("d_cor");cur.cel=g("d_cel");cur.c1=g("d_c1");cur.nc=g("d_nc");cur.c2=g("d_c2");cur.ref=g("d_ref");pRes();}
+
+function pRes(){setH("Resumen · Destino "+cur.idx,"Revisa antes de confirmar");H(
+ '<div class="banner">📋 <b>Revisa que todo esté correcto.</b> Si está bien, confirma. Si no, edítalo.</div>'
+ +'<div class="row"><span class="k">Tipo</span><span class="v">'+cur.tipo+(cur.tipo==="Paquete"?" · "+(cur.peso||"?")+" kg · $"+(cur.val||"?"):" · 2 kg")+'</span></div>'
+ +'<div class="row"><span class="k">Destino</span><span class="v">'+(cur.ciudad||"?")+" ("+(cur.prov||"?")+')</span></div>'
+ +'<div class="row"><span class="k">Recibe</span><span class="v">'+(cur.nom||"?")+'</span></div>'
+ +'<div class="row"><span class="k">Dirección</span><span class="v">'+(cur.c1||"")+" "+(cur.nc||"")+'</span></div>'
+ +'<div class="row"><span class="k">Ubicación</span><span class="v">'+(cur.lat?"marcada":"—")+'</span></div>'
+ +'<button class="cta ok" onclick="confirmar()">✅ Confirmar</button>'
+ +'<button class="cta ghost" onclick="pEnvio()">✏️ Editar</button>');}
+function confirmar(){destinos.push(cur);pOtro();}
+
+function pOtro(){setH("Destino "+cur.idx+" confirmado ✅","Llevas "+destinos.length+" destino(s)");H(
+ '<div class="banner">✅ <b>Destino '+cur.idx+' agregado</b> — '+cur.ciudad+' · '+cur.tipo+'.</div>'
+ +'<button class="cta mor" onclick="cur={tipo:\'Paquete\'};nuevoDestino()">➕ Agregar otro destino</button>'
+ +'<button class="cta ok" onclick="pTotal()" style="margin-top:10px">✅ Terminar</button>');}
+
+function pTotal(){setH("Revisa tu multienvío","Un retiro · "+destinos.length+" destino(s)");
+ var lst=destinos.map(function(d,i){return '<div class="row"><span class="k">Destino '+(i+1)+'</span><span class="v">'+d.ciudad+' ('+d.prov+') · '+d.tipo+'</span></div>';}).join("");
+ H('<div class="banner">📋 Todo listo. Confirma y enviamos.</div>'
+ +'<div class="row"><span class="k">Retiro</span><span class="v">'+remitente.nom+' · '+remitente.ciudad+'</span></div>'+lst
+ +'<button class="cta ok" onclick="enviar()">✅ Confirmar y enviar</button>'
+ +'<button class="cta ghost" onclick="pEnvio()">✏️ Editar destinos</button>');}
+
+function enviar(){
+ var payload={ remitente:{ ciudad:remitente.ciudad, provincia:remitente.prov, nombre:remitente.nom, cedula:remitente.ced, celular:remitente.cel, correo:remitente.cor, calle1:remitente.c1, nCalle:remitente.nc, calle2:remitente.c2, referencia:remitente.ref, lat:remitente.lat, lon:remitente.lon },
+   envios: destinos.map(function(d){return { tipo:d.tipo, peso:d.tipo==="Documento"?2:Number(d.peso||0), valor:d.tipo==="Documento"?0:Number(d.val||0), piezas:d.tipo==="Documento"?1:Number(d.pz||1), ciudadDestino:d.ciudad, provinciaDestino:d.prov, destinatario:{nombre:d.nom,cedula:d.ced,celular:d.cel,correo:d.cor,calle1:d.c1,nCalle:d.nc,calle2:d.c2,referencia:d.ref,lat:d.lat,lon:d.lon} };}) };
+ setH("Payload de prueba","Esto es lo que se enviaría al bot");
+ H('<div class="banner">🧪 MODO PRUEBA — este es el payload que se enviará (con el arreglo de envíos que se convierte en <b>guias[]</b> + 1 recolección). En producción esto va al callback y sigue a pago.</div>'
+ +'<div id="payout">'+JSON.stringify(payload,null,2)+'</div>'
+ +'<button class="cta" onclick="pRem2()">↺ Reiniciar prueba</button>');}
+function pRem2(){remitente={};destinos=[];cur=null;pRem();}
+
+function pv(inId,boxId){var c=g(inId),p=prov(c);var b=document.getElementById(boxId);if(b){b.style.display=p?"block":"none";b.innerHTML='Provincia: <b>'+p+'</b>';}}
+function fillCiu(){var dls=document.querySelectorAll("#ciu");dls.forEach(function(dl){dl.innerHTML=Object.keys(CAT).map(function(c){return '<option value="'+c+'">';}).join("");});}
+pRem();
+</script>
+</body>
+</html>
