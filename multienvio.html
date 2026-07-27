@@ -137,10 +137,24 @@ function pTotal(){setH("Revisa tu multienvío","Un retiro · "+destinos.length+"
 function enviar(){
  var payload={ remitente:{ ciudad:remitente.ciudad, provincia:remitente.prov, nombre:remitente.nom, cedula:remitente.ced, celular:remitente.cel, correo:remitente.cor, calle1:remitente.c1, nCalle:remitente.nc, calle2:remitente.c2, referencia:remitente.ref, lat:remitente.lat, lon:remitente.lon },
    envios: destinos.map(function(d){return { tipo:d.tipo, peso:d.tipo==="Documento"?2:Number(d.peso||0), valor:d.tipo==="Documento"?0:Number(d.val||0), piezas:d.tipo==="Documento"?1:Number(d.pz||1), ciudadDestino:d.ciudad, provinciaDestino:d.prov, destinatario:{nombre:d.nom,cedula:d.ced,celular:d.cel,correo:d.cor,calle1:d.c1,nCalle:d.nc,calle2:d.c2,referencia:d.ref,lat:d.lat,lon:d.lon} };}) };
- setH("Payload de prueba","Esto es lo que se enviaría al bot");
- H('<div class="banner">🧪 MODO PRUEBA — este es el payload que se enviará (con el arreglo de envíos que se convierte en <b>guias[]</b> + 1 recolección). En producción esto va al callback y sigue a pago.</div>'
- +'<div id="payout">'+JSON.stringify(payload,null,2)+'</div>'
- +'<button class="cta" onclick="pRem2()">↺ Reiniciar prueba</button>');}
+ var qs=new URLSearchParams(location.search);
+ var executionId=qs.get("executionId")||""; if(!executionId){var m=location.href.match(/[?&]executionId=([^&#]+)/);if(m)executionId=decodeURIComponent(m[1]);}
+ var callback=qs.get("callback")||"https://enviafacil-callback.fn.jelou.ai";
+ var wa=(qs.get("wa")||"").replace(/\D/g,"");
+ if(!executionId){ // modo suelto (sin bot) → mostrar payload para verificar
+   setH("Payload de prueba","Esto es lo que se enviaría al bot");
+   H('<div class="banner">🧪 MODO PRUEBA (sin bot) — este es el payload. Abierto desde el bot, se envía al callback y regresa a WhatsApp.</div>'
+   +'<div id="payout">'+JSON.stringify(payload,null,2)+'</div>'
+   +'<button class="cta" onclick="pRem2()">↺ Reiniciar prueba</button>'); return; }
+ setH("Enviando…","Un momento"); H('<div class="banner">Enviando tu multienvío… ⏳</div>');
+ var body=Object.assign({executionId:executionId,success:true},payload);
+ fetch(callback,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})
+  .then(function(r){return r.json().catch(function(){return {};});})
+  .then(function(out){ if(out&&out.ok===false) throw new Error("callback");
+    H('<div class="banner" style="background:#E1F5EE;border-color:#9FE1CB;color:#0F6E56">✅ ¡Multienvío enviado! Regresando a WhatsApp…</div>');
+    if(wa) setTimeout(function(){location.href="https://wa.me/"+wa;},900); else setTimeout(function(){try{window.close();}catch(e){}},1200);
+  }).catch(function(){ H('<div class="banner" style="background:#FCEBEB;border-color:#F09595;color:#A32D2D">No pudimos enviar. Revisa tu conexión e intenta de nuevo.</div><button class="cta" onclick="pTotal()">Reintentar</button>'); });
+}
 function pRem2(){remitente={};destinos=[];cur=null;pRem();}
 
 function pv(inId,boxId){var c=g(inId),p=prov(c);var b=document.getElementById(boxId);if(b){b.style.display=p?"block":"none";b.innerHTML='Provincia: <b>'+p+'</b>';}}
