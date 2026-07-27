@@ -130,10 +130,7 @@ function personaHTML(role,d){d=d||{};var dest=(role==='dest');
  var celLbl=dest?'Celular <span class="op">(opcional)</span>':'Celular <span class="req">*</span>';
  var dirTit=dest?'Dirección de entrega':'Dirección de recolección';
  var refLbl=dest?'Referencia de entrega <span class="req">*</span>':'Referencia de recolección <span class="req">*</span>';
- return '<div class="fld"><button type="button" class="mapbtn" onclick="efOpenMapa()">📍 Seleccionar ubicación en el mapa</button>'
-  +'<div class="hint">Ubica el pin y autocompletamos la dirección. Luego completa lo que falte.</div>'
-  +'<input type="hidden" id="ef_lat" value="'+(d.lat||'')+'"><input type="hidden" id="ef_lon" value="'+(d.lon||'')+'"></div>'
-  +'<div class="seccion">'+(dest?'Datos de quien recibe':'Datos de quien envía')+'</div>'
+ return '<div class="seccion">'+(dest?'Datos de quien recibe':'Datos de quien envía')+'</div>'
   +'<div class="fld"><label>'+cedLbl+'</label><input id="cedula" inputmode="numeric" maxlength="13" placeholder="10 dígitos (cédula) o 13 (RUC)" value="'+(d.cedula||'')+'"><div class="errmsg" id="e_cedula">Ingresa una cédula (10) o RUC (13) válido.</div></div>'
   +'<div class="fld"><label>Nombres completos <span class="req">*</span></label><input id="nombre" placeholder="Nombres y apellidos" value="'+(d.nombre||'')+'"><div class="errmsg" id="e_nombre">Ingresa los nombres completos.</div></div>'
   +'<div class="fld"><label>'+corLbl+'</label><input id="correo" type="email" inputmode="email" placeholder="correo@ejemplo.com" value="'+(d.correo||'')+'"><div class="errmsg" id="e_correo">Correo no válido.</div></div>'
@@ -144,6 +141,8 @@ function personaHTML(role,d){d=d||{};var dest=(role==='dest');
   +'<div class="fld"><label>Calle secundaria <span class="req">*</span></label><input id="calle_secundaria" placeholder="Calle secundaria" value="'+(d.calle_secundaria||'')+'"><div class="errmsg" id="e_calle_secundaria">Ingresa la calle secundaria.</div></div>'
   +'<div class="fld"><label>'+refLbl+'</label><input id="referencia" placeholder="Punto de referencia" value="'+(d.referencia||'')+'"><div class="errmsg" id="e_referencia">Ingresa un punto de referencia.</div><div class="hint">Ej: edificio azul, junto al parque…</div></div>';}
 
+function mapHeaderHTML(d){d=d||{};return '<div class="fld"><button type="button" class="mapbtn" onclick="efOpenMapa()">📍 Seleccionar ubicación en el mapa</button><div class="hint">Ubica el pin y autocompletamos ciudad y dirección. Luego completa lo que falte.</div><input type="hidden" id="ef_lat" value="'+(d.lat||'')+'"><input type="hidden" id="ef_lon" value="'+(d.lon||'')+'"></div>';}
+function efMatchCiudad(nombre,prov){var nn=norm(nombre),np=norm(prov||'');if(!nn)return null;var cands=CAT.filter(function(c){return norm(c[0])===nn;});if(!cands.length)cands=CAT.filter(function(c){return norm(c[0]).indexOf(nn)>=0||nn.indexOf(norm(c[0]))>=0;});if(np){var byp=cands.filter(function(c){return norm(c[2])===np;});if(byp.length)return byp[0];}return cands[0]||null;}
 function leerPersona(){return {cedula:val("cedula"),nombre:val("nombre"),correo:val("correo"),celular:val("celular"),calle_principal:val("calle_principal"),numero_casa:val("numero_casa"),calle_secundaria:val("calle_secundaria"),referencia:val("referencia"),lat:val("ef_lat"),lon:val("ef_lon")};}
 function validarPersona(role){var dest=(role==='dest');var ok=true;
  var cVal=val("cedula");if(dest&&cVal===""){setErr("cedula",false);}else{var c=cedulaOk(cVal);setErr("cedula",!c);ok=ok&&c;}
@@ -159,16 +158,17 @@ function validarPersona(role){var dest=(role==='dest');var ok=true;
 function prog(n){var t=['Remitente','Envío','Destinatario','Resumen'];return '<div class="prog">'+t.map(function(_,i){return '<div class="dot'+(i<=n?' on':'')+'"></div>';}).join('')+'</div>';}
 
 // ===== PANTALLA 0: REMITENTE (solo ciudad de retiro + datos del remitente) =====
-function scrRemitente(){sel.Des=null;var d=estado.remitente||{};if(estado.remitente&&estado.remitente.ciudad)sel.Ret=estado.remitente.ciudad;
+function scrRemitente(){sel.Des=null;window._efCiudadKey='Ret';var d=estado.remitente||{};sel.Ret=(estado.remitente&&estado.remitente.ciudad)?estado.remitente.ciudad:null;
  app('<div class="head"><div class="logo">📦</div><div><h1>Multi envíos</h1><p>Un solo retiro · varios destinos</p></div></div>'
   +prog(0)
   +'<div class="card"><div class="step">Remitente · de dónde retiramos</div>'
+  +mapHeaderHTML(d)
   +ciudadHTML('Ret','📍 Ciudad de retiro','Escribe tu ciudad...')
   +personaHTML('rem',d)+'</div>');
  barra('<button class="btn" id="btn">Continuar</button>');
- _recheck=function(){document.getElementById('btn').disabled=!sel.Ret;};recheck();
+ _recheck=function(){};
  document.getElementById('btn').onclick=function(){
-   if(!sel.Ret){efAviso('Elige la ciudad de retiro.');return;}
+   if(!sel.Ret){efAviso('Elige la ciudad de retiro (o ubícala en el mapa).');return;}
    if(!validarPersona('rem'))return;
    estado.remitente=Object.assign({ciudad:sel.Ret},leerPersona());
    if(!estado.envios.length)estado.envios.push(nuevoEnvio());
@@ -176,8 +176,8 @@ function scrRemitente(){sel.Des=null;var d=estado.remitente||{};if(estado.remite
  };}
 
 // ===== PANTALLA 1 (por destino): DATOS DEL ENVÍO =====
-function scrEnvio(i){var e=estado.envios[i];sel.Des=e.ciudad||null;sel.Ret=estado.remitente?estado.remitente.ciudad:null;
- app('<div class="head"><div class="logo">📦</div><div><h1>Destino '+(i+1)+'</h1><p>Página 1 · Datos del envío</p></div></div>'
+function scrEnvio(i){var e=estado.envios[i];window._efCiudadKey=null;
+ app('<div class="head"><div class="logo">📦</div><div><h1>Destino '+(i+1)+'</h1><p>Página 1 · ¿Qué vas a enviar?</p></div></div>'
   +prog(1)
   +'<div class="card"><div class="step">¿Qué vas a enviar?</div><div class="tipos">'
   +'<div class="tipo" data-tipo="documento" data-id="201202002001002" onclick="pickTipo(this)"><div class="ic">📄</div><div class="t">Documento</div></div>'
@@ -186,16 +186,14 @@ function scrEnvio(i){var e=estado.envios[i];sel.Des=e.ciudad||null;sel.Ret=estad
   +'<div id="paqFields" class="hidden"><div class="row"><div class="fld"><label class="lbl">⚖️ Peso (kg) — máx 50/pieza</label><input id="peso" type="text" inputmode="decimal" placeholder="1 a 50 kg" value="'+(e.peso||'')+'" oninput="chkPeso()"><div id="pesoerr" class="errp">⚠️ El peso máximo es 50 kg por pieza.</div></div>'
   +'<div class="fld"><label class="lbl">💵 Valor declarado</label><input id="valor" type="number" inputmode="numeric" min="0" placeholder="USD" value="'+(e.valor||'')+'"></div></div>'
   +'<div class="fld"><label class="lbl">📦 Tipo de contenido <span class="req">*</span></label><input id="contenido" type="text" maxlength="60" placeholder="Escribe qué contiene (ej. ropa, zapatos)" value="'+(e.contenido||'')+'"><div class="hint">Descríbelo tú mismo, no uses términos genéricos.</div></div></div>'
-  +ciudadHTML('Des','🎯 Ciudad de destino','Escribe la ciudad destino...')
   +'</div>');
  barra('<button class="btn sec" id="atras" style="flex:0 0 40%">Atrás</button><button class="btn" id="btn">Continuar</button>');
  // restaurar tipo elegido
  if(e.tipo){var tile=document.querySelector('.tipo[data-tipo="'+e.tipo+'"]');if(tile)pickTipo(tile);}
- _recheck=function(){document.getElementById('btn').disabled=!(window._selTipo&&sel.Des);};recheck();
+ _recheck=function(){document.getElementById('btn').disabled=!(window._selTipo);};recheck();
  document.getElementById('atras').onclick=function(){window._selTipo=null;if(i===0)scrRemitente();else scrMas();};
  document.getElementById('btn').onclick=function(){
    if(!window._selTipo){efAviso('Elige Documento o Paquete.');return;}
-   if(!sel.Des){efAviso('Elige la ciudad de destino.');return;}
    var paq=window._selTipo.tipo==='paquete';
    var piezas=paq?parseInt(val('piezas')||'1',10):1;
    var peso=paq?parseFloat((val('peso')||'0').replace(',','.')):2;
@@ -206,7 +204,7 @@ function scrEnvio(i){var e=estado.envios[i];sel.Des=e.ciudad||null;sel.Ret=estad
    if(paq&&peso>50*piezas){efAviso('El peso máximo es 50 kg por pieza.');return;}
    if(paq&&!(valor>0)){efAviso('Indica el valor declarado (mayor a 0).');return;}
    if(paq&&contenido.length<3){efAviso('Escribe qué contiene (mínimo 3 letras).');return;}
-   e.tipo=window._selTipo.tipo;e.idServicio=window._selTipo.id;e.ciudad=sel.Des;
+   e.tipo=window._selTipo.tipo;e.idServicio=window._selTipo.id;
    e.piezas=piezas;e.peso=peso;e.valor=valor;e.contenido=contenido;
    window._selTipo=null;scrDest(i);
  };}
@@ -216,13 +214,13 @@ function pickTipo(el){document.querySelectorAll('.tipo').forEach(function(t){t.c
 function chkPeso(){var el=document.getElementById('peso');if(!el)return;var v=parseFloat((el.value||'0').replace(',','.'));var pz=parseInt((document.getElementById('piezas')||{}).value||'1')||1;var bad=v>50*pz;el.classList.toggle('bad',bad);var e=document.getElementById('pesoerr');if(e)e.style.display=bad?'block':'none';}
 
 // ===== PANTALLA 2 (por destino): DATOS DEL DESTINATARIO =====
-function scrDest(i){var e=estado.envios[i];sel.Ret=estado.remitente?estado.remitente.ciudad:null;
- app('<div class="head"><div class="logo">📦</div><div><h1>Destino '+(i+1)+'</h1><p>Página 2 · Datos del destinatario</p></div></div>'
-  +prog(2)+'<div class="card">'+personaHTML('dest',e.dest)+'</div>');
+function scrDest(i){var e=estado.envios[i];window._efCiudadKey='Des';sel.Des=e.ciudad||null;sel.Ret=estado.remitente?estado.remitente.ciudad:null;
+ app('<div class="head"><div class="logo">📦</div><div><h1>Destino '+(i+1)+'</h1><p>Página 2 · Destinatario y destino</p></div></div>'
+  +prog(2)+'<div class="card">'+mapHeaderHTML(e.dest)+ciudadHTML('Des','🎯 Ciudad de destino','Escribe la ciudad destino...')+personaHTML('dest',e.dest)+'</div>');
  barra('<button class="btn sec" id="atras" style="flex:0 0 40%">Atrás</button><button class="btn" id="btn">Continuar</button>');
  _recheck=function(){};
  document.getElementById('atras').onclick=function(){e.dest=leerPersona();scrEnvio(i);};
- document.getElementById('btn').onclick=function(){if(!validarPersona('dest'))return;e.dest=leerPersona();scrResumen(i);};}
+ document.getElementById('btn').onclick=function(){if(!sel.Des){efAviso('Elige la ciudad de destino (o ubícala en el mapa).');return;}if(!validarPersona('dest'))return;e.ciudad=sel.Des;e.dest=leerPersona();scrResumen(i);};}
 
 // ===== PANTALLA 3 (por destino): RESUMEN + CONFIRMAR/EDITAR =====
 function itm(k,v){return v?'<div class="conf-item"><div class="k">'+k+'</div><div class="v">'+String(v).replace(/</g,'&lt;')+'</div></div>':'';}
@@ -297,7 +295,8 @@ scrRemitente();
   function tryLoc(){if(!navigator.geolocation)return;navigator.geolocation.getCurrentPosition(function(p){if(map)map.setView([p.coords.latitude,p.coords.longitude],16);},function(){},{timeout:6000,enableHighAccuracy:true});}
   function confirmLoc(){if(!map){closeM();return;}var c=map.getCenter(),btn=document.getElementById('efMapConfirm');btn.textContent='Confirmando…';btn.disabled=true;
     function done(d){setV('ef_lat',String(c.lat));setV('ef_lon',String(c.lng));
-      if(d&&d.ok){var _cp=d.calle||'',_cs=d.sector||'';if(!_cp&&_cs){_cp=_cs;_cs='';}if(_cs&&_cp&&_cs.trim().toLowerCase()===_cp.trim().toLowerCase())_cs='';if(!_cp&&d.formatted)_cp=String(d.formatted).split(',')[0].trim();if(_cp)setV('calle_principal',_cp);if(_cs)setV('calle_secundaria',_cs);}
+      if(d&&d.ok){var _cp=d.calle||'',_cs=d.sector||'';if(!_cp&&_cs){_cp=_cs;_cs='';}if(_cs&&_cp&&_cs.trim().toLowerCase()===_cp.trim().toLowerCase())_cs='';if(!_cp&&d.formatted)_cp=String(d.formatted).split(',')[0].trim();if(_cp)setV('calle_principal',_cp);if(_cs)setV('calle_secundaria',_cs);
+        if(window._efCiudadKey&&d.ciudad){var mc=efMatchCiudad(d.ciudad,d.provincia);if(mc)choose(window._efCiudadKey,mc[1],mc[0],mc[2]);}}
       btn.textContent='Confirmar ubicación';btn.disabled=false;closeM();}
     fetch('https://enviafacil-geocode.fn.jelou.ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lat:c.lat,lon:c.lng})}).then(function(r){return r.json();}).then(done).catch(function(){done(null);});}
   var FN='https://enviafacil-geocode.fn.jelou.ai',srchT=null,sess='ef-'+Date.now()+'-'+Math.floor(Math.random()*1e6);
