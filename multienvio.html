@@ -5,6 +5,8 @@
 <title>Multi envíos · EnvíaFácil</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/qrcode-generator@1.4.4/qrcode.js"></script>
+<script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <style>
 :root{--laar:#FCE200;--laarD:#E4C201;--ink:#0F0F0F;--mut:#6b6b6b;--bg:#f5f5f5;--card:#fff;--line:#e4e4e4;--err:#dc2626;--mor:#7c6fdd;--morS:#EEEDFE;--morT:#3C3489}
 *{box-sizing:border-box;margin:0;font-family:-apple-system,"Segoe UI",Roboto,sans-serif}
@@ -255,14 +257,36 @@ function payload(){var r=estado.remitente;
  return {executionId:executionId,success:true,
   remitente:{ciudad:r.ciudad.name,ciudadCodigo:r.ciudad.code,provincia:r.ciudad.prov,cedula:r.cedula,nombre:r.nombre,correo:r.correo,celular:r.celular,calle_principal:r.calle_principal,numero_casa:r.numero_casa,calle_secundaria:r.calle_secundaria,referencia:r.referencia,lat:r.lat,lon:r.lon},
   envios:estado.envios.filter(function(e){return e.confirmado;}).map(function(e){var d=e.dest;return {idServicio:e.idServicio,tipo:e.tipo==='paquete'?'Paquete':'Documento',ciudad:e.ciudad.name,ciudadCodigo:e.ciudad.code,provincia:e.ciudad.prov,piezas:e.piezas,peso:e.peso,valor:e.valor,contenido:e.contenido,cedula:d.cedula,nombre:d.nombre,correo:d.correo,celular:d.celular,calle_principal:d.calle_principal,numero_casa:d.numero_casa,calle_secundaria:d.calle_secundaria,referencia:d.referencia,lat:d.lat,lon:d.lon};})};}
-function enviar(){var body=payload();
- if(!executionId){document.body.innerHTML='<div style="padding:24px;max-width:460px;margin:0 auto"><h2>✅ Vista de prueba (sin bot)</h2><p style="color:#6b6b6b">Este es el JSON que se enviaría al bot:</p><pre style="background:#111;color:#0f0;padding:14px;border-radius:10px;overflow:auto;font-size:12px">'+JSON.stringify(body,null,2)+'</pre></div>';return;}
- document.body.innerHTML='<div style="text-align:center;padding:70px 22px"><div style="font-size:56px">⏳</div><h2 style="margin-top:8px">Enviando tu multienvío…</h2></div>';
- fetch(PROXY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
-  .then(function(r){return r.json().catch(function(){return {};});}).then(function(){
-    document.body.innerHTML='<div style="text-align:center;padding:70px 22px"><div style="font-size:56px">✅</div><h2 style="margin-top:8px">¡Listo!</h2><p style="color:#6b6b6b;margin-top:8px">Tu multienvío está en WhatsApp 📦<br><span style="font-size:13px;color:#9b9b9b">Cerrando…</span></p></div>';
-    setTimeout(function(){window.location.href='https://wa.me/'+WA;},1500);
-  }).catch(function(){document.body.innerHTML='<div style="text-align:center;padding:70px 22px"><div style="font-size:56px">⚠️</div><h2 style="margin-top:8px">No se pudo enviar</h2><p style="color:#6b6b6b;margin-top:8px">Inténtalo de nuevo.</p></div>';});}
+function enviar(){var b=payload();var r=b.remitente;
+ var compact={v:1,t:'m',
+  r:{c:r.cedula,n:r.nombre,e:r.correo,ce:r.celular,ci:[r.ciudadCodigo,r.ciudad,r.provincia],cp:r.calle_principal,nc:r.numero_casa,cs:r.calle_secundaria,rf:r.referencia},
+  es:b.envios.map(function(e){return {s:e.idServicio,tp:e.tipo,ci:[e.ciudadCodigo,e.ciudad,e.provincia],pz:e.piezas,pe:e.peso,va:e.valor,co:e.contenido,d:{c:e.cedula,n:e.nombre,e:e.correo,ce:e.celular,cp:e.calle_principal,nc:e.numero_casa,cs:e.calle_secundaria,rf:e.referencia}};})};
+ var json=JSON.stringify(compact);
+ try{
+   var qr=qrcode(0,'M');qr.addData(json);qr.make();
+   var n=qr.getModuleCount(),sc=6,pad=18,cv=document.createElement('canvas');cv.width=cv.height=n*sc+pad*2;var ctx=cv.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,cv.width,cv.height);ctx.fillStyle='#000';
+   for(var rr=0;rr<n;rr++)for(var cc=0;cc<n;cc++)if(qr.isDark(rr,cc))ctx.fillRect(cc*sc+pad,rr*sc+pad,sc,sc);
+   var qrUrl=cv.toDataURL('image/png');
+   var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4'});var y=16;
+   doc.setFontSize(17);doc.setTextColor(15,15,15);doc.text('EnviaFacil - Comprobante de multienvio',14,y);y+=7;
+   doc.setFontSize(9);doc.setTextColor(120);doc.text('Sube este comprobante al chat de WhatsApp para procesar tu envio.',14,y);y+=7;
+   doc.setDrawColor(230);doc.line(14,y,196,y);y+=7;
+   doc.setFontSize(12);doc.setTextColor(15,15,15);doc.text('Remitente',14,y);y+=6;
+   doc.setFontSize(9);doc.setTextColor(60);
+   doc.text(String(r.nombre)+'  -  '+String(r.cedula),14,y);y+=5;
+   doc.text(String(r.ciudad)+': '+String(r.calle_principal)+' '+String(r.numero_casa)+(r.calle_secundaria?' y '+r.calle_secundaria:'')+' (Ref: '+String(r.referencia)+')',14,y,{maxWidth:182});y+=5;
+   doc.text(String(r.correo)+'  -  '+String(r.celular),14,y);y+=8;
+   doc.setFontSize(12);doc.setTextColor(15,15,15);doc.text('Destinos ('+b.envios.length+')',14,y);y+=6;
+   b.envios.forEach(function(e,i){doc.setFontSize(9);doc.setTextColor(15,15,15);
+    doc.text((i+1)+'. '+String(e.tipo)+' -> '+String(e.ciudad),14,y);y+=5;doc.setTextColor(60);
+    doc.text('   '+String(e.nombre)+'  '+String(e.calle_principal)+' '+String(e.numero_casa)+' (Ref: '+String(e.referencia)+')',14,y,{maxWidth:182});y+=5;
+    doc.text('   Piezas: '+e.piezas+'  Peso: '+e.peso+'kg  Valor: $'+e.valor+'  Contenido: '+String(e.contenido),14,y,{maxWidth:182});y+=6;});
+   y+=2;doc.addImage(qrUrl,'PNG',75,y,60,60);y+=63;
+   doc.setFontSize(8);doc.setTextColor(150);doc.text('Codigo de datos - no editar. EnviaFacil by LAARCOURIER.',14,y);
+   doc.save('EnviaFacil-multienvio.pdf');
+   document.body.innerHTML='<div style="text-align:center;padding:60px 22px;max-width:460px;margin:0 auto"><div style="font-size:56px">📄</div><h2 style="margin-top:8px;color:#0F0F0F">¡Comprobante generado!</h2><p style="color:#6b6b6b;margin-top:8px">Se descargó tu comprobante en PDF.<br><br><b>Ahora súbelo al chat de WhatsApp 📤</b> y procesamos tu multienvío.</p><a href="https://wa.me/'+WA+'" style="display:inline-block;margin-top:16px;background:#FCE200;color:#0F0F0F;font-weight:700;padding:13px 28px;border-radius:26px;text-decoration:none">Ir a WhatsApp</a></div>';
+  }catch(ex){efAviso('Error generando el PDF: '+ex);}
+}
 
 function efAviso(msg){var old=document.getElementById('efAvisoBox');if(old)old.remove();var b=document.createElement('div');b.id='efAvisoBox';b.style.cssText='position:fixed;left:14px;right:14px;bottom:74px;background:#FFF3F3;border:1.5px solid #E88;color:#a00;border-radius:10px;padding:11px 13px;font-size:14px;font-weight:600;z-index:5000;max-width:432px;margin:0 auto;text-align:center';b.textContent='⚠️ '+msg;document.body.appendChild(b);setTimeout(function(){if(b)b.remove();},3500);}
 
