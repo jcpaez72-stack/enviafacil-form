@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>Multi envíos · EnvíaFácil</title>
+<title>Multidestino · EnvíaFácil</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/qrcode-generator@1.4.4/qrcode.js"></script>
@@ -161,7 +161,7 @@ function prog(n){var t=['Remitente','Envío','Destinatario','Resumen'];return '<
 
 // ===== PANTALLA 0: REMITENTE (solo ciudad de retiro + datos del remitente) =====
 function scrRemitente(){sel.Des=null;window._efCiudadKey='Ret';var d=estado.remitente||{};sel.Ret=(estado.remitente&&estado.remitente.ciudad)?estado.remitente.ciudad:null;
- app('<div class="head"><div class="logo">📦</div><div><h1>'+(estado.modo==='uno'?'Tu envío':'Multi envíos')+'</h1><p>'+(estado.modo==='uno'?'De dónde retiramos':'Un solo retiro · varios destinos')+'</p></div></div>'
+ app('<div class="head"><div class="logo">📦</div><div><h1>'+(estado.modo==='uno'?'Tu envío':'Multidestino')+'</h1><p>'+(estado.modo==='uno'?'De dónde retiramos':'Un solo retiro · varios destinos')+'</p></div></div>'
   +prog(0)
   +'<div class="card"><div class="step">Remitente · de dónde retiramos</div>'
   +mapHeaderHTML(d)
@@ -246,7 +246,7 @@ function scrResumen(i){var e=estado.envios[i];var d=e.dest;var dir=d.calle_princ
 // ===== PANTALLA MÁS: ¿otro destino o terminar? =====
 function scrMas(){var n=estado.envios.filter(function(e){return e.confirmado;}).length;
  var lst=estado.envios.map(function(e,i){if(!e.confirmado)return '';return '<div class="conf-item"><div class="k">Destino '+(i+1)+'</div><div class="v">'+e.ciudad.name+' ('+e.ciudad.prov+') · '+(e.tipo==='paquete'?'Paquete':'Documento')+' · '+e.dest.nombre+'</div></div>';}).join('');
- app('<div class="head"><div class="logo">📦</div><div><h1>Multi envíos</h1><p>'+n+' destino(s) listo(s)</p></div></div>'
+ app('<div class="head"><div class="logo">📦</div><div><h1>Multidestino</h1><p>'+n+' destino(s) listo(s)</p></div></div>'
   +'<div class="card"><div class="step">Destinos confirmados</div>'+lst+'</div>'
   +'<div class="add" onclick="agregarDestino()">➕ Agregar otro destino</div>');
  barra('<button class="btn ok" id="btn">✅ Terminar y enviar ('+n+')</button>');
@@ -269,7 +269,7 @@ function enviar(){var b=payload();var r=b.remitente;
    for(var rr=0;rr<n;rr++)for(var cc=0;cc<n;cc++)if(qr.isDark(rr,cc))ctx.fillRect(cc*sc+pad,rr*sc+pad,sc,sc);
    var qrUrl=cv.toDataURL('image/png');
    var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4'});var y=16;
-   doc.setFontSize(17);doc.setTextColor(15,15,15);doc.text(UNO?'EnviaFacil - Comprobante de envio':'EnviaFacil - Comprobante de multienvio',14,y);y+=7;
+   doc.setFontSize(17);doc.setTextColor(15,15,15);doc.text(UNO?'EnviaFacil - Comprobante de envio':'EnviaFacil - Comprobante de multidestino',14,y);y+=7;
    doc.setFontSize(9);doc.setTextColor(120);doc.text('Sube este comprobante al chat de WhatsApp para procesar tu envio.',14,y);y+=7;
    doc.setDrawColor(230);doc.line(14,y,196,y);y+=7;
    doc.setFontSize(12);doc.setTextColor(15,15,15);doc.text('Remitente',14,y);y+=6;
@@ -284,8 +284,8 @@ function enviar(){var b=payload();var r=b.remitente;
     doc.text('   Piezas: '+e.piezas+'  Peso: '+e.peso+'kg  Valor: $'+e.valor+'  Contenido: '+String(e.contenido),14,y,{maxWidth:182});y+=6;});
    y+=2;doc.addImage(qrUrl,'PNG',75,y,60,60);y+=63;
    doc.setFontSize(8);doc.setTextColor(150);doc.text('Codigo de datos - no editar. EnviaFacil by LAARCOURIER.',14,y);
-   doc.save(UNO?'EnviaFacil-envio.pdf':'EnviaFacil-multienvio.pdf');
-   document.body.innerHTML='<div style="text-align:center;padding:60px 22px;max-width:460px;margin:0 auto"><div style="font-size:56px">📄</div><h2 style="margin-top:8px;color:#0F0F0F">¡Comprobante generado!</h2><p style="color:#6b6b6b;margin-top:8px">Se descargó tu comprobante en PDF.<br><br><b>Ahora súbelo al chat de WhatsApp 📤</b> y procesamos tu '+(UNO?'envío':'multienvío')+'.</p><a href="https://wa.me/'+WA+'" style="display:inline-block;margin-top:16px;background:#FCE200;color:#0F0F0F;font-weight:700;padding:13px 28px;border-radius:26px;text-decoration:none">Ir a WhatsApp</a></div>';
+   doc.save(UNO?'EnviaFacil-envio.pdf':'EnviaFacil-multidestino.pdf');
+   document.body.innerHTML='<div style="text-align:center;padding:60px 22px;max-width:460px;margin:0 auto"><div style="font-size:56px">📄</div><h2 style="margin-top:8px;color:#0F0F0F">¡Comprobante generado!</h2><p style="color:#6b6b6b;margin-top:8px">Se descargó tu comprobante en PDF.<br><br><b>Ahora súbelo al chat de WhatsApp 📤</b> y procesamos tu '+(UNO?'envío':'multidestino')+'.</p><a href="https://wa.me/'+WA+'" style="display:inline-block;margin-top:16px;background:#FCE200;color:#0F0F0F;font-weight:700;padding:13px 28px;border-radius:26px;text-decoration:none">Ir a WhatsApp</a></div>';
   }catch(ex){efAviso('Error generando el PDF: '+ex);}
 }
 
@@ -296,7 +296,7 @@ function scrInicio(){window._efCiudadKey=null;window._selModo=estado.modo;
  app('<div class="head"><div class="logo">📦</div><div><h1>EnvíaFácil</h1><p>Arma tu envío y descarga tu comprobante</p></div></div>'
   +'<div class="card"><div class="step">¿A cuántos destinos vas a enviar?</div><div class="tipos">'
   +'<div class="tipo" data-modo="uno" onclick="pickModo(this)"><div class="ic">📦</div><div class="t">Un destino</div></div>'
-  +'<div class="tipo" data-modo="multi" onclick="pickModo(this)"><div class="ic">📮</div><div class="t">Varios destinos</div></div>'
+  +'<div class="tipo" data-modo="multi" onclick="pickModo(this)"><div class="ic">📮</div><div class="t">Multidestino</div></div>'
   +'</div><div class="hint" style="margin-top:10px">Un solo retiro; puedes enviar a una o a varias direcciones.</div></div>');
  barra('<button class="btn" id="btn" disabled>Continuar</button>');
  if(estado.modo){var t0=document.querySelector('.tipo[data-modo="'+estado.modo+'"]');if(t0)pickModo(t0);}
