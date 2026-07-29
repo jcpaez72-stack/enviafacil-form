@@ -260,8 +260,8 @@ function payload(){var r=estado.remitente;
   envios:estado.envios.filter(function(e){return e.confirmado;}).map(function(e){var d=e.dest;return {idServicio:e.idServicio,tipo:e.tipo==='paquete'?'Paquete':'Documento',ciudad:e.ciudad.name,ciudadCodigo:e.ciudad.code,provincia:e.ciudad.prov,piezas:e.piezas,peso:e.peso,valor:e.valor,contenido:e.contenido,cedula:d.cedula,nombre:d.nombre,correo:d.correo,celular:d.celular,calle_principal:d.calle_principal,numero_casa:d.numero_casa,calle_secundaria:d.calle_secundaria,referencia:d.referencia,lat:d.lat,lon:d.lon};})};}
 function enviar(){var b=payload();var r=b.remitente;
  var UNO=estado.modo==='uno';var compact={v:1,t:UNO?'e':'m',
-  r:{c:r.cedula,n:r.nombre,e:r.correo,ce:r.celular,ci:[r.ciudadCodigo,r.ciudad,r.provincia],cp:r.calle_principal,nc:r.numero_casa,cs:r.calle_secundaria,rf:r.referencia},
-  es:b.envios.map(function(e){return {s:e.idServicio,tp:e.tipo,ci:[e.ciudadCodigo,e.ciudad,e.provincia],pz:e.piezas,pe:e.peso,va:e.valor,co:e.contenido,d:{c:e.cedula,n:e.nombre,e:e.correo,ce:e.celular,cp:e.calle_principal,nc:e.numero_casa,cs:e.calle_secundaria,rf:e.referencia}};})};
+  r:{c:r.cedula,n:r.nombre,e:r.correo,ce:r.celular,ci:[r.ciudadCodigo,r.ciudad,r.provincia],cp:r.calle_principal,nc:r.numero_casa,cs:r.calle_secundaria,rf:r.referencia,la:r.lat,lo:r.lon},
+  es:b.envios.map(function(e){return {s:e.idServicio,tp:e.tipo,ci:[e.ciudadCodigo,e.ciudad,e.provincia],pz:e.piezas,pe:e.peso,va:e.valor,co:e.contenido,d:{c:e.cedula,n:e.nombre,e:e.correo,ce:e.celular,cp:e.calle_principal,nc:e.numero_casa,cs:e.calle_secundaria,rf:e.referencia,la:e.lat,lo:e.lon}};})};
  var json=JSON.stringify(compact);
  try{
    var qr=qrcode(0,'M');qr.addData(json);qr.make();
