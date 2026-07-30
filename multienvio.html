@@ -263,6 +263,45 @@ function enviar(){var b=payload();var r=b.remitente;
   r:{c:r.cedula,n:r.nombre,e:r.correo,ce:r.celular,ci:[r.ciudadCodigo,r.ciudad,r.provincia],cp:r.calle_principal,nc:r.numero_casa,cs:r.calle_secundaria,rf:r.referencia,la:r.lat,lo:r.lon},
   es:b.envios.map(function(e){return {s:e.idServicio,tp:e.tipo,ci:[e.ciudadCodigo,e.ciudad,e.provincia],pz:e.piezas,pe:e.peso,va:e.valor,co:e.contenido,d:{c:e.cedula,n:e.nombre,e:e.correo,ce:e.celular,cp:e.calle_principal,nc:e.numero_casa,cs:e.calle_secundaria,rf:e.referencia,la:e.lat,lo:e.lon}};})};
  var json=JSON.stringify(compact);
+ scrSalida(json,b,UNO);
+}
+
+// ===== PANTALLA DE SALIDA: WhatsApp directo (código) o PDF =====
+var FN_ENVIO_WEB='https://enviafacil-envio-web.fn.jelou.ai';
+function scrSalida(json,b,UNO){
+ app('<div class="head"><div class="logo">✅</div><div><h1>¡Listo!</h1><p>Tu '+(UNO?'envío está armado':'multidestino está armado')+'</p></div></div>'
+  +'<div class="card"><div class="step">¿Cómo quieres continuar?</div>'
+  +'<button class="btn" id="btnWa" style="width:100%">📱 Continuar en WhatsApp</button>'
+  +'<div style="text-align:center;color:#9a9a9a;font-size:12px;margin:10px 0">— o —</div>'
+  +'<button class="btn sec" id="btnPdf" style="width:100%">📄 Descargar comprobante PDF</button>'
+  +'<div id="salidaBox" style="margin-top:14px"></div></div>');
+ document.getElementById('btnPdf').onclick=function(){genPDF(json,b,UNO);};
+ document.getElementById('btnWa').onclick=function(){
+  var box=document.getElementById('salidaBox');box.innerHTML='<div style="text-align:center;color:#6b6b6b;padding:10px">⏳ Generando tu código…</div>';
+  fetch(FN_ENVIO_WEB,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({accion:'guardar',origen:UNO?'web-uno':'web-multi',payload:json})})
+  .then(function(r){return r.json();})
+  .then(function(out){
+    if(!out||!out.ok||!out.code){box.innerHTML='<div style="text-align:center;color:#a00;padding:8px">No pudimos generar el código 😕. Usa la opción PDF, funciona igual.</div>';return;}
+    var code=out.code;
+    var waTxt='Continuar mi envío '+code;
+    var waUrl='https://wa.me/'+WA+'?text='+encodeURIComponent(waTxt);
+    var qr=qrcode(0,'M');qr.addData(waUrl);qr.make();
+    var n=qr.getModuleCount(),sc=5,pad=14,cv=document.createElement('canvas');cv.width=cv.height=n*sc+pad*2;var ctx=cv.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,cv.width,cv.height);ctx.fillStyle='#000';
+    for(var rr=0;rr<n;rr++)for(var cc=0;cc<n;cc++)if(qr.isDark(rr,cc))ctx.fillRect(cc*sc+pad,rr*sc+pad,sc,sc);
+    box.innerHTML='<div style="text-align:center">'
+     +'<div style="font-size:13px;color:#6b6b6b">Tu código de envío</div>'
+     +'<div style="font-size:26px;font-weight:800;letter-spacing:2px;color:#0F0F0F;margin:4px 0">'+code+'</div>'
+     +'<div id="qrCv" style="margin:8px 0"></div>'
+     +'<div style="font-size:13px;color:#6b6b6b;margin-bottom:10px">📷 <b>Escanéalo con la cámara de tu teléfono</b><br>o toca el botón si ya estás en el celular</div>'
+     +'<a href="'+waUrl+'" style="display:inline-block;background:#25D366;color:#fff;font-weight:700;padding:13px 28px;border-radius:26px;text-decoration:none">Abrir WhatsApp 💬</a>'
+     +'<div style="font-size:11px;color:#9a9a9a;margin-top:10px">Vigente por 48 horas · '+code+'</div></div>';
+    document.getElementById('qrCv').appendChild(cv);
+  })
+  .catch(function(){box.innerHTML='<div style="text-align:center;color:#a00;padding:8px">Sin conexión con el servicio 😕. Usa la opción PDF, funciona igual.</div>';});
+ };
+}
+
+function genPDF(json,b,UNO){var r=b.remitente;
  try{
    var qr=qrcode(0,'M');qr.addData(json);qr.make();
    var n=qr.getModuleCount(),sc=6,pad=18,cv=document.createElement('canvas');cv.width=cv.height=n*sc+pad*2;var ctx=cv.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,cv.width,cv.height);ctx.fillStyle='#000';
