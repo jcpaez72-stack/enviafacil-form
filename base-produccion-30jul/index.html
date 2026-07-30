@@ -110,7 +110,7 @@
 
   <!-- BARRA DE BOTONES -->
   <div class="barra"><div class="inner">
-    <button id="btn" type="button">Continuar</button>
+    <button id="btnEdit" type="button" class="sec hidden">✏️ Editar</button><button id="btn" type="button">Continuar</button>
   </div></div>
 
   <!-- PANTALLA 3: OK -->
@@ -234,8 +234,9 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
 
     var enConf=false;
     var btn=document.getElementById("btn");
-    function irConf(){ enConf=true; pintarConf(); document.getElementById("scr_datos").classList.add("hidden"); document.getElementById("scr_conf").classList.remove("hidden"); document.getElementById("h_sub").textContent="Confirma tus datos."; btn.textContent="Confirmar"; }
+    function irConf(){ enConf=true; pintarConf(); document.getElementById("scr_datos").classList.add("hidden"); document.getElementById("scr_conf").classList.remove("hidden"); document.getElementById("h_sub").textContent="Confirma tus datos."; btn.textContent="Confirmar"; var _e=document.getElementById("btnEdit"); if(_e) _e.classList.remove("hidden"); }function volverAEditar(){ enConf=false; document.getElementById("scr_conf").classList.add("hidden"); document.getElementById("scr_datos").classList.remove("hidden"); document.getElementById("h_sub").textContent = esDestino ? "Completa la información de quien recibe." : "Completa la información de quien envía."; btn.textContent="Continuar"; var _e=document.getElementById("btnEdit"); if(_e) _e.classList.add("hidden"); window.scrollTo(0,0); }
 
+    (function(){var _e=document.getElementById("btnEdit"); if(_e) _e.addEventListener("click", volverAEditar);})();
     btn.addEventListener("click", async function(){
       if (!enConf){ if(!validate()) return; irConf(); return; }   // pantalla 1 -> confirmar
       // pantalla 2 -> enviar
