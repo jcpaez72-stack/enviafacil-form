@@ -119,4 +119,8 @@ btn.addEventListener("click", async function(){
   document.getElementById("ok").classList.add("show");
   if(wa) setTimeout(function(){ window.location.href="https://wa.me/"+wa; }, 900);
 });
-</script></body></html>
+</script>
+<script>window.__AI_CONN__="__AI_CONNECTION_STRING__";</script>
+<script defer src="https://js.monitor.azure.com/scripts/b/ai.2.min.js" onerror="window.__AI_LOAD_FAILED__=true"></script>
+<script defer>try{if(window.__AI_CONN__&&!window.__AI_LOAD_FAILED__&&typeof Microsoft!=="undefined"&&Microsoft.ApplicationInsights){var _efAI=new Microsoft.ApplicationInsights.ApplicationInsights({config:{connectionString:window.__AI_CONN__,enableAutoRouteTracking:true}});_efAI.loadAppInsights();_efAI.trackPageView();}}catch(e){}</script>
+</body></html>
