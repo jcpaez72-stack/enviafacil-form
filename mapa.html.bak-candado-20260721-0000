@@ -67,11 +67,6 @@
   if(callback.indexOf('executionId=')>=0){var cm=callback.match(/^(.*?)[?&]executionId=([^&#]+)(.*)$/);if(cm){if(!executionId)executionId=decodeURIComponent(cm[2]);callback=cm[1];}}
   var wa=(qs.get('wa')||'').replace(/\D/g,'');
   document.getElementById('okwa').href = wa ? ('https://wa.me/'+wa) : '#';
-  var EF_N=qs.get('n')||'';var EF_LOCK=(executionId&&EF_N)?('ef_'+executionId+'_'+EF_N+'_'+tipo):'';
-  var EF_EDIT=(qs.get('edit')||'');var EF_EDITLOCK=(EF_EDIT&&EF_LOCK)?(EF_LOCK+'_e'+EF_EDIT):'';
-  function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_LOCK);}catch(e){return null;}}
-  function efLock(d){if(!EF_LOCK)return;try{localStorage.setItem(EF_LOCK,JSON.stringify(d||{}));}catch(e){}}
-  function efShowLocked(){document.getElementById('scr').classList.add('hidden');var ok=document.getElementById('ok');var h=ok.querySelector('h2'),p=ok.querySelector('p');if(h)h.textContent='Ubicación ya registrada';if(p)p.textContent='Esta ubicación ya fue enviada. Para cambiarla, hazlo desde el chat de WhatsApp.';ok.style.display='block';}
 
   var DEF=[-0.180653,-78.467834], map=null, geoT=null, srchT=null, sess=newSess(), lastGeo=null;
   function newSess(){return 'ef-'+Date.now()+'-'+Math.floor(Math.random()*1e6);}
@@ -89,7 +84,6 @@
   }
 
   function initMap(){
-    var EF_FLURL="https://enviafacil-formlock.fn.jelou.ai";function efFormId(){return (EF_N||"")+"_"+(qs.get("tipo")||"");}function efSrvMark(d){if(!executionId||!EF_N)return;try{fetch(EF_FLURL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({accion:"marcar",exec:executionId,form:efFormId(),datos:d||{}})}).catch(function(){});}catch(e){}}function efSrvCheck(){if(!executionId||!EF_N)return;if(EF_EDIT)return;if(efLocked())return;var _v=document.createElement("div");_v.id="efVerif";_v.style.cssText="position:fixed;inset:0;background:#fff;z-index:9999;display:flex;align-items:center;justify-content:center;font:600 15px/1.4 system-ui,-apple-system,sans-serif;color:#6b6b6b";_v.textContent="Verificando…";document.body.appendChild(_v);var _quita=function(){var e=document.getElementById("efVerif");if(e)e.remove();};var _to=setTimeout(_quita,4000);try{fetch(EF_FLURL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({accion:"consultar",exec:executionId,form:efFormId()})}).then(function(r){return r.json();}).then(function(o){clearTimeout(_to);_quita();if(o&&o.ok&&o.enviado){efLock(o.datos||{});efShowLocked();}}).catch(function(){clearTimeout(_to);_quita();});}catch(e){clearTimeout(_to);_quita();}}if(efLocked()&&(!EF_EDIT||(EF_EDITLOCK&&localStorage.getItem(EF_EDITLOCK)))){efShowLocked();return;}efSrvCheck();
     map=L.map('leaf',{zoomControl:true}).setView(DEF,16);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
     map.on('moveend',onMove);
@@ -168,17 +162,12 @@
   }
   function enviar(c,d){
     d=d||{};
-    var _cp=d.calle||'',_cs=d.sector||'';
-    if(!_cp&&_cs){_cp=_cs;_cs='';}
-    if(_cs&&_cp&&_cs.trim().toLowerCase()===_cp.trim().toLowerCase())_cs='';
-    if(!_cp&&d.formatted)_cp=String(d.formatted).split(',')[0].trim();
     var body={ executionId:executionId, success:true, tipo:tipo,
       lat:String(c.lat), lon:String(c.lng),
-      calle_principal:_cp, calle_secundaria:_cs, referencia_recoleccion:'',
+      calle_principal:d.calle||'', calle_secundaria:d.sector||'', referencia_recoleccion:'',
       ciudad:d.ciudad||'', provincia:d.provincia||'', formatted:d.formatted||'' };
     fetch(callback,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
     .then(function(r){return r.json().catch(function(){return {};});}).then(function(out){
-      efLock(body);efSrvMark(body);if(EF_EDITLOCK){try{localStorage.setItem(EF_EDITLOCK,'1');}catch(e){}}
       document.getElementById('scr').classList.add('hidden');
       document.getElementById('ok').style.display='block';
       if(wa) setTimeout(function(){location.href='https://wa.me/'+wa;},900);
