@@ -178,7 +178,7 @@
       ciudad:d.ciudad||'', provincia:d.provincia||'', formatted:d.formatted||'' };
     fetch(callback,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
     .then(function(r){return r.json().catch(function(){return {};});}).then(function(out){
-      efLock(body);efSrvMark(body);if(EF_EDITLOCK){try{localStorage.setItem(EF_EDITLOCK,'1');}catch(e){}}
+      efLock(body);try{if(typeof efSrvMark==="function")efSrvMark(body);}catch(e){}if(EF_EDITLOCK){try{localStorage.setItem(EF_EDITLOCK,'1');}catch(e){}}
       document.getElementById('scr').classList.add('hidden');
       document.getElementById('ok').style.display='block';
       if(wa) setTimeout(function(){location.href='https://wa.me/'+wa;},900);
