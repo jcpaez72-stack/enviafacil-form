@@ -89,7 +89,7 @@
   }
 
   function initMap(){
-    var EF_FLURL="https://enviafacil-formlock.fn.jelou.ai";function efFormId(){return (EF_N||"")+"_"+(qs.get("tipo")||"");}function efSrvMark(d){if(!executionId||!EF_N)return;try{fetch(EF_FLURL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({accion:"marcar",exec:executionId,form:efFormId(),datos:d||{}})}).catch(function(){});}catch(e){}}function efSrvCheck(){if(!executionId||!EF_N)return;if(EF_EDIT)return;if(efLocked())return;var _v=document.createElement("div");_v.id="efVerif";_v.style.cssText="position:fixed;inset:0;background:#fff;z-index:9999;display:flex;align-items:center;justify-content:center;font:600 15px/1.4 system-ui,-apple-system,sans-serif;color:#6b6b6b";_v.textContent="Verificando…";document.body.appendChild(_v);var _quita=function(){var e=document.getElementById("efVerif");if(e)e.remove();};var _to=setTimeout(_quita,4000);try{fetch(EF_FLURL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({accion:"consultar",exec:executionId,form:efFormId()})}).then(function(r){return r.json();}).then(function(o){clearTimeout(_to);_quita();if(o&&o.ok&&o.enviado){efLock(o.datos||{});efShowLocked();}}).catch(function(){clearTimeout(_to);_quita();});}catch(e){clearTimeout(_to);_quita();}}if(efLocked()&&(!EF_EDIT||(EF_EDITLOCK&&localStorage.getItem(EF_EDITLOCK)))){efShowLocked();return;}efSrvCheck();
+    var EF_FLURL="https://enviafacil-formlock.fn.jelou.ai";function efFormId(){try{return (EF_N||"")+"_"+(qs.get("tipo")||"");}catch(e){return "";}}function efSrvMark(d){try{if(!executionId||!EF_N)return;fetch(EF_FLURL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({accion:"marcar",exec:executionId,form:efFormId(),datos:d||{}})}).catch(function(){});}catch(e){}}function efSrvCheck(){try{if(!executionId||!EF_N)return;if(typeof EF_EDIT!=="undefined"&&EF_EDIT)return;if(efLocked())return;fetch(EF_FLURL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({accion:"consultar",exec:executionId,form:efFormId()})}).then(function(r){return r.json();}).then(function(o){try{if(o&&o.ok&&o.enviado){efLock(o.datos||{});efShowLocked();}}catch(e){}}).catch(function(){});}catch(e){}}if(efLocked()&&(!EF_EDIT||(EF_EDITLOCK&&localStorage.getItem(EF_EDITLOCK)))){efShowLocked();return;}efSrvCheck();
     map=L.map('leaf',{zoomControl:true}).setView(DEF,16);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
     map.on('moveend',onMove);
@@ -199,5 +199,8 @@
   initMap();
 })();
 </script>
+<script>window.__AI_CONN__="__AI_CONNECTION_STRING__";</script>
+<script defer src="https://js.monitor.azure.com/scripts/b/ai.2.min.js" onerror="window.__AI_LOAD_FAILED__=true"></script>
+<script defer>try{if(window.__AI_CONN__&&!window.__AI_LOAD_FAILED__&&typeof Microsoft!=="undefined"&&Microsoft.ApplicationInsights){var _efAI=new Microsoft.ApplicationInsights.ApplicationInsights({config:{connectionString:window.__AI_CONN__,enableAutoRouteTracking:true}});_efAI.loadAppInsights();_efAI.trackPageView();}}catch(e){}</script>
 </body>
 </html>

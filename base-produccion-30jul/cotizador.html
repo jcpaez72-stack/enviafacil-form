@@ -51,7 +51,7 @@ function pickTipo(el){document.querySelectorAll('.tipo').forEach(t=>t.classList.
  const paq=sel.tipo==='paquete';document.getElementById('paqFields').classList.toggle('hidden',!paq);
  document.getElementById('fld_piezas').classList.toggle('hidden',!paq);checkReady();}
 function chkPeso(){var el=document.getElementById('peso');var v=parseFloat((el.value||'0').replace(',','.'));var bad=v>50;el.classList.toggle('bad',bad);var e=document.getElementById('pesoerr');if(e)e.style.display=bad?'block':'none';}
-(function(){var pre=(qs.get('tipo')||'').trim().toLowerCase();if(pre==='documento'||pre==='paquete'){var tile=document.querySelector('.tipo[data-tipo="'+pre+'"]');if(tile){pickTipo(tile);var c=tile.closest('.card');if(c)c.style.display='none';}}})();
+(function(){var pre=(qs.get('tipo')||'').trim().toLowerCase();if(!pre){try{if(window._efAI&&window._efAI.trackEvent){window._efAI.trackEvent({name:'EF_cotizador_sin_tipo'},{executionId:(qs.get('executionId')||''),origen:'cotizador'});}}catch(e){}}if(pre==='documento'||pre==='paquete'){var tile=document.querySelector('.tipo[data-tipo="'+pre+'"]');if(tile){pickTipo(tile);var c=tile.closest('.card');if(c)c.style.display='none';}}})();
 function search(k){const q=norm(document.getElementById('q'+k).value.trim());const box=document.getElementById('sug'+k);
  if(q.length<2){box.classList.remove('show');return;}
  const hits=CAT.filter(c=>norm(c[0]).includes(q)).slice(0,30);

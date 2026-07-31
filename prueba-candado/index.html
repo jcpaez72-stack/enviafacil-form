@@ -240,13 +240,13 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
     btn.addEventListener("click", async function(){
       if (!enConf){ if(!validate()) return; irConf(); return; }   // pantalla 1 -> confirmar
       // pantalla 2 -> enviar
-      btn.disabled=true; btn.textContent="Enviando…";
+      btn.disabled=true; btn.textContent="Enviando…";var _tEsp=setTimeout(function(){ if(btn.disabled) btn.textContent="Enviando… no cierres esta ventana"; },5000);
       var PROXY="https://enviafacil-callback.fn.jelou.ai";var EF_KEY="9b99e95c5782806fac1bb6051c9a1aee5e9380d535d8b02e";
       var body=Object.assign({ executionId:executionId, success:true }, payloadDatos());
       try{
         var resp=await fetch(PROXY,{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) });
         var out={}; try{ out=await resp.json(); }catch(e){}
-        if (!resp.ok || out.ok===false) throw new Error("proxy "+(out.status||resp.status));efLock(payloadDatos());efSrvMark(payloadDatos());if(EF_EDITLOCK){try{localStorage.setItem(EF_EDITLOCK,"1");}catch(e){}}
+        clearTimeout(_tEsp); if (!resp.ok || out.ok===false) throw new Error("proxy "+(out.status||resp.status));efLock(payloadDatos());efSrvMark(payloadDatos());if(EF_EDITLOCK){try{localStorage.setItem(EF_EDITLOCK,"1");}catch(e){}}
         document.getElementById("scr_conf").classList.add("hidden");
         document.querySelector(".barra").style.display="none";
         document.querySelector(".head").style.display="none";
@@ -255,7 +255,7 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
         if (wa) setTimeout(function(){ window.location.href="https://wa.me/"+wa; },900);
         else setTimeout(function(){ try{window.close();}catch(e){} },1200);
       }catch(e){
-        btn.disabled=false; btn.textContent="Confirmar";
+        clearTimeout(_tEsp); btn.disabled=false; btn.textContent="Confirmar";
         efAviso("No pudimos enviar los datos. Revisa tu conexión e intenta de nuevo.");
       }
     });
