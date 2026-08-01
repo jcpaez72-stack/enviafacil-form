@@ -426,7 +426,7 @@ scrMenu();
   var DEF=[-0.180653,-78.467834];
   function setV(id,v){var el=document.getElementById(id);if(el&&v)el.value=v;}
   function openM(){modal.classList.remove('hidden');
-    if(!map){map=L.map('efLeaf',{zoomControl:true}).setView(DEF,16);
+    if(!map){map=L.map('efLeaf',{zoomControl:false}).setView(DEF,16);L.control.zoom({position:'topright'}).addTo(map);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
       map.on('moveend',onMove);tryLoc();}
     setTimeout(function(){map.invalidateSize();onMove();},250);}
