@@ -217,7 +217,7 @@ function pickTipo(el){document.querySelectorAll('.tipo').forEach(function(t){t.c
 function chkPeso(){var el=document.getElementById('peso');if(!el)return;var v=parseFloat((el.value||'0').replace(',','.'));var pz=parseInt((document.getElementById('piezas')||{}).value||'1')||1;var bad=v>50*pz;el.classList.toggle('bad',bad);var e=document.getElementById('pesoerr');if(e)e.style.display=bad?'block':'none';}
 
 // ===== PANTALLA 2 (por destino): DATOS DEL DESTINATARIO =====
-function scrDest(i){var _e0=estado.envios[i];if(!sel.Des&&_e0&&_e0.ciudadDes){sel.Des=_e0.ciudadDes;}var e=estado.envios[i];window._efCiudadKey='Des';sel.Des=e.ciudad||null;sel.Ret=estado.remitente?estado.remitente.ciudad:null;
+function scrDest(i){var e=estado.envios[i];window._efCiudadKey='Des';sel.Des=e.ciudad||null;sel.Ret=estado.remitente?estado.remitente.ciudad:null;
  app('<div class="head"><div class="logo">📦</div><div><h1>Destino '+(i+1)+'</h1><p>Página 2 · Destinatario y destino</p></div></div>'
   +prog(2)+'<div class="card">'+mapHeaderHTML(e.dest)+ciudadHTML('Des','🎯 Ciudad de destino','Escribe la ciudad destino...')+personaHTML('dest',e.dest)+'</div>');
  barra('<button class="btn sec" id="atras" style="flex:0 0 40%">Atrás</button><button class="btn" id="btn">Continuar</button>');
@@ -411,7 +411,7 @@ function scrPrecio(c){window._efCoti=c;
  barra('<button class="btn sec" id="otra" style="flex:0 0 40%">Cotizar otro</button><button class="btn" id="btn">Solicitar este envío</button>');
  document.getElementById('otra').onclick=function(){clr('Ret');clr('Des');window._selTipo=null;scrCotizar();};
  document.getElementById('btn').onclick=function(){
-   estado.modo='uno';estado.remitente=Object.assign({},estado.remitente||{},{celular:c.celular});estado.envios=[{tipo:c.tipo,idServicio:c.idServicio,piezas:c.piezas,peso:c.peso,valor:c.valor,contenido:c.contenido,ciudadDes:c.des}];estado.idx=0;
+   estado.modo='uno';estado.remitente=Object.assign({},estado.remitente||{},{celular:c.celular,ciudad:c.ori});estado.envios=[{tipo:c.tipo,idServicio:c.idServicio,piezas:c.piezas,peso:c.peso,valor:c.valor,contenido:c.contenido,ciudad:c.des}];estado.idx=0;
    scrRemitente();
  };}
 
