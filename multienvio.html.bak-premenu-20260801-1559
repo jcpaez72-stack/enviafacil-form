@@ -217,7 +217,7 @@ function pickTipo(el){document.querySelectorAll('.tipo').forEach(function(t){t.c
 function chkPeso(){var el=document.getElementById('peso');if(!el)return;var v=parseFloat((el.value||'0').replace(',','.'));var pz=parseInt((document.getElementById('piezas')||{}).value||'1')||1;var bad=v>50*pz;el.classList.toggle('bad',bad);var e=document.getElementById('pesoerr');if(e)e.style.display=bad?'block':'none';}
 
 // ===== PANTALLA 2 (por destino): DATOS DEL DESTINATARIO =====
-function scrDest(i){var _e0=estado.envios[i];if(!sel.Des&&_e0&&_e0.ciudadDes){sel.Des=_e0.ciudadDes;}var e=estado.envios[i];window._efCiudadKey='Des';sel.Des=e.ciudad||null;sel.Ret=estado.remitente?estado.remitente.ciudad:null;
+function scrDest(i){var e=estado.envios[i];window._efCiudadKey='Des';sel.Des=e.ciudad||null;sel.Ret=estado.remitente?estado.remitente.ciudad:null;
  app('<div class="head"><div class="logo">📦</div><div><h1>Destino '+(i+1)+'</h1><p>Página 2 · Destinatario y destino</p></div></div>'
   +prog(2)+'<div class="card">'+mapHeaderHTML(e.dest)+ciudadHTML('Des','🎯 Ciudad de destino','Escribe la ciudad destino...')+personaHTML('dest',e.dest)+'</div>');
  barra('<button class="btn sec" id="atras" style="flex:0 0 40%">Atrás</button><button class="btn" id="btn">Continuar</button>');
@@ -342,81 +342,7 @@ function scrInicio(){window._efCiudadKey=null;window._selModo=estado.modo;
  document.getElementById('btn').onclick=function(){if(!window._selModo){efAviso('Elige una opción.');return;}estado.modo=window._selModo;scrRemitente();};}
 function pickModo(el){document.querySelectorAll('.tipo').forEach(function(t){t.classList.remove('sel');});el.classList.add('sel');window._selModo=el.dataset.modo;document.getElementById('btn').disabled=false;}
 
-
-// ══════════ ENTRADA WEB: menú + cotizador ══════════
-var COTIZAR_URL='https://enviafacil-cotizar.fn.jelou.ai';
-function scrMenu(){window._efCiudadKey=null;window._selTipo=null;
- app('<div class="head"><div class="logo">📦</div><div><h1>EnvíaFácil</h1><p>Cotiza o solicita tu envío</p></div></div>'
-  +'<div class="card"><div class="step">¿Qué necesitas?</div><div class="tipos">'
-  +'<div class="tipo" data-op="cotizar" onclick="pickOp(this)"><div class="ic">🧮</div><div class="t">Cotizar</div></div>'
-  +'<div class="tipo" data-op="enviar" onclick="pickOp(this)"><div class="ic">🚚</div><div class="t">Solicitar envío</div></div>'
-  +'</div><div class="hint" style="margin-top:10px">Cotizar te da el precio al instante. Solicitar envío arma tu guía y coordina el retiro.</div></div>');
- barra('<button class="btn" id="btn" disabled>Continuar</button>');
- document.getElementById('btn').onclick=function(){ if(window._selOp==='cotizar')scrCotizar(); else scrInicio(); };}
-function pickOp(el){document.querySelectorAll('.tipo').forEach(function(t){t.classList.remove('sel');});el.classList.add('sel');window._selOp=el.dataset.op;document.getElementById('btn').disabled=false;}
-
-function scrCotizar(){window._efCiudadKey=null;window._selTipo=null;
- app('<div class="head"><div class="logo">🧮</div><div><h1>Cotizar</h1><p>Precio al instante, sin registrarte</p></div></div>'
-  +'<div class="card">'+ciudadHTML('Ret','📍 Ciudad de origen','Escribe la ciudad')+ciudadHTML('Des','🎯 Ciudad de destino','Escribe la ciudad')+'<div class="fld"><label class="lbl">📱 Tu celular <span class="req">*</span></label><input id="celcoti" type="tel" inputmode="numeric" maxlength="20" placeholder="0999999999" value="'+(window._efCel||'')+'"><div class="hint">Lo usamos para tu cotización y para avisarte del envío.</div></div>'+'</div>'
-  +'<div class="card"><div class="step">¿Qué vas a enviar?</div><div class="tipos">'
-  +'<div class="tipo" data-tipo="documento" data-id="201202002001002" onclick="pickTipo(this)"><div class="ic">📄</div><div class="t">Documento</div></div>'
-  +'<div class="tipo" data-tipo="paquete" data-id="201202002002013" onclick="pickTipo(this)"><div class="ic">📦</div><div class="t">Paquete</div></div></div>'
-  +'<div id="fld_piezas" class="fld hidden" style="margin-top:14px"><label class="lbl">📦 Número de piezas</label><input id="piezas" type="number" inputmode="numeric" min="1" max="100" value="1"></div>'
-  +'<div id="paqFields" class="hidden"><div class="row"><div class="fld"><label class="lbl">⚖️ Peso (kg) — máx 50/pieza</label><input id="peso" type="text" inputmode="decimal" placeholder="1 a 50 kg" oninput="chkPeso()"><div id="pesoerr" class="errp">⚠️ El peso máximo es 50 kg por pieza.</div></div>'
-  +'<div class="fld"><label class="lbl">💵 Valor declarado</label><input id="valor" type="number" inputmode="numeric" min="0" placeholder="USD"></div></div>'
-  +'<div class="fld"><label class="lbl">📦 Tipo de contenido <span class="req">*</span></label><input id="contenido" type="text" maxlength="60" placeholder="Escribe qué contiene (ej. ropa, zapatos)"><div class="hint">Descríbelo tú mismo, no uses términos genéricos.</div></div></div></div>');
- barra('<button class="btn sec" id="atras" style="flex:0 0 40%">Atrás</button><button class="btn" id="btn">Cotizar</button>');
- document.getElementById('atras').onclick=function(){window._selTipo=null;scrMenu();};
- document.getElementById('btn').onclick=cotizarWeb;}
-
-function cotizarWeb(){
- if(!sel.Ret||!sel.Des){efAviso('Elige la ciudad de origen y la de destino.');return;}
- var cel=(val('celcoti')||'').replace(/\D/g,'');
- if(!(cel.length>=10&&cel.length<=15)){efAviso('Escribe tu celular (10 dígitos).');return;}
- window._efCel=cel;
- if(!window._selTipo){efAviso('Elige Documento o Paquete.');return;}
- var paq=window._selTipo.tipo==='paquete';
- var piezas=paq?parseInt(val('piezas')||'1',10):1;
- var peso=paq?parseFloat((val('peso')||'0').replace(',','.')):2;
- var valor=paq?parseFloat((val('valor')||'0').replace(',','.')):0;
- var contenido=paq?val('contenido'):'Documentos';
- if(paq&&!(piezas>=1)){efAviso('Indica el número de piezas (mínimo 1).');return;}
- if(paq&&!(peso>=1)){efAviso('Indica el peso en kg (mínimo 1).');return;}
- if(paq&&peso>50*piezas){efAviso('El peso máximo es 50 kg por pieza.');return;}
- if(paq&&!(valor>0)){efAviso('Indica el valor declarado (mayor a 0).');return;}
- if(paq&&contenido.length<3){efAviso('Escribe qué contiene (mínimo 3 letras).');return;}
- var b=document.getElementById('btn');b.disabled=true;b.textContent='Cotizando…';
- fetch(COTIZAR_URL,{method:'POST',headers:{'Content-Type':'application/json'},
-   body:JSON.stringify({idCiuOrigen:sel.Ret.code,idCiuDestino:sel.Des.code,idServicio:window._selTipo.id,
-     peso:peso,piezas:piezas,valorDeclarado:valor,celular:cel})})
-  .then(function(r){return r.json();})
-  .then(function(o){
-    var total=(o&&(o.total||(o.data&&o.data.total)));
-    if(total==null){throw new Error('sin total');}
-    scrPrecio({total:total,tipo:window._selTipo.tipo,idServicio:window._selTipo.id,
-      piezas:piezas,peso:peso,valor:valor,contenido:contenido,
-      ori:sel.Ret,des:sel.Des,celular:cel});
-  })
-  .catch(function(){b.disabled=false;b.textContent='Cotizar';efAviso('No pudimos calcular el precio. Intenta de nuevo.');});}
-
-function scrPrecio(c){window._efCoti=c;
- app('<div class="head"><div class="logo">💰</div><div><h1>Tu cotización</h1><p>Valor referencial del envío</p></div></div>'
-  +'<div class="card"><div class="precio" style="font-size:34px;font-weight:800;text-align:center;margin:6px 0 2px">$'+Number(c.total).toFixed(2)+'</div>'
-  +'<div class="hint" style="text-align:center">Incluye retiro en tu dirección y entrega al destinatario</div>'
-  +'<div class="res" style="margin-top:14px">'
-  +'<div>📍 <b>Origen:</b> '+c.ori.name+'</div><div>🎯 <b>Destino:</b> '+c.des.name+'</div>'
-  +'<div>📦 <b>Tipo:</b> '+(c.tipo==='paquete'?'Paquete':'Documento')+'</div>'
-  +(c.tipo==='paquete'?('<div>⚖️ <b>Peso:</b> '+c.peso+' kg · <b>Piezas:</b> '+c.piezas+'</div><div>💵 <b>Valor declarado:</b> $'+c.valor+'</div><div>📦 <b>Contiene:</b> '+c.contenido+'</div>'):'')
-  +'</div><div class="hint" style="margin-top:10px">El valor puede variar según el destino y las condiciones del envío.</div></div>');
- barra('<button class="btn sec" id="otra" style="flex:0 0 40%">Cotizar otro</button><button class="btn" id="btn">Solicitar este envío</button>');
- document.getElementById('otra').onclick=function(){clr('Ret');clr('Des');window._selTipo=null;scrCotizar();};
- document.getElementById('btn').onclick=function(){
-   estado.modo='uno';estado.remitente=Object.assign({},estado.remitente||{},{celular:c.celular});estado.envios=[{tipo:c.tipo,idServicio:c.idServicio,piezas:c.piezas,peso:c.peso,valor:c.valor,contenido:c.contenido,ciudadDes:c.des}];estado.idx=0;
-   scrRemitente();
- };}
-
-
-scrMenu();
+scrInicio();
 </script>
 
 <!-- MAPA: lógica (copiada de index.html), expone efOpenMapa() =====-->
