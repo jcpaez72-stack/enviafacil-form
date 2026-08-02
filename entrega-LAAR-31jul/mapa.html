@@ -15,7 +15,7 @@
   #leaf{ position:absolute; inset:0; }
   #pin{ position:absolute; left:50%; top:50%; transform:translate(-50%,-100%); pointer-events:none; font-size:38px; line-height:1; z-index:500; }
   #fab{ position:absolute; right:14px; bottom:20px; width:46px; height:46px; border-radius:50%; background:#fff; border:0.5px solid #ddd; font-size:20px; z-index:500; cursor:pointer; }
-  #searchbox{ position:absolute; top:10px; left:10px; right:10px; z-index:600; }
+  #searchbox{ position:absolute; top:10px; left:10px; right:56px; z-index:600; }
   #search{ width:100%; height:42px; border-radius:10px; border:none; padding:0 12px; font-size:14px; box-shadow:0 1px 6px rgba(0,0,0,.25); }
   #sug{ background:#fff; border-radius:10px; margin-top:4px; box-shadow:0 2px 8px rgba(0,0,0,.2); overflow:hidden; display:none; max-height:220px; overflow-y:auto; }
   .foot{ padding:14px 16px; border-top:0.5px solid #e4e4e4; }
@@ -90,7 +90,7 @@
 
   function initMap(){
     var EF_FLURL="https://enviafacil-formlock.fn.jelou.ai";function efFormId(){try{return (EF_N||"")+"_"+(qs.get("tipo")||"");}catch(e){return "";}}function efSrvMark(d){try{if(!executionId||!EF_N)return;fetch(EF_FLURL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({accion:"marcar",exec:executionId,form:efFormId(),datos:d||{}})}).catch(function(){});}catch(e){}}function efSrvCheck(){try{if(!executionId||!EF_N)return;if(typeof EF_EDIT!=="undefined"&&EF_EDIT)return;if(efLocked())return;fetch(EF_FLURL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({accion:"consultar",exec:executionId,form:efFormId()})}).then(function(r){return r.json();}).then(function(o){try{if(o&&o.ok&&o.enviado){efLock(o.datos||{});efShowLocked();}}catch(e){}}).catch(function(){});}catch(e){}}if(efLocked()&&(!EF_EDIT||(EF_EDITLOCK&&localStorage.getItem(EF_EDITLOCK)))){efShowLocked();return;}efSrvCheck();
-    map=L.map('leaf',{zoomControl:true}).setView(DEF,16);
+    map=L.map('leaf',{zoomControl:false}).setView(DEF,16);L.control.zoom({position:'topright'}).addTo(map);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
     map.on('moveend',onMove);
     // centrar en la ciudad esperada, si viene
