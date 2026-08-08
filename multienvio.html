@@ -88,7 +88,7 @@ var qs=new URLSearchParams(location.search);
 var executionId=qs.get("executionId")||"";
 if(!executionId){var m0=location.href.match(/[?&]executionId=([^&#]+)/);if(m0)executionId=decodeURIComponent(m0[1]);}
 var WA=(qs.get("wa")||"593999842656").replace(/\D/g,"");
-var PROXY="https://enviafacil-callback.fn.jelou.ai";
+var PROXY="https://enviafacil-callback.fn.jelou.ai"; var PASO=(qs.get("paso")||"").toLowerCase();
 
 // ===== estado =====
 var estado={modo:null,remitente:null,envios:[],idx:0};
@@ -173,7 +173,7 @@ function scrRemitente(){sel.Des=null;window._efCiudadKey='Ret';var d=estado.remi
  document.getElementById('btn').onclick=function(){
    if(!sel.Ret){efAviso('Elige la ciudad de retiro (o ubícala en el mapa).');return;}
    if(!validarPersona('rem'))return;
-   estado.remitente=Object.assign({ciudad:sel.Ret},leerPersona());
+   estado.remitente=Object.assign({ciudad:sel.Ret},leerPersona()); if(PASO==='remitente'){return enviarAlBot(payloadRemitente());}
    if(!estado.envios.length)estado.envios.push(nuevoEnvio());
    estado.idx=0;scrEnvio(0);
  };}
@@ -258,7 +258,27 @@ function payload(){var r=estado.remitente;
  return {executionId:executionId,success:true,
   remitente:{ciudad:r.ciudad.name,ciudadCodigo:r.ciudad.code,provincia:r.ciudad.prov,cedula:r.cedula,nombre:r.nombre,correo:r.correo,celular:r.celular,calle_principal:r.calle_principal,numero_casa:r.numero_casa,calle_secundaria:r.calle_secundaria,referencia:r.referencia,lat:r.lat,lon:r.lon},
   envios:estado.envios.filter(function(e){return e.confirmado;}).map(function(e){var d=e.dest;return {idServicio:e.idServicio,tipo:e.tipo==='paquete'?'Paquete':'Documento',ciudad:e.ciudad.name,ciudadCodigo:e.ciudad.code,provincia:e.ciudad.prov,piezas:e.piezas,peso:e.peso,valor:e.valor,contenido:e.contenido,cedula:d.cedula,nombre:d.nombre,correo:d.correo,celular:d.celular,calle_principal:d.calle_principal,numero_casa:d.numero_casa,calle_secundaria:d.calle_secundaria,referencia:d.referencia,lat:d.lat,lon:d.lon};})};}
-function enviar(){var b=payload();var r=b.remitente;
+
+function payloadRemitente(){var r=estado.remitente;return {executionId:executionId,success:true,paso:'remitente',remitente:{ciudad:r.ciudad.name,ciudadCodigo:r.ciudad.code,provincia:r.ciudad.prov,cedula:r.cedula,nombre:r.nombre,correo:r.correo,celular:r.celular,calle_principal:r.calle_principal,numero_casa:r.numero_casa,calle_secundaria:r.calle_secundaria,referencia:r.referencia,lat:r.lat,lon:r.lon}};}
+function payloadDestinos(){var b=payload();return {executionId:executionId,success:true,paso:'destinos',envios:b.envios};}
+async function enviarAlBot(b){
+  if(window._efEnviandoBot)return; window._efEnviandoBot=true;
+  app('<div class="head"><div class="logo">⏳</div><div><h1>Enviando…</h1><p>No cierres esta ventana</p></div></div>');
+  try{
+    var resp=await fetch(PROXY,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)});
+    var out={}; try{ out=await resp.json(); }catch(e){}
+    if(!resp.ok || out.ok===false) throw new Error('proxy '+(out.status||resp.status));
+  }catch(e){
+    window._efEnviandoBot=false;
+    app('<div class="head"><div class="logo">⚠️</div><div><h1>No se pudo enviar</h1><p>Revisa tu conexión e inténtalo otra vez.</p></div></div>'
+       +'<div class="card"><button class="btn" onclick="enviarAlBot(payload())">Reintentar</button></div>');
+    return;
+  }
+  app('<div class="head"><div class="logo">✅</div><div><h1>¡Listo!</h1><p>Volvemos a WhatsApp…</p></div></div>');
+  if(WA) setTimeout(function(){ location.href='https://wa.me/'+WA; }, 900);
+}
+
+function enviar(){var b=payload();if(executionId){return enviarAlBot(PASO==='destinos'?payloadDestinos():b);}var r=b.remitente;
  var UNO=estado.modo==='uno';var compact={v:1,t:UNO?'e':'m',
   r:{c:r.cedula,n:r.nombre,e:r.correo,ce:r.celular,ci:[r.ciudadCodigo,r.ciudad,r.provincia],cp:r.calle_principal,nc:r.numero_casa,cs:r.calle_secundaria,rf:r.referencia,la:r.lat,lo:r.lon},
   es:b.envios.map(function(e){return {s:e.idServicio,tp:e.tipo,ci:[e.ciudadCodigo,e.ciudad,e.provincia],pz:e.piezas,pe:e.peso,va:e.valor,co:e.contenido,d:{c:e.cedula,n:e.nombre,e:e.correo,ce:e.celular,cp:e.calle_principal,nc:e.numero_casa,cs:e.calle_secundaria,rf:e.referencia,la:e.lat,lo:e.lon}};})};
@@ -416,7 +436,9 @@ function scrPrecio(c){window._efCoti=c;
  };}
 
 
-scrMenu();
+if(PASO==='remitente'){estado.modo='multi';scrRemitente();}
+else if(PASO==='destinos'){estado.modo='multi';estado.remitente=estado.remitente||{};if(!estado.envios.length)estado.envios.push(nuevoEnvio());estado.idx=0;scrEnvio(0);}
+else{scrMenu();}
 </script>
 
 <!-- MAPA: lógica (copiada de index.html), expone efOpenMapa() =====-->
