@@ -161,7 +161,7 @@ function prog(n){var t=['Remitente','Envío','Destinatario','Resumen'];return '<
 
 // ===== PANTALLA 0: REMITENTE (solo ciudad de retiro + datos del remitente) =====
 function scrRemitente(){sel.Des=null;window._efCiudadKey='Ret';var d=estado.remitente||{};sel.Ret=(estado.remitente&&estado.remitente.ciudad)?estado.remitente.ciudad:null;
- app('<div class="head"><div class="logo">📦</div><div><h1>'+(estado.modo==='uno'?'Tu envío':'Multidestino')+'</h1><p>'+(estado.modo==='uno'?'De dónde retiramos':'Un solo retiro · varios destinos')+'</p></div></div>'
+ app('<div class="head"><div class="logo">📦</div><div><h1>'+(estado.modo==='uno'?'Tu envío':'Multidestino')+'</h1><p>'+(estado.modo==='uno'?'De dónde retiramos':'Un solo retiro · Multi destinos')+'</p></div></div>'
   +prog(0)
   +'<div class="card"><div class="step">Remitente · de dónde retiramos</div>'
   +mapHeaderHTML(d)
