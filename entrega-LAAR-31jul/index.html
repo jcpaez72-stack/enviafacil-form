@@ -72,8 +72,8 @@
     </div>
     <div class="grp">
       <label id="l_celular">Celular <span class="req">*</span></label>
-      <input id="celular" inputmode="numeric" maxlength="15" placeholder="09XXXXXXXX (o internacional)" />
-      <div class="errmsg" id="e_celular">Celular de 10 dígitos (Ecuador) o número internacional.</div>
+      <input id="celular" inputmode="numeric" maxlength="10" placeholder="0991234567" />
+      <div class="errmsg" id="e_celular">Ingresa un celular de 10 dígitos (ej: 0991234567).</div>
     </div>
 
     <div id="bloque_dir">
@@ -153,7 +153,7 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
     if (esDestino){
       document.getElementById("l_cedula").innerHTML = 'Cédula o RUC <span class="hint" style="font-weight:400;display:inline">(opcional)</span>';
       var _lc=document.getElementById("l_correo"); if(_lc) _lc.innerHTML='Correo electrónico <span class="hint" style="font-weight:400;display:inline">(opcional)</span>';
-      var _lcel=document.getElementById("l_celular"); if(_lcel) _lcel.innerHTML='Celular <span class="hint" style="font-weight:400;display:inline">(opcional)</span>';
+      
       var _rq=document.getElementById("req_cedula"); if(_rq) _rq.style.display="none";
     }
 
@@ -201,7 +201,7 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
       ok=ok&&cOk;
       var nOk=val("nombre").length>=3; setErr("nombre",!nOk); ok=ok&&nOk;
       var _ev=val("correo"), eOk; if(esDestino&&_ev===""){eOk=true;setErr("correo",false);} else {eOk=correoOk(_ev);setErr("correo",!eOk);} ok=ok&&eOk;
-      var _cv=val("celular"), celOk; if(esDestino&&_cv===""){celOk=true;setErr("celular",false);} else {celOk=/^\d{10,15}$/.test(_cv);setErr("celular",!celOk);} ok=ok&&celOk;
+      var _cv=val("celular").replace(/\D/g,""), celOk; celOk=/^\d{10}$/.test(_cv); setErr("celular",!celOk); ok=ok&&celOk;
       if (!esOficina){
         var caOk=val("calle_principal").length>=2; setErr("calle_principal",!caOk); ok=ok&&caOk;
         var nuOk=val("numero_casa").length>=1; setErr("numero_casa",!nuOk); ok=ok&&nuOk;
@@ -271,7 +271,7 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
       <div id="efLeaf" style="position:absolute;inset:0"></div>
       <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-100%);pointer-events:none;font-size:38px;line-height:1;z-index:500">📍</div>
       <button type="button" id="efMiUbic" aria-label="mi ubicación" style="position:absolute;right:14px;bottom:20px;width:46px;height:46px;border-radius:50%;background:#fff;border:0.5px solid #ddd;font-size:20px;z-index:500;cursor:pointer">🎯</button>
-      <div style="position:absolute;top:10px;left:10px;right:10px;z-index:600">
+      <div style="position:absolute;top:10px;left:10px;right:56px;z-index:600">
         <input id="efSearch" type="text" autocomplete="off" placeholder="Busca ciudad, calle o referencia" style="width:100%;height:42px;border-radius:10px;border:none;padding:0 12px;font-size:14px;box-shadow:0 1px 6px rgba(0,0,0,.25);box-sizing:border-box"/>
         <div id="efSug" style="background:#fff;border-radius:10px;margin-top:4px;box-shadow:0 2px 8px rgba(0,0,0,.2);overflow:hidden;display:none;max-height:220px;overflow-y:auto"></div>
       </div>
@@ -293,7 +293,7 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
     function openM(){
       modal.classList.remove('hidden');
       if(!map){
-        map=L.map('efLeaf',{zoomControl:true}).setView(DEF,16);
+        map=L.map('efLeaf',{zoomControl:false}).setView(DEF,16);L.control.zoom({position:'topright'}).addTo(map);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
         map.on('moveend',onMove);
         var _ec=qmap.get('ciudadEsp')||'', _ep=qmap.get('provEsp')||'';
