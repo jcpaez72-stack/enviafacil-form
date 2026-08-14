@@ -111,10 +111,12 @@ var EF_KEY="__EF_API_KEY__";
 var qs=new URLSearchParams(location.search);
 var executionId=qs.get("executionId")||"";
 if(!executionId){var m0=location.href.match(/[?&]executionId=([^&#]+)/);if(m0)executionId=decodeURIComponent(m0[1]);}
-var EF_N=qs.get("n")||"";var EF_LOCK=(executionId&&EF_N)?("ef_"+executionId+"_"+EF_N+"_"+(qs.get("paso")||"")):"";var EF_EDIT=(qs.get("edit")||"")==="1";
-function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_LOCK);}catch(e){return null;}}function efLock(d){if(!EF_LOCK)return;try{localStorage.setItem(EF_LOCK,JSON.stringify(d||{}));if(EF_EDITLOCK){localStorage.setItem(EF_EDITLOCK,"1");}}catch(e){}}function efShowLocked(){var d={};try{d=JSON.parse(efLocked())||{};}catch(e){}var SKIP={executionId:1,callback:1,success:1,dbgHref:1,idServicio:1};var rows="";for(var k in d){if(SKIP[k]||d[k]===""||d[k]==null)continue;rows+='<div style="display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #eee"><span style="color:#8a8a8a">'+k.replace(/_/g," ")+'</span><b style="text-align:right;max-width:60%">'+String(d[k])+'</b></div>';}var _wa=((qs.get("wa")||"593991344747").replace(/\D/g,""));document.body.innerHTML='<div style="max-width:430px;margin:0 auto;padding:44px 22px;text-align:center"><div style="font-size:52px">\u2705</div><h2 style="margin:10px 0 4px;color:#0F0F0F">Datos ya enviados</h2><p style="color:#6b6b6b;margin:0 0 16px">Esta informaci\u00f3n ya fue registrada y no se puede modificar aqu\u00ed.</p><div style="text-align:left;background:#fafafa;border:1px solid #eee;border-radius:12px;padding:12px 16px">'+rows+'</div><p style="color:#9b9b9b;font-size:13px;margin-top:14px">Para corregir algo, hazlo desde la conversaci\u00f3n de WhatsApp.</p><a href="https://wa.me/'+_wa+'" style="display:inline-block;margin-top:8px;background:#FFD100;color:#0F0F0F;font-weight:700;padding:12px 26px;border-radius:26px;text-decoration:none">Volver a WhatsApp</a></div>';}var EF_FLURL="https://enviafacil-formlock.fn.jelou.ai";function efFormId(){try{return (EF_N||"")+"_"+(qs.get("paso")||"");}catch(e){return "";}}function efSrvMark(d){try{if(!executionId||!EF_N)return;fetch(EF_FLURL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({accion:"marcar",exec:executionId,form:efFormId(),datos:d||{}})}).catch(function(){});}catch(e){}}function efSrvCheck(){try{if(!executionId||!EF_N)return;if(typeof EF_EDIT!=="undefined"&&EF_EDIT)return;if(efLocked())return;fetch(EF_FLURL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({accion:"consultar",exec:executionId,form:efFormId()})}).then(function(r){return r.json();}).then(function(o){try{if(o&&o.ok&&o.enviado){efLock(o.datos||{});efShowLocked();}}catch(e){}}).catch(function(){});}catch(e){}}if(efLocked()&&(!EF_EDIT||(EF_EDITLOCK&&localStorage.getItem(EF_EDITLOCK)))){efShowLocked();}if(efLocked()){efShowLocked();}efSrvCheck();
+var EF_N=qs.get("n")||"";
+  /* uno=1 → el formulario confirma UN destino y se cierra; el chat pregunta si va otro */
+  var EF_UNO=(qs.get("uno")==="1");var EF_LOCK=(executionId&&EF_N)?("ef_"+executionId+"_"+EF_N+"_"+(qs.get("paso")||"")):"";var EF_EDIT=(qs.get("edit")||"")==="1";
+function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_LOCK);}catch(e){return null;}}function efLock(d){if(!EF_LOCK)return;try{localStorage.setItem(EF_LOCK,JSON.stringify(d||{}));if(EF_EDITLOCK){localStorage.setItem(EF_EDITLOCK,"1");}}catch(e){}}function efShowLocked(){var d={};try{d=JSON.parse(efLocked())||{};}catch(e){}var SKIP={executionId:1,callback:1,success:1,dbgHref:1,idServicio:1,enviosJSON:1};var _fl={};function _plano(o,pre){for(var kk in o){if(!Object.prototype.hasOwnProperty.call(o,kk))continue;if(SKIP[kk])continue;var vv=o[kk];if(vv===""||vv==null)continue;var et=pre?(pre+" · "+kk):kk;if(Object.prototype.toString.call(vv)==="[object Array]"){for(var ii=0;ii<vv.length;ii++){_plano(vv[ii],et+" "+(ii+1));}}else if(typeof vv==="object"){_plano(vv,et);}else{_fl[et]=vv;}}}_plano(d,"");d=_fl;var rows="";for(var k in d){if(d[k]===""||d[k]==null)continue;rows+='<div style="display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #eee"><span style="color:#8a8a8a">'+k.replace(/_/g," ")+'</span><b style="text-align:right;max-width:60%">'+String(d[k])+'</b></div>';}var _wa=((qs.get("wa")||"593991344747").replace(/\D/g,""));document.body.innerHTML='<div style="max-width:430px;margin:0 auto;padding:44px 22px;text-align:center"><div style="font-size:52px">\u2705</div><h2 style="margin:10px 0 4px;color:#0F0F0F">Datos ya enviados</h2><p style="color:#6b6b6b;margin:0 0 16px">Esta informaci\u00f3n ya fue registrada y no se puede modificar aqu\u00ed.</p><div style="text-align:left;background:#fafafa;border:1px solid #eee;border-radius:12px;padding:12px 16px">'+rows+'</div><p style="color:#9b9b9b;font-size:13px;margin-top:14px">Para corregir algo, hazlo desde la conversaci\u00f3n de WhatsApp.</p><a href="https://wa.me/'+_wa+'" style="display:inline-block;margin-top:8px;background:#FFD100;color:#0F0F0F;font-weight:700;padding:12px 26px;border-radius:26px;text-decoration:none">Volver a WhatsApp</a></div>';}var EF_FLURL="https://enviafacil-formlock.fn.jelou.ai";function efFormId(){try{return (EF_N||"")+"_"+(qs.get("paso")||"");}catch(e){return "";}}function efSrvMark(d){try{if(!executionId||!EF_N)return;fetch(EF_FLURL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({accion:"marcar",exec:executionId,form:efFormId(),datos:d||{}})}).catch(function(){});}catch(e){}}function efSrvCheck(){try{if(!executionId||!EF_N)return;if(typeof EF_EDIT!=="undefined"&&EF_EDIT)return;if(efLocked())return;fetch(EF_FLURL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({accion:"consultar",exec:executionId,form:efFormId()})}).then(function(r){return r.json();}).then(function(o){try{if(o&&o.ok&&o.enviado){efLock(o.datos||{});efShowLocked();}}catch(e){}}).catch(function(){});}catch(e){}}if(efLocked()&&(!EF_EDIT||(EF_EDITLOCK&&localStorage.getItem(EF_EDITLOCK)))){efShowLocked();}if(efLocked()){efShowLocked();}efSrvCheck();
 
-var WA=(qs.get("wa")||"593999842656").replace(/\D/g,"");
+var WA=(qs.get("wa")||"593991344747").replace(/\D/g,"");
 var PROXY="https://enviafacil-callback.fn.jelou.ai"; var PASO=(qs.get("paso")||"").toLowerCase();
 
 // ===== estado =====
@@ -170,7 +172,7 @@ function personaHTML(role,d){d=d||{};var dest=(role==='dest');
   +'<div class="fld"><label>Calle secundaria <span class="req">*</span></label><input id="calle_secundaria" placeholder="Calle secundaria" value="'+(d.calle_secundaria||'')+'"><div class="errmsg" id="e_calle_secundaria">Ingresa la calle secundaria.</div></div>'
   +'<div class="fld"><label>'+refLbl+'</label><input id="referencia" placeholder="Punto de referencia" value="'+(d.referencia||'')+'"><div class="errmsg" id="e_referencia">Ingresa un punto de referencia.</div><div class="hint">Ej: edificio azul, junto al parque…</div></div>';}
 
-function mapHeaderHTML(d){d=d||{};return '<div class="fld"><button type="button" class="mapbtn" onclick="efOpenMapa()">📍 Seleccionar ubicación en el mapa</button><div class="hint">Ubica el pin y autocompletamos ciudad y dirección. Luego completa lo que falte.</div><input type="hidden" id="ef_lat" value="'+(d.lat||'')+'"><input type="hidden" id="ef_lon" value="'+(d.lon||'')+'"></div>';}
+function mapHeaderHTML(d){d=d||{};return '<div class="fld"><button type="button" class="mapbtn" onclick="efOpenMapa()">📍 Seleccionar ubicación en el mapa</button><div class="hint">Ubica el pin y autocompletamos ciudad y dirección. Luego completa lo que falte.</div><div id="efDirChip"></div><input type="hidden" id="ef_lat" value="'+(d.lat||'')+'"><input type="hidden" id="ef_lon" value="'+(d.lon||'')+'"></div>';}
 function efMatchCiudad(nombre,prov){var nn=norm(nombre),np=norm(prov||'');if(!nn)return null;var cands=CAT.filter(function(c){return norm(c[0])===nn;});if(!cands.length)cands=CAT.filter(function(c){return norm(c[0]).indexOf(nn)>=0||nn.indexOf(norm(c[0]))>=0;});if(np){var byp=cands.filter(function(c){return norm(c[2])===np;});if(byp.length)return byp[0];}return cands[0]||null;}
 function leerPersona(){return {cedula:val("cedula"),nombre:val("nombre"),correo:val("correo"),celular:val("celular"),calle_principal:val("calle_principal"),numero_casa:val("numero_casa"),calle_secundaria:val("calle_secundaria"),referencia:val("referencia"),lat:val("ef_lat"),lon:val("ef_lon")};}
 function validarPersona(role){var dest=(role==='dest');var ok=true;
@@ -268,7 +270,7 @@ function scrResumen(i){var e=estado.envios[i];var d=e.dest;var dir=d.calle_princ
   +itm('Dirección de entrega',dir)+itm('Referencia',d.referencia)+'</div>');
  barra('<button class="btn sec" id="editar" style="flex:0 0 40%">✏️ Editar</button><button class="btn ok" id="btn">'+(estado.modo==='uno'?'✅ Generar comprobante':'✅ Confirmar destino')+'</button>');
  document.getElementById('editar').onclick=function(){scrEnvio(i);};
- document.getElementById('btn').onclick=function(){e.confirmado=true;if(estado.modo==='uno'){enviar();}else{scrMas();}};}
+ document.getElementById('btn').onclick=function(){e.confirmado=true;if(estado.modo==='uno'||EF_UNO){enviar();}else{scrMas();}};}
 
 // ===== PANTALLA MÁS: ¿otro destino o terminar? =====
 function scrMas(){var n=estado.envios.filter(function(e){return e.confirmado;}).length;
@@ -288,7 +290,7 @@ function payload(){var r=estado.remitente;
 
 function payloadRemitente(){var r=estado.remitente;return {executionId:executionId,success:true,paso:'remitente',remitente:{ciudad:r.ciudad.name,ciudadCodigo:r.ciudad.code,provincia:r.ciudad.prov,cedula:r.cedula,nombre:r.nombre,correo:r.correo,celular:r.celular,calle_principal:r.calle_principal,numero_casa:r.numero_casa,calle_secundaria:r.calle_secundaria,referencia:r.referencia,lat:r.lat,lon:r.lon}};}
 function payloadDestinos(){var es=estado.envios.filter(function(e){return e.confirmado;}).map(function(e){var d=e.dest||{};return {idServicio:e.idServicio,tipo:e.tipo==='paquete'?'Paquete':'Documento',ciudad:(e.ciudad||{}).name,ciudadCodigo:(e.ciudad||{}).code,provincia:(e.ciudad||{}).prov,piezas:e.piezas,peso:e.peso,valor:e.valor,contenido:e.contenido,cedula:d.cedula,nombre:d.nombre,correo:d.correo,celular:d.celular,calle_principal:d.calle_principal,numero_casa:d.numero_casa,calle_secundaria:d.calle_secundaria,referencia:d.referencia,lat:d.lat,lon:d.lon};});return {executionId:executionId,success:true,paso:'destinos',envios:es,enviosJSON:JSON.stringify(es),n:es.length};}
-async function enviarAlBot(b){try{efSrvMark(b);efLock(b);}catch(e){}
+async function enviarAlBot(b){window._efUltimoPayload=b;
   if(window._efEnviandoBot)return; window._efEnviandoBot=true;
   app('<div class="head"><div class="logo">⏳</div><div><h1>Enviando…</h1><p>No cierres esta ventana</p></div></div>');
   try{
@@ -298,9 +300,10 @@ async function enviarAlBot(b){try{efSrvMark(b);efLock(b);}catch(e){}
   }catch(e){
     window._efEnviandoBot=false;
     app('<div class="head"><div class="logo">⚠️</div><div><h1>No se pudo enviar</h1><p>Revisa tu conexión e inténtalo otra vez.</p></div></div>'
-       +'<div class="card"><button class="btn" onclick="enviarAlBot(payload())">Reintentar</button></div>');
+       +'<div class="card"><button class="btn" onclick="enviarAlBot(window._efUltimoPayload)">Reintentar</button></div>');
     return;
   }
+  try{efSrvMark(b);efLock(b);}catch(e){}
   app('<div class="head"><div class="logo">✅</div><div><h1>¡Listo!</h1><p>Volvemos a WhatsApp…</p></div></div>');
   if(WA) setTimeout(function(){ location.href='https://wa.me/'+WA; }, 900);
 }
@@ -477,7 +480,10 @@ else{scrMenu();}
   function openM(){modal.classList.remove('hidden');
     if(!map){map=L.map('efLeaf',{zoomControl:false}).setView(DEF,16);L.control.zoom({position:'topright'}).addTo(map);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
-      map.on('moveend',onMove);tryLoc();}
+      map.on('moveend',onMove);}
+    var _yl=document.getElementById('ef_lat'),_yn=document.getElementById('ef_lon');
+    if(_yl&&_yl.value&&_yn&&_yn.value){map.setView([Number(_yl.value),Number(_yn.value)],17);}
+    else{map.setView(DEF,16);tryLoc();}
     setTimeout(function(){map.invalidateSize();onMove();},250);}
   window.efOpenMapa=openM;
   function closeM(){modal.classList.add('hidden');}
@@ -512,5 +518,62 @@ else{scrMenu();}
   document.getElementById('efMiUbic').addEventListener('click',tryLoc);
 })();
 </script>
+
+<script>
+/* ===== EnvíaFácil · añadidos 14-ago-2026 ================================
+   (1) prellenado del remitente desde la URL   (2) ✕ para borrar la ubicación
+   Se agregan al final para no alterar el resto del archivo.            */
+(function(){
+  var _qs=new URLSearchParams(location.search);
+  function _v(id){var e=document.getElementById(id);return e?e.value:'';}
+  function _set(id,v){var e=document.getElementById(id);if(e)e.value=(v==null?'':v);}
+
+  /* --- (2) chip de la ubicación elegida, con su ✕ --- */
+  window.efDirRefresca=function(){
+    var c=document.getElementById('efDirChip'); if(!c) return;
+    var la=_v('ef_lat'), lo=_v('ef_lon');
+    if(la&&lo){
+      var txt=[_v('calle_principal'),_v('numero_casa')].filter(Boolean).join(' ');
+      c.innerHTML='<div class="chosen">📍 '+(txt||'Ubicación seleccionada')+
+        '<span class="x" onclick="efDirBorra()" style="cursor:pointer">✕</span></div>';
+    } else { c.innerHTML=''; }
+  };
+  window.efDirBorra=function(){
+    _set('ef_lat','');_set('ef_lon','');
+    _set('calle_principal','');_set('calle_secundaria','');
+    efDirRefresca();
+  };
+
+  /* --- (1) prellenado: acepta alias porque el bot manda otros nombres --- */
+  function pf(id,keys){
+    var el=document.getElementById(id); if(!el||el.value) return;
+    for(var i=0;i<keys.length;i++){var v=_qs.get(keys[i]); if(v){el.value=v;return;}}
+  }
+  var _yaPre=false;
+  window.efPrellenarRemitente=function(){
+    if(_yaPre) return; if(!document.getElementById('cedula')) return;
+    _yaPre=true;
+    pf('cedula',['cedula']); pf('nombre',['nombre','nombres_completos']); pf('correo',['correo']);
+    pf('calle_principal',['calle_principal','calle']);
+    pf('numero_casa',['numero_casa','numero']);
+    pf('calle_secundaria',['calle_secundaria','calle2']);
+    pf('referencia',['referencia_recoleccion','referencia']);
+    pf('ef_lat',['lat','preLat']); pf('ef_lon',['lon','preLon']);
+    var el=document.getElementById('celular');
+    if(el&&!el.value){var c=_qs.get('celular')||'';c=c.replace(/\D/g,'');
+      if(c.indexOf('593')===0)c='0'+c.slice(3);
+      if(/^\d{10,15}$/.test(c))el.value=c;}
+    efDirRefresca();
+  };
+
+  /* engancha sin tocar el resto: tras dibujar el remitente y tras confirmar el mapa */
+  var _t=setInterval(function(){
+    if(document.getElementById('cedula')) efPrellenarRemitente();
+    if(document.getElementById('efDirChip')) efDirRefresca();
+  },400);
+  window.addEventListener('pagehide',function(){clearInterval(_t);});
+})();
+</script>
+
 </body>
 </html>
