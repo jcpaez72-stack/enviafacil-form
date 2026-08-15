@@ -12,7 +12,7 @@
 ```bash
 cd enviafacil-form-web
 # corre esto después de CADA cambio; compara contra la tabla de abajo
-for f in index.html datos-envio.html mapa.html oficina-retiro.html cotizador.html; do
+for f in index.html datos-envio.html mapa.html oficina-retiro.html cotizador.html multienvio.html; do
   echo "── $f ──"
   grep -qi "EF_LOCK"        "$f" && echo "  ✅ candado"
   grep -qi "EF_EDIT"        "$f" && echo "  ✅ editable(nonce)"
@@ -31,21 +31,21 @@ done
 
 ## Estado actual por formulario (lo que DEBE seguir presente)
 
-| Feature (marcador) | index | datos-envio | mapa | oficina-retiro | cotizador |
-|---|:---:|:---:|:---:|:---:|:---:|
-| Candado seguridad (`EF_LOCK`) | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Editable con nonce (`EF_EDIT`/`EF_EDITLOCK`) | ✅ | ✅ | ✅ | ✅ | — *(JC: se pone cuando se use)* |
-| Control ciudad↔ubicación (`checkCiudad`/`efNorm`) | ✅ | — | ✅ | — | — |
-| Validación cédula/RUC (`_rucOk`/`_mod11`/`_ced10`) | ✅ | — | — | — *(no captura id)* | — |
-| Celular internacional 10-15 díg (`/^\d{10,15}$/`) | ✅ | — | — | ✅ | — |
-| Destinatario correo/celular OPCIONAL (`esDestino`) | ✅ | — | — | — | — |
-| Joya = mapa Leaflet in-form (`efBtnMapa`/`efMapaTop`) | ✅ | — | ✅ | — | — |
-| Ocultar joya si ya dio ubicación (`sinJoya`) | ✅ | — | — | — | — |
-| Captura lat/lon (hidden `ef_lat`/`ef_lon` + prefill) | ✅ | — | ✅ | — | — |
-| Buscador Google Places / geocode | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Alineación Valor↔Peso (`align-items:flex-end`) | — | ✅ | — | — | — |
-| Calle secundaria = campo propio (`calle_secundaria`) | ✅ | — | ✅ | — | — |
-| Seguridad API key (`__EF_API_KEY__` / `X-EF-Key`) | ✅ | ✅ | — | ✅ | ✅ |
+| Feature (marcador) | index | datos-envio | mapa | oficina-retiro | cotizador | multienvío |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| Candado seguridad (`EF_LOCK`) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Editable con nonce (`EF_EDIT`/`EF_EDITLOCK`) | ✅ | ✅ | ✅ | ✅ | — *(JC: se pone cuando se use)* | ✅ |
+| Control ciudad↔ubicación (`checkCiudad`/`efNorm`) | ✅ | — | ✅ | — | — | 🔴 |
+| Validación cédula/RUC (`_rucOk`/`_mod11`/`_ced10`) | ✅ | — | — | — *(no captura id)* | — | ✅ |
+| Celular internacional 10-15 díg (`/^\d{10,15}$/`) | ✅ | — | — | ✅ | — | ✅ |
+| Destinatario correo/celular OPCIONAL (`esDestino`) | ✅ | — | — | — | — | 🔴 |
+| Joya = mapa Leaflet in-form (`efBtnMapa`/`efMapaTop`) | ✅ | — | ✅ | — | — | ⚠️ |
+| Ocultar joya si ya dio ubicación (`sinJoya`) | ✅ | — | — | — | — | 🔴 |
+| Captura lat/lon (hidden `ef_lat`/`ef_lon` + prefill) | ✅ | — | ✅ | — | — | ✅ |
+| Buscador Google Places / geocode | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Alineación Valor↔Peso (`align-items:flex-end`) | — | ✅ | — | — | — | — |
+| Calle secundaria = campo propio (`calle_secundaria`) | ✅ | — | ✅ | — | — | ✅ |
+| Seguridad API key (`__EF_API_KEY__` / `X-EF-Key`) | ✅ | ✅ | — | ✅ | ✅ | ✅ |
 
 ## Reglas que NUNCA deben regresar (con el *por qué*)
 
@@ -59,11 +59,27 @@ done
   coordenadas no. *Por qué:* es lo que viaja a LAAR y no puede perderse por un fallo de red.
 1. **RUC de sociedades (3er díg 6/9): NO exigir mód 11 estricto.** El SRI emite RUC reales que no cumplen el checksum → mód11 estricto los rechaza. Usar salvaguarda por estructura (`_mod11(...)===dv || (+establecimiento)>0`). Probado con `0993384491001` y `0993378756001`. Ver [[laar-validacion-ruc-modulo10]].
 2. **Celular: aceptar internacional (10-15 díg), no solo 10.** Un número USA de 11 díg atascaba el form. Prefill normaliza `593…`→`0…`. Ver [[laar-ef2-remitente-doble-tap-fix]].
-3. **Destinatario NO exige correo ni celular** (opcionales). Se pide correo escrito, no por audio.
+3. **🔴 CORREGIDO 4-ago-2026 — el CELULAR del destinatario es OBLIGATORIO, 10 dígitos exactos.**
+   Antes era opcional; el API `POST /api/Guias/v1/guias/contado` **rechaza con 400** sin
+   `destino.celular` (*«Ingrese una número de celular»*), y la guía se genera **después de cobrar**:
+   dos clientes pagaron y no recibieron nada (Patricia Montero $6,38 · Raúl Toapanta $6,74).
+   **Doble barrera:** (a) el form lo exige; (b) el bot lo pide por chat si falta; (c) `&v=AAAAMMDD`
+   en la URL o los teléfonos con el form en caché siguen mandándolo vacío.
+   El **correo** del destinatario **sí sigue siendo opcional**. Ver [[laar-api-guia-exige-celular-destinatario]].
 4. **Blindaje: si un dato viene inválido, el form NO debe atascar** — dejar vacío/pedir de nuevo, nunca quedar muerto ni desviar en silencio. Ver [[laar-ef2-degradacion-silenciosa]].
 5. **Callback: URL absoluta a la función, SIN `X-EF-Key`** en el fetch del puente (rompía CORS de fenix). Ver [[laar-ef2-webview-callback-causa-raiz]].
 6. **Candado + editable + re-candado:** al editar se abre solo lo editado; al cerrar se vuelve a poner candado. No dejar abierto.
 7. **WebView WhatsApp: sin `confirm()`/`alert()`** (bloqueados); resolver por código. Ver [[referencia-webview-whatsapp-limites]].
+
+## 📦 multienvio.html — agregado al manifiesto el 15-ago-2026
+Se creó después de este documento y **nunca estuvo aquí**: por eso nadie corrió la verificación sobre él.
+- **Canónico:** `multienvio.html` (no tiene gemelo `-fenix`; se entrega con el mismo nombre).
+- **Publicado por LAAR como** `multienvio-prueba.html`; `multienvio.html` da 404 (aún no definitivo).
+- **Propio de este form (no está en los otros):** dos pasos en un archivo (`?paso=remitente` /
+  `?paso=destinos`), **la ciudad se elige DENTRO** (por eso `checkCiudad` hay que adaptarlo, no copiarlo),
+  bandera **`uno=1`** = confirma UN destino y cierra (el chat pregunta si va otro).
+- 🔴 **Deudas abiertas al 15-ago:** celular del destinatario obligatorio · `&v=` en sus URLs ·
+  `checkCiudad` · `sinJoya`.
 
 ## ⚠️ Riesgo de regresión detectado — ARCHIVOS DUPLICADOS
 En la carpeta hay variantes que pueden confundir cuál es el "bueno":

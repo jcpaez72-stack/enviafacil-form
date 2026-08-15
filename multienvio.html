@@ -172,14 +172,15 @@ function personaHTML(role,d){d=d||{};var dest=(role==='dest');
   +'<div class="fld"><label>Calle secundaria <span class="req">*</span></label><input id="calle_secundaria" placeholder="Calle secundaria" value="'+(d.calle_secundaria||'')+'"><div class="errmsg" id="e_calle_secundaria">Ingresa la calle secundaria.</div></div>'
   +'<div class="fld"><label>'+refLbl+'</label><input id="referencia" placeholder="Punto de referencia" value="'+(d.referencia||'')+'"><div class="errmsg" id="e_referencia">Ingresa un punto de referencia.</div><div class="hint">Ej: edificio azul, junto al parque…</div></div>';}
 
-function mapHeaderHTML(d){d=d||{};return '<div class="fld"><button type="button" class="mapbtn" onclick="efOpenMapa()">📍 Seleccionar ubicación en el mapa</button><div class="hint">Ubica el pin y autocompletamos ciudad y dirección. Luego completa lo que falte.</div><div id="efDirChip"></div><input type="hidden" id="ef_lat" value="'+(d.lat||'')+'"><input type="hidden" id="ef_lon" value="'+(d.lon||'')+'"></div>';}
+function mapHeaderHTML(d){d=d||{};var _sj=(qs.get('sinJoya')==='1');
+  return '<div class="fld"'+(_sj?' style="display:none"':'')+'><button type="button" class="mapbtn" onclick="efOpenMapa()">📍 Seleccionar ubicación en el mapa</button><div class="hint">Ubica el pin y autocompletamos ciudad y dirección. Luego completa lo que falte.</div><div id="efDirChip"></div><input type="hidden" id="ef_lat" value="'+(d.lat||'')+'"><input type="hidden" id="ef_lon" value="'+(d.lon||'')+'"></div>';}
 function efMatchCiudad(nombre,prov){var nn=norm(nombre),np=norm(prov||'');if(!nn)return null;var cands=CAT.filter(function(c){return norm(c[0])===nn;});if(!cands.length)cands=CAT.filter(function(c){return norm(c[0]).indexOf(nn)>=0||nn.indexOf(norm(c[0]))>=0;});if(np){var byp=cands.filter(function(c){return norm(c[2])===np;});if(byp.length)return byp[0];}return cands[0]||null;}
 function leerPersona(){return {cedula:val("cedula"),nombre:val("nombre"),correo:val("correo"),celular:val("celular"),calle_principal:val("calle_principal"),numero_casa:val("numero_casa"),calle_secundaria:val("calle_secundaria"),referencia:val("referencia"),lat:val("ef_lat"),lon:val("ef_lon")};}
 function validarPersona(role){var dest=(role==='dest');var ok=true;
  var cVal=val("cedula");if(dest&&cVal===""){setErr("cedula",false);}else{var c=cedulaOk(cVal);setErr("cedula",!c);ok=ok&&c;}
  var nOk=val("nombre").length>=3;setErr("nombre",!nOk);ok=ok&&nOk;
  var ev=val("correo");if(dest&&ev===""){setErr("correo",false);}else{var e=correoOk(ev);setErr("correo",!e);ok=ok&&e;}
- var cv=val("celular");if(dest&&cv===""){setErr("celular",false);}else{var ce=/^\d{10,15}$/.test(cv);setErr("celular",!ce);ok=ok&&ce;}
+ /* 4-ago-2026: el API rechaza la guia con 400 sin destino.celular y la guia se genera DESPUES de cobrar. El destinatario lo lleva OBLIGATORIO y de 10 digitos exactos; el remitente conserva 10-15 (internacional). */var cv=val("celular");var ce=dest?/^\d{10}$/.test(cv):/^\d{10,15}$/.test(cv);setErr("celular",!ce);ok=ok&&ce;
  var a=val("calle_principal").length>=2;setErr("calle_principal",!a);ok=ok&&a;
  var b=val("numero_casa").length>=1;setErr("numero_casa",!b);ok=ok&&b;
  var s=val("calle_secundaria").length>=1;setErr("calle_secundaria",!s);ok=ok&&s;
@@ -498,8 +499,24 @@ else{scrMenu();}
       }else{a.textContent='No pudimos leer la dirección aquí';window._efGeo=null;}
     }).catch(function(){document.getElementById('efAddr').textContent='Sin conexión al ubicar';});}
   function tryLoc(){if(!navigator.geolocation)return;navigator.geolocation.getCurrentPosition(function(p){if(map)map.setView([p.coords.latitude,p.coords.longitude],16);},function(){},{timeout:6000,enableHighAccuracy:true});}
-  function confirmLoc(){if(!map){closeM();return;}var c=map.getCenter(),btn=document.getElementById('efMapConfirm');btn.textContent='Confirmando…';btn.disabled=true;
-    function done(d){setV('ef_lat',String(c.lat));setV('ef_lon',String(c.lng));
+  /* Control ciudad↔ubicación. En index.html la ciudad viene en la URL (ciudadEsp/provEsp);
+   aquí el cliente la elige DENTRO del formulario, así que se compara contra sel[key]. */
+window.efNorm=function(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/\([^)]*\)/g,'').replace(/^[A-ZÑ ]+\s*-\s*/,'').replace(/[^A-Z0-9]/g,'');}
+window.checkCiudad=function(gc,gp){
+  var k=window._efCiudadKey; var elegida=(k&&sel&&sel[k])?sel[k]:null;
+  if(!elegida) return {level:'none'};
+  var ncg=efNorm(gc),ncp=efNorm(gp),nec=efNorm(elegida.name),nep=efNorm(elegida.prov);
+  if(nep&&ncp&&nep!==ncp) return {level:'strong',msg:'Tu ubicación está en '+(gp||gc)+', pero el envío es a '+(elegida.prov||elegida.name)};
+  if(nec&&ncg&&nec!==ncg&&ncg.indexOf(nec)<0&&nec.indexOf(ncg)<0) return {level:'soft',msg:'Ubicación en '+(gc||'')+' (el envío es a '+elegida.name+')'};
+  return {level:'ok'};
+}
+function confirmLoc(){if(!map){closeM();return;}var c=map.getCenter(),btn=document.getElementById('efMapConfirm');btn.textContent='Confirmando…';btn.disabled=true;
+    function done(d){
+      if(d&&d.ok){var chk=checkCiudad(d.ciudad,d.provincia);
+        if(chk.level==='strong'&&!window._efForce){window._efForce=true;
+          var _cov=document.getElementById('efCov');if(_cov){_cov.textContent='⛔ '+chk.msg;_cov.style.color='#a00';}
+          btn.textContent='Continuar de todos modos';btn.disabled=false;return;}}
+      setV('ef_lat',String(c.lat));setV('ef_lon',String(c.lng));
       if(d&&d.ok){var _cp=d.calle||'',_cs=d.sector||'';if(!_cp&&_cs){_cp=_cs;_cs='';}if(_cs&&_cp&&_cs.trim().toLowerCase()===_cp.trim().toLowerCase())_cs='';if(!_cp&&d.formatted)_cp=String(d.formatted).split(',')[0].trim();if(_cp)setV('calle_principal',_cp);if(_cs)setV('calle_secundaria',_cs);
         if(window._efCiudadKey&&d.ciudad){var mc=efMatchCiudad(d.ciudad,d.provincia);if(mc)choose(window._efCiudadKey,mc[1],mc[0],mc[2]);}}
       btn.textContent='Confirmar ubicación';btn.disabled=false;closeM();}
