@@ -87,13 +87,14 @@
       </div>
       <div class="errmsg" id="e_tipoenvio">Elige si es documento o paquete.</div>
     </div>
-    <div class="grp">
-      <label>Qué contiene <span class="req">*</span></label>
+    <!-- 16-ago: «contenido» va DENTRO de paqFields, como en produccion.
+         Si es Documento, LAAR no pregunta que contiene. Yo lo tenia afuera y
+         ademas lo exigia: el cliente escribia algo que produccion nunca pide. -->
+    <div class="grp" id="paqFields">
+      <label>📦 Tipo de contenido <span class="req">*</span></label>
       <input id="contenido" type="text" maxlength="60"
              placeholder="Escribe qué contiene (ej. ropa, zapatos, repuestos)">
       <div class="errmsg" id="e_contenido">Escribe qué contiene el envío.</div>
-    </div>
-    <div class="grp" id="paqFields">
       <label>Peso (kg) <span class="req">*</span></label>
       <input id="peso" type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*"
              placeholder="1 a 50 kg">
@@ -466,7 +467,10 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
         p.valor  = val("valor");
         /* El bot lee `tipo` y busca "docu" en minusculas (nodo «Consolidar envio»). */
         p.tipo = (mnTipo === "documento") ? "Documento" : "Paquete";
-        if (mnTipo === "documento"){ p.peso = ""; p.piezas = "1"; p.valor = "0"; }
+        if (mnTipo === "documento"){
+          p.peso = ""; p.piezas = "1"; p.valor = "0";
+          p.contenido = "Documentos";   /* igual que enviafacil-multidestino */
+        }
       }
       /* Destino a oficina: LAAR lo recibe como retiroOficina{isRetiro,idOficina}. */
       if (EF_DESLOCK){
@@ -539,8 +543,9 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
         var ciOk = !!(selCiudad && selCiudad.codigo); setErr("ciudad", !ciOk); ok = ok && ciOk;
       }
       var tiOk = !!mnTipo; setErr("tipoenvio", !tiOk); ok = ok && tiOk;
+      /* Documento: LAAR no pide contenido, ni peso, ni piezas, ni valor. */
+      if (mnTipo === "documento") return ok;
       var coOk = val("contenido").length >= 2; setErr("contenido", !coOk); ok = ok && coOk;
-      if (mnTipo === "documento") return ok;          /* documento: sin peso ni valor */
       var _pz = parseInt(val("piezas") || "1") || 1;
       var _pe = parseFloat((val("peso") || "0").replace(",", "."));
       var peOk = _pe > 0 && _pe <= 50 * _pz;          /* 50 kg POR PIEZA */
