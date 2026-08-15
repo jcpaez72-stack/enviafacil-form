@@ -61,8 +61,53 @@
     <p id="h_sub">Completa la información.</p>
   </div>
 
-  <!-- PANTALLA 1: DATOS -->
-  <div class="wrap" id="scr_datos">
+
+  <!-- ═══ PAGINA 1 · DATOS DEL ENVIO ═══════════════════════════════════════
+       Replica datos-envio.html, que en produccion es un formulario APARTE y
+       va con sus dos pasos. Aqui es la primera pagina; la persona viene en la
+       siguiente, como en index.html. -->
+  <div class="wrap" id="scr_envio">
+
+
+
+  <!-- DATOS DEL ENVIO — copiados de datos-envio.html. Solo en los destinos. -->
+  <div id="bloque_envio">
+    <div class="seccion">Datos del envio</div>
+    <!-- Documento vs Paquete — copiado de datos-envio.html. Documento NO lleva
+         peso, piezas ni valor: es regla de negocio, no una simplificacion. -->
+    <div class="grp" id="tarjeta_tipo">
+      <label>Que envias <span class="req">*</span></label>
+      <div class="tipos" id="tipos" style="display:flex;gap:10px">
+        <div class="tipo" data-tipo="documento" data-id="201202002001002"
+             style="flex:1;padding:14px;border:2px solid #ddd;border-radius:12px;text-align:center;cursor:pointer">
+          <div style="font-size:22px">📄</div><div style="font-weight:600">Documento</div></div>
+        <div class="tipo" data-tipo="paquete" data-id="201202002002013"
+             style="flex:1;padding:14px;border:2px solid #ddd;border-radius:12px;text-align:center;cursor:pointer">
+          <div style="font-size:22px">📦</div><div style="font-weight:600">Paquete</div></div>
+      </div>
+      <div class="errmsg" id="e_tipoenvio">Elige si es documento o paquete.</div>
+    </div>
+    <div class="grp">
+      <label>Que contiene <span class="req">*</span></label>
+      <input id="contenido" type="text" maxlength="60"
+             placeholder="Escribe que contiene (ej. ropa, zapatos, repuestos)">
+      <div class="errmsg" id="e_contenido">Escribe que contiene el envio.</div>
+    </div>
+    <div class="grp" id="paqFields">
+      <label>Peso (kg) <span class="req">*</span></label>
+      <input id="peso" type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*"
+             placeholder="1 a 50 kg">
+      <div class="errmsg" id="pesoerr">Maximo 50 kg POR PIEZA.</div>
+      <label>Piezas <span class="req">*</span></label>
+      <input id="piezas" type="number" inputmode="numeric" min="1" max="100" value="1"
+            >
+      <label>Valor declarado (USD) <span class="req">*</span></label>
+      <input id="valor" type="number" inputmode="numeric" min="0" placeholder="USD">
+      <div class="errmsg" id="e_valor">Ingresa el valor declarado.</div>
+    </div>
+  </div>
+
+
       <!-- CIUDAD — copiado de datos-envio.html. Se oculta si viene fija (oficina). -->
       <div class="grp fld" id="bloque_ciudad">
         <label id="l_ciudad">Ciudad <span class="req">*</span></label>
@@ -72,6 +117,11 @@
         <div id="chCiu"></div>
         <div class="errmsg" id="e_ciudad">Elige una ciudad de la lista.</div>
       </div>
+
+  </div>
+
+  <!-- PANTALLA 1: DATOS -->
+  <div class="wrap" id="scr_datos">
 
       <div class="grp" id="efMapaTop">
         <button type="button" id="efBtnMapa" style="width:100%;height:48px;border-radius:12px;border:2px solid #E4C201;background:#FFFBEA;color:#0F0F0F;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer">📍 Seleccionar ubicación en el mapa</button>
@@ -123,44 +173,6 @@
         <div class="errmsg" id="e_referencia_recoleccion">Ingresa un punto de referencia (ej. edificio, color de casa, junto a…).</div>
         <div class="hint">Ej: edificio azul, junto al parque, casa de dos pisos…</div>
       </div>
-    </div>
-  </div>
-
-
-  <!-- DATOS DEL ENVIO — copiados de datos-envio.html. Solo en los destinos. -->
-  <div class="wrap" id="bloque_envio">
-    <div class="seccion">Datos del envio</div>
-    <!-- Documento vs Paquete — copiado de datos-envio.html. Documento NO lleva
-         peso, piezas ni valor: es regla de negocio, no una simplificacion. -->
-    <div class="grp" id="tarjeta_tipo">
-      <label>Que envias <span class="req">*</span></label>
-      <div class="tipos" id="tipos" style="display:flex;gap:10px">
-        <div class="tipo" data-tipo="documento" data-id="201202002001002"
-             style="flex:1;padding:14px;border:2px solid #ddd;border-radius:12px;text-align:center;cursor:pointer">
-          <div style="font-size:22px">📄</div><div style="font-weight:600">Documento</div></div>
-        <div class="tipo" data-tipo="paquete" data-id="201202002002013"
-             style="flex:1;padding:14px;border:2px solid #ddd;border-radius:12px;text-align:center;cursor:pointer">
-          <div style="font-size:22px">📦</div><div style="font-weight:600">Paquete</div></div>
-      </div>
-      <div class="errmsg" id="e_tipoenvio">Elige si es documento o paquete.</div>
-    </div>
-    <div class="grp">
-      <label>Que contiene <span class="req">*</span></label>
-      <input id="contenido" type="text" maxlength="60"
-             placeholder="Escribe que contiene (ej. ropa, zapatos, repuestos)">
-      <div class="errmsg" id="e_contenido">Escribe que contiene el envio.</div>
-    </div>
-    <div class="grp" id="paqFields">
-      <label>Peso (kg) <span class="req">*</span></label>
-      <input id="peso" type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*"
-             placeholder="1 a 50 kg">
-      <div class="errmsg" id="pesoerr">Maximo 50 kg POR PIEZA.</div>
-      <label>Piezas <span class="req">*</span></label>
-      <input id="piezas" type="number" inputmode="numeric" min="1" max="100" value="1"
-            >
-      <label>Valor declarado (USD) <span class="req">*</span></label>
-      <input id="valor" type="number" inputmode="numeric" min="0" placeholder="USD">
-      <div class="errmsg" id="e_valor">Ingresa el valor declarado.</div>
     </div>
   </div>
 
@@ -418,23 +430,7 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
       var nOk=val("nombre").length>=3; setErr("nombre",!nOk); ok=ok&&nOk;
       var _ev=val("correo"), eOk; if(esDestino&&_ev===""){eOk=true;setErr("correo",false);} else {eOk=correoOk(_ev);setErr("correo",!eOk);} ok=ok&&eOk;
       var _cv=val("celular").replace(/\D/g,""), celOk; celOk=/^\d{10}$/.test(_cv); setErr("celular",!celOk); ok=ok&&celOk;
-      /* 16-ago Multienvios: la ciudad es obligatoria salvo que venga fija. */
-      if (!EF_DESLOCK){
-        var ciOk = !!(selCiudad && selCiudad.codigo); setErr("ciudad", !ciOk); ok = ok && ciOk;
-      }
-      /* Datos del envio: solo en los destinos. 50 kg POR PIEZA. */
-      if (esDestinos){
-        var tiOk = !!mnTipo; setErr("tipoenvio", !tiOk); ok = ok && tiOk;
-        var coOk = val("contenido").length >= 2; setErr("contenido", !coOk); ok = ok && coOk;
-        if (mnTipo === "documento"){ return ok; }   /* documento: sin peso ni valor */
-        var _pz  = parseInt(val("piezas") || "1") || 1;
-        var _pe  = parseFloat((val("peso") || "0").replace(",", "."));
-        var peOk = _pe > 0 && _pe <= 50 * _pz;
-        var _ep = document.getElementById("pesoerr"); if (_ep) _ep.style.display = peOk ? "none" : "block";
-        ok = ok && peOk;
-        var _va  = parseFloat(val("valor") || "-1");
-        var vaOk = _va >= 0; setErr("valor", !vaOk); ok = ok && vaOk;
-      }
+      /* envio y ciudad se validan en la pagina 1 (validarEnvio) */
       if (!esOficina){
         var caOk=val("calle_principal").length>=2; setErr("calle_principal",!caOk); ok=ok&&caOk;
         var nuOk=val("numero_casa").length>=1; setErr("numero_casa",!nuOk); ok=ok&&nuOk;
@@ -496,7 +492,12 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
 
     (function(){var _e=document.getElementById("btnEdit"); if(_e) _e.addEventListener("click", volverAEditar);})();
     btn.addEventListener("click", async function(){
-      if (!enConf){ if(!validate()) return; irConf(); return; }   // pantalla 1 -> confirmar
+      /* 16-ago Multienvios: TRES pantallas, como produccion las tiene separadas.
+         pagina 1 = datos del envio (era datos-envio.html)
+         pagina 2 = quien recibe + direccion (era index.html)
+         pagina 3 = confirmar */
+      if (mnPagina === 1){ if(!validarEnvio()) return; irDatos(); return; }
+      if (!enConf){ if(!validate()) return; irConf(); return; }
       // pantalla 2 -> enviar
       btn.disabled=true; btn.textContent="Enviando…";var _tEsp=setTimeout(function(){ if(btn.disabled) btn.textContent="Enviando… no cierres esta ventana"; },5000);
       var PROXY="https://enviafacil-callback.fn.jelou.ai";var EF_KEY="__EF_API_KEY__";
@@ -517,7 +518,40 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
         efAviso("No pudimos enviar los datos. Revisa tu conexión e intenta de nuevo.");
       }
     });
-      /* ── ARRANQUE DE MULTIENVIOS ─────────────────────────────────────────
+      /* ── LAS TRES PANTALLAS ──────────────────────────────────────────────
+       El remitente no tiene datos de envio, asi que arranca en la 2. */
+    var mnPagina = 1;
+
+    function irDatos(){
+      mnPagina = 2;
+      document.getElementById("scr_envio").classList.add("hidden");
+      document.getElementById("scr_datos").classList.remove("hidden");
+      var h = document.getElementById("h_sub");
+      if (h) h.textContent = "Completa la informacion de quien recibe.";
+      btn.textContent = "Continuar";
+    }
+
+    /* Validacion de la PAGINA 1. La de la persona vive en validate(),
+       heredada de index.html y sin tocar. */
+    function validarEnvio(){
+      var ok = true;
+      if (!EF_DESLOCK){
+        var ciOk = !!(selCiudad && selCiudad.codigo); setErr("ciudad", !ciOk); ok = ok && ciOk;
+      }
+      var tiOk = !!mnTipo; setErr("tipoenvio", !tiOk); ok = ok && tiOk;
+      var coOk = val("contenido").length >= 2; setErr("contenido", !coOk); ok = ok && coOk;
+      if (mnTipo === "documento") return ok;          /* documento: sin peso ni valor */
+      var _pz = parseInt(val("piezas") || "1") || 1;
+      var _pe = parseFloat((val("peso") || "0").replace(",", "."));
+      var peOk = _pe > 0 && _pe <= 50 * _pz;          /* 50 kg POR PIEZA */
+      var _ep = document.getElementById("pesoerr"); if (_ep) _ep.style.display = peOk ? "none" : "block";
+      ok = ok && peOk;
+      var _va = parseFloat(val("valor") || "-1");
+      var vaOk = _va >= 0; setErr("valor", !vaOk); ok = ok && vaOk;
+      return ok;
+    }
+
+    /* ── ARRANQUE DE MULTIENVIOS ─────────────────────────────────────────
        Se ejecuta despues de que index.html ya monto todo lo suyo. */
     (function(){
       /* La ciudad de ORIGEN se pregunta UNA sola vez, en el remitente
@@ -545,9 +579,22 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
           '<div class="hint">El destinatario retirara el paquete en la agencia que elegiste.</div>';
       }
 
-      /* Los datos del envio son por destino: en el remitente no van. */
-      var be = document.getElementById("bloque_envio");
-      if (be && !esDestinos) be.classList.add("hidden");
+      /* El REMITENTE no tiene datos de envio: arranca directo en la pagina 2.
+         Cada DESTINO arranca en la pagina 1, igual que en produccion el cliente
+         pasa por datos-envio.html antes de dar los datos de quien recibe. */
+      var se = document.getElementById("scr_envio");
+      var sd = document.getElementById("scr_datos");
+      if (!esDestinos){
+        mnPagina = 2;
+        if (se) se.classList.add("hidden");
+        if (sd) sd.classList.remove("hidden");
+      } else {
+        mnPagina = 1;
+        if (se) se.classList.remove("hidden");
+        if (sd) sd.classList.add("hidden");
+        var h = document.getElementById("h_sub");
+        if (h) h.textContent = "Primero, que vas a enviar.";
+      }
 
       /* Los eventos se enganchan por codigo: los handlers inline del HTML
          no alcanzan a estas funciones, que viven dentro del IIFE de index.html. */
