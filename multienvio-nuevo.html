@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>Datos · EnvíaFácil</title>
+<style>
+  :root{ --amarillo:#FFD100; --negro:#1a1a1a; --gris:#6b7280; --borde:#e5e7eb; --err:#dc2626; --ok:#16a34a; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:#f4f4f5; color:var(--negro); }
+  .head{ background:var(--amarillo); padding:18px 20px; }
+  .head h1{ margin:0; font-size:19px; font-weight:800; }
+  .head p{ margin:4px 0 0; font-size:13px; color:#4b4b4b; }
+  .wrap{ padding:16px 18px 96px; max-width:520px; margin:0 auto; }
+  .grp{ margin-bottom:14px; }
+  label{ display:block; font-size:13px; font-weight:600; margin-bottom:6px; }
+  label .req{ color:var(--err); }
+  input{ width:100%; padding:12px 14px; font-size:16px; border:1.5px solid var(--borde); border-radius:10px; background:#fff; outline:none; }
+  input:focus{ border-color:var(--amarillo); }
+  input.invalid{ border-color:var(--err); background:#fef2f2; }
+  .row{ display:flex; gap:10px; }
+  .row .grp{ flex:1; }
+  .hint{ font-size:11px; color:var(--gris); margin-top:4px; }
+  .errmsg{ font-size:12px; color:var(--err); margin-top:4px; display:none; }
+  .barra{ position:fixed; left:0; right:0; bottom:0; background:#fff; border-top:1px solid var(--borde); padding:12px 18px; }
+  .barra .inner{ max-width:520px; margin:0 auto; display:flex; gap:10px; }
+  button{ width:100%; padding:15px; font-size:16px; font-weight:800; color:var(--negro); background:var(--amarillo); border:none; border-radius:12px; cursor:pointer; }
+  button.sec{ background:#fff; border:1.5px solid var(--borde); color:var(--negro); }
+  button:disabled{ opacity:.6; }
+  .seccion{ font-size:12px; font-weight:700; color:var(--gris); text-transform:uppercase; letter-spacing:.4px; margin:6px 0 10px; }
+  /* pantalla confirmar */
+  .conf-item{ padding:12px 0; border-bottom:1px solid var(--borde); }
+  .conf-item .k{ font-size:12px; color:var(--gris); }
+  .conf-item .v{ font-size:15px; font-weight:600; margin-top:2px; word-break:break-word; }
+  .ok-screen{ display:none; text-align:center; padding:60px 24px; }
+  .ok-screen .check{ font-size:56px; }
+  .ok-screen h2{ margin:12px 0 6px; }
+  .ok-screen p{ color:var(--gris); }
+  .hidden{ display:none !important; }
+</style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+  <div class="head">
+    <h1 id="h_titulo">Datos del remitente</h1>
+    <p id="h_sub">Completa la información.</p>
+  </div>
+
+  <!-- PANTALLA 1: DATOS -->
+  <div class="wrap" id="scr_datos">
+      <!-- CIUDAD — copiado de datos-envio.html. Se oculta si viene fija (oficina). -->
+      <div class="grp" id="bloque_ciudad">
+        <label id="l_ciudad">Ciudad <span class="req">*</span></label>
+        <input id="qCiu" placeholder="Escribe la ciudad..." autocomplete="off"
+              >
+        <div id="sugCiu" class="sug"></div>
+        <div id="chCiu"></div>
+        <div class="errmsg" id="e_ciudad">Elige una ciudad de la lista.</div>
+      </div>
+
+      <div class="grp" id="efMapaTop">
+        <button type="button" id="efBtnMapa" style="width:100%;height:48px;border-radius:12px;border:2px solid #E4C201;background:#FFFBEA;color:#0F0F0F;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer">📍 Seleccionar ubicación en el mapa</button>
+        <div class="hint">Ubica el pin y autocompletamos tu dirección. Luego solo completa lo que falte.</div>
+        <input type="hidden" id="ef_lat"/><input type="hidden" id="ef_lon"/>
+      </div>
+    <div class="seccion">Datos de quien envía</div>
+    <div class="grp">
+      <label id="l_cedula">Cédula (10) o RUC (13) <span class="req" id="req_cedula">*</span></label>
+      <input id="cedula" inputmode="numeric" maxlength="13" placeholder="10 dígitos (cédula) o 13 (RUC)" />
+      <div class="errmsg" id="e_cedula">Ingresa una cédula (10 dígitos) o RUC (13 dígitos) válido.</div>
+    </div>
+    <div class="grp">
+      <label>Nombres completos <span class="req">*</span></label>
+      <input id="nombre" placeholder="Nombres y apellidos" />
+      <div class="errmsg" id="e_nombre">Ingresa los nombres completos.</div>
+    </div>
+    <div class="grp">
+      <label id="l_correo">Correo electrónico <span class="req">*</span></label>
+      <input id="correo" type="email" inputmode="email" placeholder="correo@ejemplo.com" />
+      <div class="errmsg" id="e_correo">Correo no válido.</div>
+    </div>
+    <div class="grp">
+      <label id="l_celular">Celular <span class="req">*</span></label>
+      <input id="celular" inputmode="numeric" maxlength="10" placeholder="0991234567" />
+      <div class="errmsg" id="e_celular">Ingresa un celular de 10 dígitos (ej: 0991234567).</div>
+    </div>
+
+    <div id="bloque_dir">
+      <div class="seccion" id="s_dir">Dirección de recolección</div>
+      <div class="grp">
+        <label>Calle principal <span class="req">*</span></label>
+        <input id="calle_principal" placeholder="Av. / Calle principal" />
+        <div class="errmsg" id="e_calle_principal">Ingresa la calle principal.</div>
+      </div>
+      <div class="grp">
+        <label>Número de casa <span class="req">*</span></label>
+        <input id="numero_casa" placeholder="N° de casa" />
+        <div class="errmsg" id="e_numero_casa">Ingresa el número de casa.</div>
+      </div>
+      <div class="grp">
+        <label>Calle secundaria <span class="req">*</span></label>
+        <input id="calle_secundaria" placeholder="Calle secundaria" />
+        <div class="errmsg" id="e_calle_secundaria">Ingresa la calle secundaria.</div>
+      </div>
+      <div class="grp">
+        <label id="l_ref">Referencia de recolección <span class="req">*</span></label>
+        <input id="referencia_recoleccion" placeholder="Punto de referencia" />
+        <div class="errmsg" id="e_referencia_recoleccion">Ingresa un punto de referencia (ej. edificio, color de casa, junto a…).</div>
+        <div class="hint">Ej: edificio azul, junto al parque, casa de dos pisos…</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- DATOS DEL ENVIO — copiados de datos-envio.html. Solo en los destinos. -->
+  <div class="wrap" id="bloque_envio">
+    <div class="seccion">Datos del envio</div>
+    <!-- Documento vs Paquete — copiado de datos-envio.html. Documento NO lleva
+         peso, piezas ni valor: es regla de negocio, no una simplificacion. -->
+    <div class="grp">
+      <label>Que envias <span class="req">*</span></label>
+      <div class="tipos" id="tipos" style="display:flex;gap:10px">
+        <div class="tipo" data-tipo="documento" data-id="201202002001002"
+             style="flex:1;padding:14px;border:2px solid #ddd;border-radius:12px;text-align:center;cursor:pointer">
+          <div style="font-size:22px">📄</div><div style="font-weight:600">Documento</div></div>
+        <div class="tipo" data-tipo="paquete" data-id="201202002002013"
+             style="flex:1;padding:14px;border:2px solid #ddd;border-radius:12px;text-align:center;cursor:pointer">
+          <div style="font-size:22px">📦</div><div style="font-weight:600">Paquete</div></div>
+      </div>
+      <div class="errmsg" id="e_tipoenvio">Elige si es documento o paquete.</div>
+    </div>
+    <div class="grp">
+      <label>Que contiene <span class="req">*</span></label>
+      <input id="contenido" type="text" maxlength="60"
+             placeholder="Escribe que contiene (ej. ropa, zapatos, repuestos)">
+      <div class="errmsg" id="e_contenido">Escribe que contiene el envio.</div>
+    </div>
+    <div class="grp" id="paqFields">
+      <label>Peso (kg) <span class="req">*</span></label>
+      <input id="peso" type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*"
+             placeholder="1 a 50 kg">
+      <div class="errmsg" id="pesoerr">Maximo 50 kg POR PIEZA.</div>
+      <label>Piezas <span class="req">*</span></label>
+      <input id="piezas" type="number" inputmode="numeric" min="1" max="100" value="1"
+            >
+      <label>Valor declarado (USD) <span class="req">*</span></label>
+      <input id="valor" type="number" inputmode="numeric" min="0" placeholder="USD">
+      <div class="errmsg" id="e_valor">Ingresa el valor declarado.</div>
+    </div>
+  </div>
+
+  <!-- PANTALLA 2: CONFIRMAR -->
+  <div class="wrap hidden" id="scr_conf">
+    <div class="seccion">Revisa que todo esté correcto</div>
+    <div id="conf_body"></div>
+  </div>
+
+  <!-- BARRA DE BOTONES -->
+  <div class="barra"><div class="inner">
+    <button id="btnEdit" type="button" class="sec hidden">✏️ Editar</button><button id="btn" type="button">Continuar</button>
+  </div></div>
+
+  <!-- PANTALLA 3: OK -->
+  <div class="ok-screen" id="ok">
+    <div class="check">✅</div>
+    <h2>¡Datos guardados!</h2>
+    <p>Ya puedes volver al chat de WhatsApp para continuar con tu envío.</p>
+  </div>
+
+<script>
+  (function(){
+    var qs = new URLSearchParams(location.search);
+    /* 16-ago: en Multienvios el `tipo` NO viene en la URL: se deduce del paso.
+   destinos + lockDes  ->  "oficina"  ->  se activa el modo oficina que YA
+   trae index.html (esconde direccion, quita mapa, no la valida). */
+    var _paso = (qs.get("paso") || "remitente").toLowerCase();
+    var _lock = qs.get("lockDes") === "1";
+    var tipo = (_paso === "destinos") ? (_lock ? "oficina" : "destinatario") : "remitente";  // remitente | destinatario | oficina
+    var esOficina = tipo.indexOf("oficina") >= 0;
+    var esDestino = tipo.indexOf("destinatario") >= 0 || esOficina;
+
+    /* ═══════════════════════════════════════════════════════════════════
+       MULTIENVIOS — 16-ago-2026
+       Construido SOBRE index.html de produccion. Todo lo de seguridad,
+       validacion de persona, mapa y candado se hereda tal cual.
+       Aqui solo se agrega lo propio: ciudad, datos del envio, los dos pasos
+       y el modo oficina.
+       ═══════════════════════════════════════════════════════════════════ */
+
+    /* paso=remitente -> quien envia.   paso=destinos -> cada destinatario. */
+    var EF_PASO = (qs.get("paso") || "remitente").toLowerCase();
+    var esDestinos = EF_PASO === "destinos";
+
+    /* uno=1: se confirma UN destino y se cierra. El bucle lo lleva el chat. */
+    var EF_UNO = qs.get("uno") === "1";
+
+    /* lockDes=1: la ciudad ya vino con la oficina elegida. Ni se pregunta
+       ni se pide direccion: el paquete se retira en la agencia. */
+    var EF_DESLOCK = qs.get("lockDes") === "1";
+    var EF_DESCOD  = qs.get("desCod")  || "";
+    var EF_DESNOM  = qs.get("desNom")  || "";
+    var EF_DESPROV = qs.get("desProv") || "";
+
+    /* CATALOGO DE CIUDADES — SIEMPRE EN VIVO CONTRA EL API DE LAAR.
+       Orden de JC (16-ago): nada de data quemada. Por eso NO hay catalogo
+       pegado de respaldo: si no carga, se dice y se ofrece reintentar; nunca
+       una lista corta o vacia en silencio, que es peor que un error visible. */
+    var CAT = [];
+    var CAT_ESTADO = "cargando";
+
+    function cargarCiudades(){
+      CAT_ESTADO = "cargando"; pintarEstadoCat();
+      var _k = (typeof EF_KEY !== "undefined" && EF_KEY && EF_KEY.indexOf("__") !== 0) ? EF_KEY : null;
+      var _fx = /laarcourier\.com$/i.test(location.hostname) && !!_k;
+      var _u = _fx ? "api/ciudades" : "https://enviafacil-ciudades.fn.jelou.ai";
+      var _o = {};
+      if (_fx) { _o.headers = { "X-EF-Key": _k }; }
+      if (typeof AbortController !== "undefined") {
+        var _c = new AbortController(); _o.signal = _c.signal;
+        setTimeout(function(){ try{ _c.abort(); }catch(e){} }, 5000);
+      }
+      fetch(_u, _o).then(function(r){ return r.ok ? r.json() : null; }).then(function(j){
+        var a = j && j.ciudades;
+        if (Object.prototype.toString.call(a) === "[object Array]" && a.length >= 600
+            && Object.prototype.toString.call(a[0]) === "[object Array]" && a[0].length >= 3) {
+          CAT = a; CAT_ESTADO = "ok";
+        } else { CAT_ESTADO = "error"; }
+        pintarEstadoCat();
+      })["catch"](function(){ CAT_ESTADO = "error"; pintarEstadoCat(); });
+    }
+
+    function pintarEstadoCat(){
+      var e = document.getElementById("e_ciudad"); if (!e) return;
+      if (CAT_ESTADO === "cargando"){
+        e.style.display = "block"; e.style.color = "#8a8a8a";
+        e.textContent = "Cargando ciudades…";
+      } else if (CAT_ESTADO === "error"){
+        e.style.display = "block"; e.style.color = "#a00";
+        e.innerHTML = 'No pudimos cargar las ciudades. ' +
+                      '<span id="reintentarCiu" style="text-decoration:underline;cursor:pointer">Reintentar</span>';
+        var r = document.getElementById("reintentarCiu");
+        if (r) r.addEventListener("click", cargarCiudades);
+      } else { e.style.display = "none"; e.style.color = ""; e.textContent = ""; }
+    }
+
+    /* Normalizador propio: el efNorm de index.html vive en otro ambito y no se
+       alcanza desde aqui. Mismo comportamiento que el de datos-envio.html. */
+    function mnNorm(x){
+      return String(x || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+    }
+
+    /* Buscador de ciudad — mismo comportamiento que datos-envio.html */
+    var selCiudad = null;
+    function buscarCiu(){
+      var box = document.getElementById("sugCiu");
+      var q = mnNorm(document.getElementById("qCiu").value.trim());
+      if (q.length < 2){ box.classList.remove("show"); return; }
+      var hits = CAT.filter(function(c){ return mnNorm(c[0]).indexOf(q) >= 0 || mnNorm(c[2]).indexOf(q) >= 0; })
+        .sort(function(a,b){ var A=mnNorm(a[0]).indexOf(q), B=mnNorm(b[0]).indexOf(q);
+                             if(A<0)A=99; if(B<0)B=99; return A-B; })
+        .slice(0, 30);
+      if (!hits.length){
+        box.innerHTML = '<div class="empty" style="padding:10px;color:#8a8a8a">Sin resultados</div>';
+        box.classList.add("show"); return;
+      }
+      box.innerHTML = "";
+      hits.forEach(function(c){
+        var d = document.createElement("div");
+        d.style.cssText = "padding:10px;cursor:pointer;border-bottom:1px solid #eee";
+        d.innerHTML = '<b>' + c[0] + '</b> <span style="color:#7a6a00">· ' + c[2] + '</span>';
+        d.addEventListener("click", function(){ elegirCiu(c); });
+        box.appendChild(d);
+      });
+      box.classList.add("show");
+    }
+
+    function elegirCiu(c){
+      selCiudad = { nombre: c[0], codigo: c[1], provincia: c[2] };
+      document.getElementById("sugCiu").classList.remove("show");
+      document.getElementById("qCiu").classList.add("hidden");
+      document.getElementById("chCiu").innerHTML =
+        '<div style="display:flex;align-items:center;gap:8px;padding:10px;background:#FFFBEA;' +
+        'border:1px solid #E4C201;border-radius:10px">✅ <b>' + c[0] + '</b> (' + c[2] + ')' +
+        '<span id="limpiarCiu" style="margin-left:auto;cursor:pointer;font-weight:700">✕</span></div>';
+      var x = document.getElementById("limpiarCiu");
+      if (x) x.addEventListener("click", limpiarCiu);
+      setErr("ciudad", false);
+      /* la ciudad manda: el control ciudad<->ubicacion compara contra ESTA */
+      /* El control ciudad<->ubicacion de produccion compara contra `ciudadEsp`,
+         que el bot manda en el envio simple. Aqui la ciudad se elige DENTRO del
+         formulario, asi que se le pasa por window para que compare contra ella.
+         Sin esto el control no haria nada y el pin podria caer en otra ciudad. */
+      window._efCiudadKey = c[0];
+      window._efCiudadSel = { nombre: c[0], provincia: c[2] };
+    }
+
+    function limpiarCiu(){
+      selCiudad = null; window._efCiudadKey = null; window._efCiudadSel = null;
+      document.getElementById("chCiu").innerHTML = "";
+      var i = document.getElementById("qCiu");
+      i.classList.remove("hidden"); i.value = "";
+    }
+
+    /* Documento vs Paquete. Documento no lleva peso, piezas ni valor:
+       el bot lo deduce de `tipo` buscando "docu" en minusculas. */
+    var mnTipo = null;
+    function elegirTipoEnvio(el){
+      var ts = document.querySelectorAll("#tipos .tipo");
+      for (var i = 0; i < ts.length; i++){
+        ts[i].style.borderColor = "#ddd"; ts[i].style.background = "";
+      }
+      el.style.borderColor = "#E4C201"; el.style.background = "#FFFBEA";
+      mnTipo = el.getAttribute("data-tipo");
+      var paq = mnTipo === "paquete";
+      var pf = document.getElementById("paqFields");
+      if (pf) pf.classList.toggle("hidden", !paq);
+      setErr("tipoenvio", false);
+    }
+
+    /* Tope de 50 kg POR PIEZA — regla de negocio, copiada de datos-envio.html */
+    function chkPeso(){
+      var el = document.getElementById("peso"); if (!el) return;
+      var v = parseFloat((el.value || "0").replace(",", "."));
+      var pz = parseInt((document.getElementById("piezas") || {}).value || "1") || 1;
+      var bad = v > 50 * pz;
+      var e = document.getElementById("pesoerr");
+      if (e) e.style.display = bad ? "block" : "none";
+    }
+
+
+    // ---- executionId + callback (robusto) ----
+    var DEFAULT_CALLBACK = "https://enviafacil-callback.fn.jelou.ai";
+    var executionId = qs.get("executionId") || "";
+    var callback = qs.get("callback") || DEFAULT_CALLBACK;
+    if (!executionId) { var m = location.href.match(/[?&]executionId=([^&#]+)/); if (m) executionId = decodeURIComponent(m[1]); }
+    if (callback.indexOf("executionId=") >= 0) { var cm = callback.match(/^(.*?)[?&]executionId=([^&#]+)(.*)$/); if (cm){ if(!executionId) executionId=decodeURIComponent(cm[2]); callback=cm[1]; } }
+    var EF_N=qs.get("n")||"";var EF_LOCK=(executionId&&EF_N)?("ef_"+executionId+"_"+EF_N+"_"+(qs.get("tipo")||"")):"";var EF_EDIT=(qs.get("edit")||"");var EF_EDITLOCK=(EF_EDIT&&EF_LOCK)?(EF_LOCK+"_e"+EF_EDIT):"";function efAviso(msg){var b=document.getElementById('efAvisoBox');if(!b){b=document.createElement('div');b.id='efAvisoBox';b.style.cssText='background:#FFF3F3;border:1.5px solid #E88;color:#a00;border-radius:10px;padding:11px 13px;margin:10px 0;font-size:14px;font-weight:600';var btn=document.querySelector('button');if(btn&&btn.parentNode){btn.parentNode.insertBefore(b,btn);}else{document.body.insertBefore(b,document.body.firstChild);}}b.textContent='\u26a0\ufe0f '+msg;b.scrollIntoView({block:'center'});}
+function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_LOCK);}catch(e){return null;}}function efLock(d){if(!EF_LOCK)return;try{localStorage.setItem(EF_LOCK,JSON.stringify(d||{}));}catch(e){}}function efShowLocked(){var d={};try{d=JSON.parse(efLocked())||{};}catch(e){}var SKIP={executionId:1,callback:1,success:1,dbgHref:1,idServicio:1};var rows="";for(var k in d){if(SKIP[k]||d[k]===""||d[k]==null)continue;rows+='<div style="display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #eee"><span style="color:#8a8a8a">'+k.replace(/_/g," ")+'</span><b style="text-align:right;max-width:60%">'+String(d[k])+'</b></div>';}var _wa=((qs.get("wa")||"593991344747").replace(/\D/g,""));document.body.innerHTML='<div style="max-width:430px;margin:0 auto;padding:44px 22px;text-align:center"><div style="font-size:52px">\u2705</div><h2 style="margin:10px 0 4px;color:#0F0F0F">Datos ya enviados</h2><p style="color:#6b6b6b;margin:0 0 16px">Esta informaci\u00f3n ya fue registrada y no se puede modificar aqu\u00ed.</p><div style="text-align:left;background:#fafafa;border:1px solid #eee;border-radius:12px;padding:12px 16px">'+rows+'</div><p style="color:#9b9b9b;font-size:13px;margin-top:14px">Para corregir algo, hazlo desde la conversaci\u00f3n de WhatsApp.</p><a href="https://wa.me/'+_wa+'" style="display:inline-block;margin-top:8px;background:#FFD100;color:#0F0F0F;font-weight:700;padding:12px 26px;border-radius:26px;text-decoration:none">Volver a WhatsApp</a></div>';}var EF_FLURL="https://enviafacil-formlock.fn.jelou.ai";function efFormId(){try{return (EF_N||"")+"_"+(qs.get("tipo")||"");}catch(e){return "";}}function efSrvMark(d){try{if(!executionId||!EF_N)return;fetch(EF_FLURL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({accion:"marcar",exec:executionId,form:efFormId(),datos:d||{}})}).catch(function(){});}catch(e){}}function efSrvCheck(){try{if(!executionId||!EF_N)return;if(typeof EF_EDIT!=="undefined"&&EF_EDIT)return;if(efLocked())return;fetch(EF_FLURL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({accion:"consultar",exec:executionId,form:efFormId()})}).then(function(r){return r.json();}).then(function(o){try{if(o&&o.ok&&o.enviado){efLock(o.datos||{});efShowLocked();}}catch(e){}}).catch(function(){});}catch(e){}}if(efLocked()&&(!EF_EDIT||(EF_EDITLOCK&&localStorage.getItem(EF_EDITLOCK)))){efShowLocked();}efSrvCheck();
+
+
+    // ---- Textos por variante (fiel al Flow original) ----
+    var titulo = esOficina ? "Datos del destinatario (oficina)" : (esDestino ? "Datos del destinatario" : "Datos del remitente");
+    document.getElementById("h_titulo").textContent = titulo;
+    document.getElementById("h_sub").textContent = esDestino ? "Completa la información de quien recibe." : "Completa la información de quien envía.";
+    document.querySelector(".seccion").textContent = esDestino ? "Datos de quien recibe" : "Datos de quien envía";
+    if (esDestino && !esOficina){
+      document.getElementById("s_dir").textContent = "Dirección de entrega";
+      document.getElementById("l_ref").innerHTML = 'Referencia de entrega <span class="req">*</span>';
+    }
+    // Variante OFICINA = solo 4 campos (sin dirección)
+    if (esOficina){ document.getElementById("bloque_dir").classList.add("hidden"); }
+    if (esOficina || qs.get("sinJoya")==="1") { var _mb=document.getElementById("efBtnMapa"); if(_mb&&_mb.parentNode){ _mb.parentNode.classList.add("hidden"); } }  // mapa: rem+des (no oficina)
+    // Cédula del destinatario = OPCIONAL (el Flow original la tenía required:false)
+    if (esDestino){
+      document.getElementById("l_cedula").innerHTML = 'Cédula o RUC <span class="hint" style="font-weight:400;display:inline">(opcional)</span>';
+      var _lc=document.getElementById("l_correo"); if(_lc) _lc.innerHTML='Correo electrónico <span class="hint" style="font-weight:400;display:inline">(opcional)</span>';
+      
+      var _rq=document.getElementById("req_cedula"); if(_rq) _rq.style.display="none";
+    }
+
+    // ---- PREFILL (cuando viene del pin/geocode o datos previos) ----
+    function pf(id, keys){ for (var i=0;i<keys.length;i++){ var v=qs.get(keys[i]); if(v){ var el=document.getElementById(id); if(el) el.value=v; return; } } }
+    pf("cedula",["cedula"]); pf("nombre",["nombre"]); pf("correo",["correo"]);
+    var cel = qs.get("celular") || ""; if (cel){ cel=cel.replace(/\D/g,""); if(cel.indexOf("593")===0) cel="0"+cel.slice(3); if(/^\d{10,15}$/.test(cel)) document.getElementById("celular").value=cel; }
+    pf("calle_principal",["calle_principal","calle"]); pf("numero_casa",["numero_casa","numero"]);
+    pf("calle_secundaria",["calle_secundaria","calle2"]); pf("referencia_recoleccion",["referencia_recoleccion","referencia"]);
+    pf("ef_lat",["lat","preLat"]); pf("ef_lon",["lon","preLon"]);
+
+    // ---- Validación ----
+    function val(id){ var el=document.getElementById(id); return el ? el.value.trim() : ""; }
+    function setErr(id, bad){ var el=document.getElementById(id); if(!el) return; el.classList.toggle("invalid",bad); var e=document.getElementById("e_"+id); if(e) e.style.display=bad?"block":"none"; }
+    // Cédula (10, módulo 10) o RUC (13)
+    function cedulaOk(v){
+      v=(v||"").replace(/\D/g,"");
+      if (v.length===10) return _ced10(v);
+      if (v.length===13) return _rucOk(v);
+      return false;
+    }
+    function _ced10(v){
+      if(v.length!==10) return false;
+      var d=v.split("").map(Number), prov=+v.slice(0,2);
+      if(prov<1||prov>24) return false;
+      var suma=0; for(var i=0;i<9;i++){ var x=d[i]*(i%2===0?2:1); suma+=x>9?x-9:x; }
+      return ((10-suma%10)%10)===d[9];
+    }
+    function _mod11(v,coef){ var s=0; for(var i=0;i<coef.length;i++) s+=(+v[i])*coef[i]; var r=11-(s%11); if(r===11)r=0; return r; }
+    function _rucOk(v){
+      if(v.length!==13) return false;
+      var prov=+v.slice(0,2); if(prov<1||prov>24) return false;
+      var t=+v[2];
+      if(t<6) return _ced10(v.slice(0,10)) && (+v.slice(10))>0;                       // natural: cédula (mód 10) + establecimiento
+      if(t===6) return _mod11(v,[3,2,7,6,5,4,3,2])===(+v[8]) || (+v.slice(9))>0;        // pública: mód 11, salvaguarda por estructura (SRI emite RUC que no cumplen mód 11)
+      if(t===9) return _mod11(v,[4,3,2,7,6,5,4,3,2])===(+v[9]) || (+v.slice(10))>0;      // jurídica: mód 11, salvaguarda por estructura (SRI emite RUC que no cumplen mód 11)
+      return false;                                                                     // tercer dígito 7/8 no válido
+    }
+    function correoOk(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+    function validate(){
+      var ok=true;
+      var cVal=val("cedula"), cOk;
+      if (esDestino && cVal===""){ cOk=true; setErr("cedula",false); }   // destinatario: cédula opcional
+      else { cOk=cedulaOk(cVal); setErr("cedula",!cOk); }
+      ok=ok&&cOk;
+      var nOk=val("nombre").length>=3; setErr("nombre",!nOk); ok=ok&&nOk;
+      var _ev=val("correo"), eOk; if(esDestino&&_ev===""){eOk=true;setErr("correo",false);} else {eOk=correoOk(_ev);setErr("correo",!eOk);} ok=ok&&eOk;
+      var _cv=val("celular").replace(/\D/g,""), celOk; celOk=/^\d{10}$/.test(_cv); setErr("celular",!celOk); ok=ok&&celOk;
+      /* 16-ago Multienvios: la ciudad es obligatoria salvo que venga fija. */
+      if (!EF_DESLOCK){
+        var ciOk = !!(selCiudad && selCiudad.codigo); setErr("ciudad", !ciOk); ok = ok && ciOk;
+      }
+      /* Datos del envio: solo en los destinos. 50 kg POR PIEZA. */
+      if (esDestinos){
+        var tiOk = !!mnTipo; setErr("tipoenvio", !tiOk); ok = ok && tiOk;
+        var coOk = val("contenido").length >= 2; setErr("contenido", !coOk); ok = ok && coOk;
+        if (mnTipo === "documento"){ return ok; }   /* documento: sin peso ni valor */
+        var _pz  = parseInt(val("piezas") || "1") || 1;
+        var _pe  = parseFloat((val("peso") || "0").replace(",", "."));
+        var peOk = _pe > 0 && _pe <= 50 * _pz;
+        var _ep = document.getElementById("pesoerr"); if (_ep) _ep.style.display = peOk ? "none" : "block";
+        ok = ok && peOk;
+        var _va  = parseFloat(val("valor") || "-1");
+        var vaOk = _va >= 0; setErr("valor", !vaOk); ok = ok && vaOk;
+      }
+      if (!esOficina){
+        var caOk=val("calle_principal").length>=2; setErr("calle_principal",!caOk); ok=ok&&caOk;
+        var nuOk=val("numero_casa").length>=1; setErr("numero_casa",!nuOk); ok=ok&&nuOk;
+        var c2Ok=val("calle_secundaria").length>=1; setErr("calle_secundaria",!c2Ok); ok=ok&&c2Ok;
+        var rfOk=val("referencia_recoleccion").length>=3; setErr("referencia_recoleccion",!rfOk); ok=ok&&rfOk;  // referencia OBLIGATORIA
+      }
+      return ok;
+    }
+
+    // ---- Datos que se envían ----
+    function payloadDatos(){
+      var p={ tipo:tipo, cedula:val("cedula"), nombre:val("nombre"), nombres_completos:val("nombre"), correo:val("correo"), celular:val("celular") };
+      if (!esOficina){
+        p.calle_principal=val("calle_principal"); p.numero_casa=val("numero_casa");
+        p.calle_secundaria=val("calle_secundaria"); p.referencia_recoleccion=val("referencia_recoleccion");
+        p.lat=val("ef_lat"); p.lon=val("ef_lon");
+      }
+      /* ── CONTRATO CON EL BOT (16-ago-2026) ────────────────────────────
+         Verificado contra el nodo «Consolidar envio» de la skill 44490, que es
+         quien LEE esto. NO contra una lista escrita a mano.
+         ⛔ El bot lee `e.referencia`, no `referencia_recoleccion`: se manda con
+            los dos nombres para no perderla.
+         ⛔ `idServicio` NO lo lee nadie: el bot deduce documento/paquete de
+            `tipo` (busca "docu", en minusculas). */
+      p.referencia = val("referencia_recoleccion");
+      if (selCiudad){
+        p.ciudad = selCiudad.nombre; p.ciudadCodigo = selCiudad.codigo; p.provincia = selCiudad.provincia;
+      }
+      if (esDestinos){
+        p.contenido = val("contenido");
+        p.peso   = val("peso");
+        p.piezas = val("piezas") || "1";
+        p.valor  = val("valor");
+        /* El bot lee `tipo` y busca "docu" en minusculas (nodo «Consolidar envio»). */
+        p.tipo = (mnTipo === "documento") ? "Documento" : "Paquete";
+        if (mnTipo === "documento"){ p.peso = ""; p.piezas = "1"; p.valor = "0"; }
+      }
+      /* Destino a oficina: LAAR lo recibe como retiroOficina{isRetiro,idOficina}. */
+      if (EF_DESLOCK){
+        p.idOficina = qs.get("idOficina") || "";
+        p.isRetiro  = true;
+      }
+      return p;
+    }
+
+    // ---- Pantalla de confirmación (2ª pantalla, como el Flow) ----
+    function itm(k,v){ return v ? '<div class="conf-item"><div class="k">'+k+'</div><div class="v">'+String(v).replace(/</g,"&lt;")+'</div></div>' : ''; }
+    function pintarConf(){
+      var p=payloadDatos();
+      var dir = !esOficina ? (p.calle_principal+" "+p.numero_casa+(p.calle_secundaria?" y "+p.calle_secundaria:"")) : "";
+      var html = itm("Cédula / RUC",p.cedula)+itm("Nombres completos",p.nombre)+itm("Correo",p.correo)+itm("Celular",p.celular);
+      if (!esOficina){ html += itm(esDestino?"Dirección de entrega":"Dirección de recolección",dir)+itm(esDestino?"Referencia de entrega":"Referencia de recolección",p.referencia_recoleccion); }
+      document.getElementById("conf_body").innerHTML = html;
+    }
+
+    var enConf=false;
+    var btn=document.getElementById("btn");
+    function irConf(){ enConf=true; pintarConf(); document.getElementById("scr_datos").classList.add("hidden"); document.getElementById("scr_conf").classList.remove("hidden"); document.getElementById("h_sub").textContent="Confirma tus datos."; btn.textContent="Confirmar"; var _e=document.getElementById("btnEdit"); if(_e) _e.classList.remove("hidden"); }function volverAEditar(){ enConf=false; document.getElementById("scr_conf").classList.add("hidden"); document.getElementById("scr_datos").classList.remove("hidden"); document.getElementById("h_sub").textContent = esDestino ? "Completa la información de quien recibe." : "Completa la información de quien envía."; btn.textContent="Continuar"; var _e=document.getElementById("btnEdit"); if(_e) _e.classList.add("hidden"); window.scrollTo(0,0); }
+
+    (function(){var _e=document.getElementById("btnEdit"); if(_e) _e.addEventListener("click", volverAEditar);})();
+    btn.addEventListener("click", async function(){
+      if (!enConf){ if(!validate()) return; irConf(); return; }   // pantalla 1 -> confirmar
+      // pantalla 2 -> enviar
+      btn.disabled=true; btn.textContent="Enviando…";var _tEsp=setTimeout(function(){ if(btn.disabled) btn.textContent="Enviando… no cierres esta ventana"; },5000);
+      var PROXY="https://enviafacil-callback.fn.jelou.ai";var EF_KEY="__EF_API_KEY__";
+      var body=Object.assign({ executionId:executionId, success:true }, payloadDatos());
+      try{
+        var resp=await fetch(PROXY,{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) });
+        var out={}; try{ out=await resp.json(); }catch(e){}
+        clearTimeout(_tEsp); if (!resp.ok || out.ok===false) throw new Error("proxy "+(out.status||resp.status));efLock(payloadDatos());efSrvMark(payloadDatos());if(EF_EDITLOCK){try{localStorage.setItem(EF_EDITLOCK,"1");}catch(e){}}
+        document.getElementById("scr_conf").classList.add("hidden");
+        document.querySelector(".barra").style.display="none";
+        document.querySelector(".head").style.display="none";
+        document.getElementById("ok").style.display="block";
+        var wa=(qs.get("wa")||"").replace(/\D/g,"");
+        if (wa) setTimeout(function(){ window.location.href="https://wa.me/"+wa; },900);
+        else setTimeout(function(){ try{window.close();}catch(e){} },1200);
+      }catch(e){
+        clearTimeout(_tEsp); btn.disabled=false; btn.textContent="Confirmar";
+        efAviso("No pudimos enviar los datos. Revisa tu conexión e intenta de nuevo.");
+      }
+    });
+      /* ── ARRANQUE DE MULTIENVIOS ─────────────────────────────────────────
+       Se ejecuta despues de que index.html ya monto todo lo suyo. */
+    (function(){
+      /* La ciudad de ORIGEN se pregunta UNA sola vez, en el remitente
+         (orden de JC, 16-ago). En los destinos la etiqueta es de destino.
+         Se dice "recoleccion", no "retiro": "retiro" es donde el
+         destinatario recoge, y usar la misma palabra confunde. */
+      var lc = document.getElementById("l_ciudad");
+      if (lc) lc.innerHTML = (esDestinos ? "🎯 Ciudad de destino" : "📍 Ciudad de recoleccion")
+                             + ' <span class="req">*</span>';
+
+      var qc = document.getElementById("qCiu");
+      if (qc) qc.placeholder = esDestinos ? "Escribe la ciudad destino..." : "Escribe tu ciudad...";
+
+      /* Destino a oficina: la ciudad vino con la oficina elegida.
+         No se pregunta de nuevo — se muestra fija. */
+      if (EF_DESLOCK && EF_DESCOD){
+        selCiudad = { nombre: EF_DESNOM, codigo: EF_DESCOD, provincia: EF_DESPROV };
+        window._efCiudadKey = EF_DESNOM;
+        window._efCiudadSel = { nombre: EF_DESNOM, provincia: EF_DESPROV };
+        var bc = document.getElementById("bloque_ciudad");
+        if (bc) bc.innerHTML =
+          '<label>🏢 Se retira en oficina</label>' +
+          '<div style="padding:10px;background:#FFFBEA;border:1px solid #E4C201;border-radius:10px">' +
+          '<b>' + EF_DESNOM + '</b> (' + EF_DESPROV + ')</div>' +
+          '<div class="hint">El destinatario retirara el paquete en la agencia que elegiste.</div>';
+      }
+
+      /* Los datos del envio son por destino: en el remitente no van. */
+      var be = document.getElementById("bloque_envio");
+      if (be && !esDestinos) be.classList.add("hidden");
+
+      /* Los eventos se enganchan por codigo: los handlers inline del HTML
+         no alcanzan a estas funciones, que viven dentro del IIFE de index.html. */
+      var _q = document.getElementById("qCiu");
+      if (_q){ _q.addEventListener("input", buscarCiu); _q.addEventListener("focus", buscarCiu); }
+      Array.prototype.forEach.call(document.querySelectorAll("#tipos .tipo"), function(el){
+        el.addEventListener("click", function(){ elegirTipoEnvio(el); });
+      });
+      ["peso","piezas"].forEach(function(id){
+        var el = document.getElementById(id);
+        if (el) el.addEventListener("input", chkPeso);
+      });
+
+      /* El catalogo se pide en vivo. Sin respaldo pegado, por orden de JC. */
+      if (!EF_DESLOCK) cargarCiudades();
+    })();
+
+    })();
+</script>
+
+  <div id="efMapModal" class="hidden" style="position:fixed;inset:0;z-index:99999;background:#fff;display:flex;flex-direction:column">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:0.5px solid #e4e4e4">
+      <span style="font-size:16px;font-weight:600">Seleccionar ubicación</span>
+      <span id="efMapClose" style="font-size:24px;color:#8a8a8a;cursor:pointer;line-height:1">&times;</span>
+    </div>
+    <div style="position:relative;flex:1;min-height:200px">
+      <div id="efLeaf" style="position:absolute;inset:0"></div>
+      <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-100%);pointer-events:none;font-size:38px;line-height:1;z-index:500">📍</div>
+      <button type="button" id="efMiUbic" aria-label="mi ubicación" style="position:absolute;right:14px;bottom:20px;width:46px;height:46px;border-radius:50%;background:#fff;border:0.5px solid #ddd;font-size:20px;z-index:500;cursor:pointer">🎯</button>
+      <div style="position:absolute;top:10px;left:10px;right:56px;z-index:600">
+        <input id="efSearch" type="text" autocomplete="off" placeholder="Busca ciudad, calle o referencia" style="width:100%;height:42px;border-radius:10px;border:none;padding:0 12px;font-size:14px;box-shadow:0 1px 6px rgba(0,0,0,.25);box-sizing:border-box"/>
+        <div id="efSug" style="background:#fff;border-radius:10px;margin-top:4px;box-shadow:0 2px 8px rgba(0,0,0,.2);overflow:hidden;display:none;max-height:220px;overflow-y:auto"></div>
+      </div>
+    </div>
+    <div style="padding:14px 16px;border-top:0.5px solid #e4e4e4">
+      <div id="efCov" style="font-size:12px;margin-bottom:6px;color:#888">Mueve el mapa para ubicar el pin</div>
+      <div id="efAddr" style="font-size:14px;font-weight:600;margin-bottom:12px;min-height:20px;color:#0f0f0f"></div>
+      <button type="button" id="efMapConfirm" style="width:100%;height:48px;border-radius:24px;background:#FCE200;border:none;color:#0F0F0F;font-weight:600;font-size:15px;cursor:pointer">Confirmar ubicación</button>
+    </div>
+  </div>
+  <script>
+  (function(){
+    var modal=document.getElementById('efMapModal'),map=null,geoT=null;
+    var qmap=new URLSearchParams(location.search);
+    function efNorm(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/\([^)]*\)/g,'').replace(/^[A-ZÑ ]+\s*-\s*/,'').replace(/[^A-Z0-9]/g,'');}
+    function checkCiudad(gc,gp){var ec=qmap.get('ciudadEsp')||'',ep=qmap.get('provEsp')||'';
+      /* 16-ago Multienvios: si no vino ciudadEsp por URL, se compara contra la
+         ciudad elegida en el formulario. */
+      if(!ec&&!ep&&window._efCiudadSel){ec=window._efCiudadSel.nombre||'';ep=window._efCiudadSel.provincia||'';}if(!ec&&!ep)return {level:'none'};var ncg=efNorm(gc),ncp=efNorm(gp),nec=efNorm(ec),nep=efNorm(ep);if(nep&&ncp&&nep!==ncp)return {level:'strong',msg:'Tu ubicación está en '+(gp||gc)+', pero tu envío es a '+(ep||ec)};if(nec&&ncg&&nec!==ncg&&ncg.indexOf(nec)<0&&nec.indexOf(ncg)<0)return {level:'soft',msg:'Ubicación en '+(gc||'')+' (tu envío es a '+ec+')'};return {level:'ok'};}
+    var DEF=[-0.180653,-78.467834];
+    function setV(id,v){var el=document.getElementById(id);if(el&&v)el.value=v;}
+    function openM(){
+      modal.classList.remove('hidden');
+      if(!map){
+        map=L.map('efLeaf',{zoomControl:false}).setView(DEF,16);L.control.zoom({position:'topright'}).addTo(map);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+        map.on('moveend',onMove);
+        var _ec=qmap.get('ciudadEsp')||'', _ep=qmap.get('provEsp')||'';
+        if(_ec){ centerCity(_ec+(_ep?(', '+_ep):'')+', Ecuador'); } else { tryLoc(); }
+      }
+      setTimeout(function(){map.invalidateSize();onMove();},250);
+    }
+    function centerCity(q){
+      fetch(FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q:q,session:sess})})
+        .then(function(r){return r.json();}).then(function(d){
+          if(d.ok&&d.predictions&&d.predictions.length){ pickPlace(d.predictions[0].place_id,''); }
+        }).catch(function(){});
+    }
+    function closeM(){modal.classList.add('hidden');}
+    function onMove(){
+      var sg=document.getElementById('efSug');if(sg)sg.style.display='none';
+      window._efForce=false;var _cb=document.getElementById('efMapConfirm');if(_cb)_cb.textContent='Confirmar ubicación';
+      var c=map.getCenter();
+      document.getElementById('efAddr').textContent='Ubicando…';
+      document.getElementById('efCov').textContent='';
+      clearTimeout(geoT);geoT=setTimeout(function(){revGeo(c.lat,c.lng);},450);
+    }
+    function revGeo(lat,lon){
+      fetch('https://enviafacil-geocode.fn.jelou.ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lat:lat,lon:lon})})
+      .then(function(r){return r.json();}).then(function(d){
+        var a=document.getElementById('efAddr'),cov=document.getElementById('efCov');
+        if(d&&d.ok){
+          window._efGeo={lat:lat,lon:lon,calle:d.calle||'',sector:d.sector||'',ciudad:d.ciudad||'',prov:d.provincia||'',fmt:d.formatted||''};
+          a.textContent=d.formatted||((d.calle||'')+', '+(d.ciudad||''));
+          if(d.ciudad){var _ck=checkCiudad(d.ciudad,d.provincia);
+            if(_ck.level==='strong'){cov.textContent='⛔ '+_ck.msg;cov.style.color='#a00';}
+            else if(_ck.level==='soft'){cov.textContent='⚠️ '+_ck.msg;cov.style.color='#b26a00';}
+            else{cov.textContent='✅ '+d.ciudad+', '+(d.provincia||'');cov.style.color='#0f6e56';}}
+          else{cov.textContent='⚠️ No pudimos identificar la zona';cov.style.color='#a00';}
+        }else{a.textContent='No pudimos leer la dirección aquí';window._efGeo=null;}
+      }).catch(function(){document.getElementById('efAddr').textContent='Sin conexión al ubicar';});
+    }
+    function tryLoc(){
+      if(!navigator.geolocation)return;
+      navigator.geolocation.getCurrentPosition(function(p){if(map)map.setView([p.coords.latitude,p.coords.longitude],16);},function(){},{timeout:6000,enableHighAccuracy:true});
+    }
+    function confirmLoc(){
+      if(!map){closeM();return;}
+      var c=map.getCenter(),btn=document.getElementById('efMapConfirm');
+      btn.textContent='Confirmando…';btn.disabled=true;
+      function done(d){
+        if(d&&d.ok){var chk=checkCiudad(d.ciudad,d.provincia);
+          if(chk.level==='strong'&&!window._efForce){window._efForce=true;
+            var cov=document.getElementById('efCov');cov.textContent='⛔ '+chk.msg;cov.style.color='#a00';
+            btn.textContent='Continuar de todos modos';btn.disabled=false;return;}}
+        setV('ef_lat',String(c.lat));setV('ef_lon',String(c.lng));
+        if(d&&d.ok){
+          var _cp=d.calle||'',_cs=d.sector||'';
+          if(!_cp&&_cs){_cp=_cs;_cs='';}
+          if(_cs&&_cp&&_cs.trim().toLowerCase()===_cp.trim().toLowerCase())_cs='';
+          if(!_cp&&d.formatted)_cp=String(d.formatted).split(',')[0].trim();
+          if(_cp)setV('calle_principal',_cp);
+          if(_cs)setV('calle_secundaria',_cs);
+        }
+        window._efForce=false;btn.textContent='Confirmar ubicación';btn.disabled=false;closeM();
+      }
+      fetch('https://enviafacil-geocode.fn.jelou.ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lat:c.lat,lon:c.lng})})
+        .then(function(r){return r.json();}).then(done).catch(function(){done(null);});
+    }
+    var FN='https://enviafacil-geocode.fn.jelou.ai',srchT=null,sess=newSess();
+    function newSess(){return 'ef-'+Date.now()+'-'+Math.floor(Math.random()*1e6);}
+    function doSearch(q){
+      var bias=map?(map.getCenter().lat+','+map.getCenter().lng):'';
+      fetch(FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q:q,session:sess,bias:bias})})
+        .then(function(r){return r.json();}).then(function(d){
+          var sug=document.getElementById('efSug');
+          if(!d.ok||!d.predictions||!d.predictions.length){sug.style.display='none';return;}
+          sug.innerHTML='';
+          d.predictions.forEach(function(p){
+            var row=document.createElement('div');
+            row.style.cssText='padding:10px 12px;border-bottom:0.5px solid #eee;cursor:pointer';
+            row.innerHTML='<div style="font-weight:600;font-size:13px;color:#0f0f0f">'+(p.main||p.description)+'</div>'+(p.sec?'<div style="color:#888;font-size:12px">'+p.sec+'</div>':'');
+            row.addEventListener('click',function(){pickPlace(p.place_id,p.description);});
+            sug.appendChild(row);
+          });
+          sug.style.display='block';
+        }).catch(function(){var sg=document.getElementById('efSug');if(sg)sg.style.display='none';});
+    }
+    function pickPlace(pid,desc){
+      var sug=document.getElementById('efSug');sug.style.display='none';
+      document.getElementById('efSearch').value=desc;
+      fetch(FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({place_id:pid,session:sess})})
+        .then(function(r){return r.json();}).then(function(d){
+          sess=newSess();
+          if(d.ok&&d.lat&&d.lon&&map){map.setView([parseFloat(d.lat),parseFloat(d.lon)],17);}
+        }).catch(function(){});
+    }
+    (function(){var inp=document.getElementById('efSearch');if(!inp)return;
+      inp.addEventListener('input',function(){var q=inp.value.trim();clearTimeout(srchT);
+        if(q.length<3){document.getElementById('efSug').style.display='none';return;}
+        srchT=setTimeout(function(){doSearch(q);},320);});})();
+    document.getElementById('efBtnMapa').addEventListener('click',openM);
+    document.getElementById('efMapClose').addEventListener('click',closeM);
+    document.getElementById('efMapConfirm').addEventListener('click',confirmLoc);
+    document.getElementById('efMiUbic').addEventListener('click',tryLoc);
+  })();
+
+
+
+  </script>
+<script>window.__AI_CONN__="InstrumentationKey=df300d6c-f33a-4203-961f-0ed586b6d881;IngestionEndpoint=https://brazilsouth-1.in.applicationinsights.azure.com/;LiveEndpoint=https://brazilsouth.livediagnostics.monitor.azure.com/;ApplicationId=b9cf5019-53ed-475f-a4de-2cca564d7860";</script>
+<script defer src="https://js.monitor.azure.com/scripts/b/ai.2.min.js" onerror="window.__AI_LOAD_FAILED__=true"></script>
+<script defer>try{if(window.__AI_CONN__&&!window.__AI_LOAD_FAILED__&&typeof Microsoft!=="undefined"&&Microsoft.ApplicationInsights){var _efAI=new Microsoft.ApplicationInsights.ApplicationInsights({config:{connectionString:window.__AI_CONN__,enableAutoRouteTracking:true}});_efAI.loadAppInsights();_efAI.trackPageView();}}catch(e){}</script>
+</body>
+</html>
