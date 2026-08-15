@@ -72,11 +72,11 @@
 
   <!-- DATOS DEL ENVIO — copiados de datos-envio.html. Solo en los destinos. -->
   <div id="bloque_envio">
-    <div class="seccion">Datos del envio</div>
+    <div class="seccion">Datos del envío</div>
     <!-- Documento vs Paquete — copiado de datos-envio.html. Documento NO lleva
          peso, piezas ni valor: es regla de negocio, no una simplificacion. -->
     <div class="grp" id="tarjeta_tipo">
-      <label>Que envias <span class="req">*</span></label>
+      <label>Qué envías <span class="req">*</span></label>
       <div class="tipos" id="tipos" style="display:flex;gap:10px">
         <div class="tipo" data-tipo="documento" data-id="201202002001002"
              style="flex:1;padding:14px;border:2px solid #ddd;border-radius:12px;text-align:center;cursor:pointer">
@@ -88,16 +88,16 @@
       <div class="errmsg" id="e_tipoenvio">Elige si es documento o paquete.</div>
     </div>
     <div class="grp">
-      <label>Que contiene <span class="req">*</span></label>
+      <label>Qué contiene <span class="req">*</span></label>
       <input id="contenido" type="text" maxlength="60"
-             placeholder="Escribe que contiene (ej. ropa, zapatos, repuestos)">
-      <div class="errmsg" id="e_contenido">Escribe que contiene el envio.</div>
+             placeholder="Escribe qué contiene (ej. ropa, zapatos, repuestos)">
+      <div class="errmsg" id="e_contenido">Escribe qué contiene el envío.</div>
     </div>
     <div class="grp" id="paqFields">
       <label>Peso (kg) <span class="req">*</span></label>
       <input id="peso" type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*"
              placeholder="1 a 50 kg">
-      <div class="errmsg" id="pesoerr">Maximo 50 kg POR PIEZA.</div>
+      <div class="errmsg" id="pesoerr">Máximo 50 kg POR PIEZA.</div>
       <label>Piezas <span class="req">*</span></label>
       <input id="piezas" type="number" inputmode="numeric" min="1" max="100" value="1"
             >
@@ -527,7 +527,7 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
       document.getElementById("scr_envio").classList.add("hidden");
       document.getElementById("scr_datos").classList.remove("hidden");
       var h = document.getElementById("h_sub");
-      if (h) h.textContent = "Completa la informacion de quien recibe.";
+      if (h) h.textContent = "Completa la información de quien recibe.";
       btn.textContent = "Continuar";
     }
 
@@ -559,7 +559,7 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
          Se dice "recoleccion", no "retiro": "retiro" es donde el
          destinatario recoge, y usar la misma palabra confunde. */
       var lc = document.getElementById("l_ciudad");
-      if (lc) lc.innerHTML = (esDestinos ? "🎯 Ciudad de destino" : "📍 Ciudad de recoleccion")
+      if (lc) lc.innerHTML = (esDestinos ? "🎯 Ciudad de destino" : "📍 Ciudad de recolección")
                              + ' <span class="req">*</span>';
 
       var qc = document.getElementById("qCiu");
@@ -572,11 +572,18 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
         window._efCiudadKey = EF_DESNOM;
         window._efCiudadSel = { nombre: EF_DESNOM, provincia: EF_DESPROV };
         var bc = document.getElementById("bloque_ciudad");
+        /* Verbatim de datos-envio.html, que es como produccion lo resuelve:
+           se MUESTRA la ciudad fijada y se dice que no es editable, para que
+           el cliente no se quede preguntando por que no la puede tocar.
+           La agencia elegida no va aqui: aparece en el resumen del chat. */
         if (bc) bc.innerHTML =
-          '<label>🏢 Se retira en oficina</label>' +
-          '<div style="padding:10px;background:#FFFBEA;border:1px solid #E4C201;border-radius:10px">' +
-          '<b>' + EF_DESNOM + '</b> (' + EF_DESPROV + ')</div>' +
-          '<div class="hint">El destinatario retirara el paquete en la agencia que elegiste.</div>';
+          '<label>🎯 Ciudad de destino</label>' +
+          '<div style="display:flex;align-items:flex-start;gap:8px;padding:10px;' +
+          'background:#FFFBEA;border:1px solid #E4C201;border-radius:10px">' +
+          '<span>✅</span><span style="display:block"><b>' + EF_DESNOM + '</b> ' +
+          '<span style="color:#7a6a00">(' + EF_DESPROV + ')</span>' +
+          '<span style="color:#7a6a00;display:block;margin-top:3px">' +
+          '🏢 Retiro en oficina — no editable</span></span></div>';
       }
 
       /* El REMITENTE no tiene datos de envio: arranca directo en la pagina 2.
@@ -593,7 +600,7 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
         if (se) se.classList.remove("hidden");
         if (sd) sd.classList.add("hidden");
         var h = document.getElementById("h_sub");
-        if (h) h.textContent = "Primero, que vas a enviar.";
+        if (h) h.textContent = "Primero, qué vas a enviar.";
       }
 
       /* Los eventos se enganchan por codigo: los handlers inline del HTML
