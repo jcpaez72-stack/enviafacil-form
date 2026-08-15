@@ -2,3 +2,5 @@
 # Respaldo con credenciales REALES de LAAR — NUNCA publicar
 ROLLBACK-fenix-vivo-31jul/
 base-produccion-30jul/
+backups/
+*.bak-*

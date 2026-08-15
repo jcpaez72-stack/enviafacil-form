@@ -158,14 +158,14 @@ var _recheck=function(){};function recheck(){try{_recheck();}catch(e){}}
 function personaHTML(role,d){d=d||{};var dest=(role==='dest');
  var cedLbl=dest?'Cédula o RUC <span class="op">(opcional)</span>':'Cédula (10) o RUC (13) <span class="req">*</span>';
  var corLbl=dest?'Correo electrónico <span class="op">(opcional)</span>':'Correo electrónico <span class="req">*</span>';
- var celLbl=dest?'Celular <span class="op">(opcional)</span>':'Celular <span class="req">*</span>';
+ var celLbl='Celular <span class="req">*</span>';/* fenix quito el (opcional): el celular del destinatario es obligatorio */
  var dirTit=dest?'Dirección de entrega':'Dirección de recolección';
  var refLbl=dest?'Referencia de entrega <span class="req">*</span>':'Referencia de recolección <span class="req">*</span>';
  return '<div class="seccion">'+(dest?'Datos de quien recibe':'Datos de quien envía')+'</div>'
   +'<div class="fld"><label>'+cedLbl+'</label><input id="cedula" inputmode="numeric" maxlength="13" placeholder="10 dígitos (cédula) o 13 (RUC)" value="'+(d.cedula||'')+'"><div class="errmsg" id="e_cedula">Ingresa una cédula (10) o RUC (13) válido.</div></div>'
   +'<div class="fld"><label>Nombres completos <span class="req">*</span></label><input id="nombre" placeholder="Nombres y apellidos" value="'+(d.nombre||'')+'"><div class="errmsg" id="e_nombre">Ingresa los nombres completos.</div></div>'
   +'<div class="fld"><label>'+corLbl+'</label><input id="correo" type="email" inputmode="email" placeholder="correo@ejemplo.com" value="'+(d.correo||'')+'"><div class="errmsg" id="e_correo">Correo no válido.</div></div>'
-  +'<div class="fld"><label>'+celLbl+'</label><input id="celular" inputmode="numeric" maxlength="15" placeholder="09XXXXXXXX" value="'+(d.celular||'')+'"><div class="errmsg" id="e_celular">Celular de 10 dígitos (o internacional).</div></div>'
+  +'<div class="fld"><label>'+celLbl+'</label><input id="celular" inputmode="numeric" maxlength="15" placeholder="09XXXXXXXX" value="'+(d.celular||'')+'"><div class="errmsg" id="e_celular">Ingresa un celular de 10 dígitos (ej: 0991234567).</div></div>'
   +'<div class="seccion">'+dirTit+'</div>'
   +'<div class="fld"><label>Calle principal <span class="req">*</span></label><input id="calle_principal" placeholder="Av. / Calle principal" value="'+(d.calle_principal||'')+'"><div class="errmsg" id="e_calle_principal">Ingresa la calle principal.</div></div>'
   +'<div class="fld"><label>Número de casa <span class="req">*</span></label><input id="numero_casa" placeholder="N° de casa" value="'+(d.numero_casa||'')+'"><div class="errmsg" id="e_numero_casa">Ingresa el número de casa.</div></div>'
@@ -180,7 +180,7 @@ function validarPersona(role){var dest=(role==='dest');var ok=true;
  var cVal=val("cedula");if(dest&&cVal===""){setErr("cedula",false);}else{var c=cedulaOk(cVal);setErr("cedula",!c);ok=ok&&c;}
  var nOk=val("nombre").length>=3;setErr("nombre",!nOk);ok=ok&&nOk;
  var ev=val("correo");if(dest&&ev===""){setErr("correo",false);}else{var e=correoOk(ev);setErr("correo",!e);ok=ok&&e;}
- /* 4-ago-2026: el API rechaza la guia con 400 sin destino.celular y la guia se genera DESPUES de cobrar. El destinatario lo lleva OBLIGATORIO y de 10 digitos exactos; el remitente conserva 10-15 (internacional). */var cv=val("celular");var ce=dest?/^\d{10}$/.test(cv):/^\d{10,15}$/.test(cv);setErr("celular",!ce);ok=ok&&ce;
+ /* 4-ago-2026: el API rechaza la guia con 400 sin destino.celular y la guia se genera DESPUES de cobrar. El destinatario lo lleva OBLIGATORIO y de 10 digitos exactos; el remitente conserva 10-15 (internacional). */var cv=val("celular").replace(/\D/g,"");var ce=dest?/^\d{10}$/.test(cv):/^\d{10,15}$/.test(cv);setErr("celular",!ce);ok=ok&&ce;
  var a=val("calle_principal").length>=2;setErr("calle_principal",!a);ok=ok&&a;
  var b=val("numero_casa").length>=1;setErr("numero_casa",!b);ok=ok&&b;
  var s=val("calle_secundaria").length>=1;setErr("calle_secundaria",!s);ok=ok&&s;
