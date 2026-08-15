@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>Multidestino · EnvíaFácil</title>
+<title>Multienvíos · EnvíaFácil</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/qrcode-generator@1.4.4/qrcode.js"></script>
@@ -191,7 +191,7 @@ function prog(n){var t=['Remitente','Envío','Destinatario','Resumen'];return '<
 
 // ===== PANTALLA 0: REMITENTE (solo ciudad de retiro + datos del remitente) =====
 function scrRemitente(){sel.Des=null;window._efCiudadKey='Ret';var d=estado.remitente||{};sel.Ret=(estado.remitente&&estado.remitente.ciudad)?estado.remitente.ciudad:null;
- app('<div class="head"><div class="logo">📦</div><div><h1>'+(estado.modo==='uno'?'Tu envío':'Multidestino')+'</h1><p>'+(estado.modo==='uno'?'De dónde retiramos':'Un solo retiro · Multi destinos')+'</p></div></div>'
+ app('<div class="head"><div class="logo">📦</div><div><h1>'+(estado.modo==='uno'?'Tu envío':'Multienvíos')+'</h1><p>'+(estado.modo==='uno'?'De dónde retiramos':'Un solo retiro · varios destinos')+'</p></div></div>'
   +prog(0)
   +'<div class="card"><div class="step">Remitente · de dónde retiramos</div>'
   +mapHeaderHTML(d)
@@ -271,14 +271,17 @@ function scrResumen(i){var e=estado.envios[i];var d=e.dest;var dir=d.calle_princ
   +itm('Dirección de entrega',dir)+itm('Referencia',d.referencia)+'</div>');
  barra('<button class="btn sec" id="editar" style="flex:0 0 40%">✏️ Editar</button><button class="btn ok" id="btn">'+(estado.modo==='uno'?'✅ Generar comprobante':'✅ Confirmar destino')+'</button>');
  document.getElementById('editar').onclick=function(){scrEnvio(i);};
- document.getElementById('btn').onclick=function(){e.confirmado=true;if(estado.modo==='uno'||EF_UNO){enviar();}else{scrMas();}};}
+ /* 15-ago-2026: el bucle de destinos lo maneja el CHAT, no el formulario. Confirma uno
+   y cierra SIEMPRE, aunque se pierda uno=1 en la URL. Antes caia en scrMas(), que
+   ofrecia «Agregar otro destino» compitiendo con los botones del chat. */
+ document.getElementById('btn').onclick=function(){e.confirmado=true;enviar();};}
 
 // ===== PANTALLA MÁS: ¿otro destino o terminar? =====
 function scrMas(){var n=estado.envios.filter(function(e){return e.confirmado;}).length;
  var lst=estado.envios.map(function(e,i){if(!e.confirmado)return '';return '<div class="conf-item"><div class="k">Destino '+(i+1)+'</div><div class="v">'+e.ciudad.name+' ('+e.ciudad.prov+') · '+(e.tipo==='paquete'?'Paquete':'Documento')+' · '+e.dest.nombre+'</div></div>';}).join('');
- app('<div class="head"><div class="logo">📦</div><div><h1>Multidestino</h1><p>'+n+' destino(s) listo(s)</p></div></div>'
+ app('<div class="head"><div class="logo">📦</div><div><h1>Multienvíos</h1><p>'+n+' destino(s) listo(s)</p></div></div>'
   +'<div class="card"><div class="step">Destinos confirmados</div>'+lst+'</div>'
-  +'<div class="add" onclick="agregarDestino()">➕ Agregar otro destino</div>');
+  );/* boton «Agregar otro destino» retirado: lo pregunta el chat */
  barra('<button class="btn ok" id="btn">✅ Terminar y enviar ('+n+')</button>');
  document.getElementById('btn').onclick=enviar;}
 function agregarDestino(){estado.envios.push(nuevoEnvio());estado.idx=estado.envios.length-1;window._selTipo=null;sel.Des=null;scrEnvio(estado.idx);}
@@ -386,7 +389,7 @@ function scrInicio(){window._efCiudadKey=null;window._selModo=estado.modo;
  app('<div class="head"><div class="logo">📦</div><div><h1>EnvíaFácil</h1><p>Arma tu envío y descarga tu comprobante</p></div></div>'
   +'<div class="card"><div class="step">¿A cuántos destinos vas a enviar?</div><div class="tipos">'
   +'<div class="tipo" data-modo="uno" onclick="pickModo(this)"><div class="ic">📦</div><div class="t">Un destino</div></div>'
-  +'<div class="tipo" data-modo="multi" onclick="pickModo(this)"><div class="ic">📮</div><div class="t">Multidestino</div></div>'
+  +'<div class="tipo" data-modo="multi" onclick="pickModo(this)"><div class="ic">📮</div><div class="t">Multienvíos</div></div>'
   +'</div><div class="hint" style="margin-top:10px">Un solo retiro; puedes enviar a una o a varias direcciones.</div></div>');
  barra('<button class="btn" id="btn" disabled>Continuar</button>');
  if(estado.modo){var t0=document.querySelector('.tipo[data-modo="'+estado.modo+'"]');if(t0)pickModo(t0);}
