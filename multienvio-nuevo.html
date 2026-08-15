@@ -37,6 +37,20 @@
   .ok-screen h2{ margin:12px 0 6px; }
   .ok-screen p{ color:var(--gris); }
   .hidden{ display:none !important; }
+
+    /* 16-ago: copiado de datos-envio.html. SIN esto la lista de sugerencias
+       no tiene `display:none` y queda SIEMPRE abierta — lo que JC vio en el
+       telefono. Copiar el HTML sin su CSS no es copiar. */
+    .fld{position:relative}
+    .sug{position:absolute;left:0;right:0;top:100%;z-index:9;background:#fff;
+         border:1px solid #ddd;border-radius:12px;margin-top:4px;max-height:230px;
+         overflow:auto;box-shadow:0 6px 20px rgba(0,0,0,.12);display:none}
+    .sug.show{display:block}
+    .sug div{padding:10px 13px;font-size:14px;cursor:pointer;border-bottom:1px solid #f0f5f6}
+    .tipos{display:flex;gap:10px}
+    .tipo{flex:1;border:2px solid #ddd;border-radius:14px;padding:16px 8px;
+          text-align:center;cursor:pointer;transition:.15s;background:#fff}
+    .tipo.sel{border-color:#E4C201;background:#FFFBE0;box-shadow:0 0 0 3px rgba(252,226,0,.3)}
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -50,7 +64,7 @@
   <!-- PANTALLA 1: DATOS -->
   <div class="wrap" id="scr_datos">
       <!-- CIUDAD — copiado de datos-envio.html. Se oculta si viene fija (oficina). -->
-      <div class="grp" id="bloque_ciudad">
+      <div class="grp fld" id="bloque_ciudad">
         <label id="l_ciudad">Ciudad <span class="req">*</span></label>
         <input id="qCiu" placeholder="Escribe la ciudad..." autocomplete="off"
               >
@@ -118,7 +132,7 @@
     <div class="seccion">Datos del envio</div>
     <!-- Documento vs Paquete — copiado de datos-envio.html. Documento NO lleva
          peso, piezas ni valor: es regla de negocio, no una simplificacion. -->
-    <div class="grp">
+    <div class="grp" id="tarjeta_tipo">
       <label>Que envias <span class="req">*</span></label>
       <div class="tipos" id="tipos" style="display:flex;gap:10px">
         <div class="tipo" data-tipo="documento" data-id="201202002001002"
@@ -542,6 +556,22 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
       Array.prototype.forEach.call(document.querySelectorAll("#tipos .tipo"), function(el){
         el.addEventListener("click", function(){ elegirTipoEnvio(el); });
       });
+
+      /* ── DOCUMENTO O PAQUETE: LO PREGUNTA EL BOT ────────────────────────
+         Replica el arranque de datos-envio.html tal cual: si `tipo` llega por
+         la URL, se autoselecciona y SE ESCONDE la tarjeta entera. El selector
+         se queda dentro solo como respaldo, igual que en produccion.
+         (En este formulario `tipo` significa documento|paquete; el
+         remitente/destinatario/oficina de index.html se deduce de `paso`.) */
+      var _pre = (qs.get("tipo") || "").trim().toLowerCase();
+      if (_pre === "documento" || _pre === "paquete"){
+        var _tile = document.querySelector('#tipos .tipo[data-tipo="' + _pre + '"]');
+        if (_tile){
+          elegirTipoEnvio(_tile);
+          var _card = document.getElementById("tarjeta_tipo");
+          if (_card) _card.style.display = "none";
+        }
+      }
       ["peso","piezas"].forEach(function(id){
         var el = document.getElementById(id);
         if (el) el.addEventListener("input", chkPeso);
