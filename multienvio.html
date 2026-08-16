@@ -436,8 +436,9 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
       /* La CIUDAD la valida la pagina 1 en los destinos. Pero el REMITENTE
          arranca en la pagina 2 y no pasa por ahi: sin esto se podia continuar
          sin ciudad y el resumen salia con «📍 Origen:» vacio. */
-      /* La ciudad es obligatoria para todos, salvo que venga fija por la oficina. */
-      if (!EF_DESLOCK){
+      /* Aqui solo la valida el REMITENTE: en los destinos ya se valido en la
+         pagina 1, y si es oficina viene fija. */
+      if (!esDestinos){
         var ciOk = !!(selCiudad && selCiudad.codigo); setErr("ciudad", !ciOk); ok = ok && ciOk;
       }
       if (!esOficina){
@@ -569,8 +570,10 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
        heredada de index.html y sin tocar. */
     function validarEnvio(){
       var ok = true;
-      /* La ciudad ya NO se valida aqui: su campo vive en la pagina 2, que es la
-         que TODOS ven. El remitente no pasa por esta pagina. */
+      /* En los DESTINOS la ciudad vive en esta pagina, con el envio. */
+      if (!EF_DESLOCK){
+        var ciOk1 = !!(selCiudad && selCiudad.codigo); setErr("ciudad", !ciOk1); ok = ok && ciOk1;
+      }
       var tiOk = !!mnTipo; setErr("tipoenvio", !tiOk); ok = ok && tiOk;
       /* Documento: LAAR no pide contenido, ni peso, ni piezas, ni valor. */
       if (mnTipo === "documento") return ok;
@@ -635,6 +638,18 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
         if (se) se.classList.remove("hidden");
         if (sd) sd.classList.add("hidden");
         mnCabecera(1);
+      }
+
+      /* ── DONDE VA LA CIUDAD ──────────────────────────────────────────────
+         produccion:  datos-envio.html pide/bloquea la ciudad del DESTINO
+                      index.html (persona) NO tiene ciudad
+         aqui:        destino  -> pagina 1, con el envio
+                      remitente-> pagina 2, porque no ve la pagina 1 y el bot
+                                  no sabe su ciudad (en el envio simple si). */
+      var _bc = document.getElementById("bloque_ciudad");
+      if (_bc && esDestinos){
+        var _se = document.getElementById("scr_envio");
+        if (_se) _se.appendChild(_bc);
       }
 
       /* Los eventos se enganchan por codigo: los handlers inline del HTML
