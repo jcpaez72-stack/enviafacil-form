@@ -109,6 +109,11 @@
     </div>
   </div>
 
+  </div>
+
+  <!-- PANTALLA 1: DATOS -->
+  <div class="wrap" id="scr_datos">
+
 
       <!-- CIUDAD — copiado de datos-envio.html. Se oculta si viene fija (oficina). -->
       <div class="grp fld" id="bloque_ciudad">
@@ -120,10 +125,6 @@
         <div class="errmsg" id="e_ciudad">Elige una ciudad de la lista.</div>
       </div>
 
-  </div>
-
-  <!-- PANTALLA 1: DATOS -->
-  <div class="wrap" id="scr_datos">
 
       <div class="grp" id="efMapaTop">
         <button type="button" id="efBtnMapa" style="width:100%;height:48px;border-radius:12px;border:2px solid #E4C201;background:#FFFBEA;color:#0F0F0F;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer">📍 Seleccionar ubicación en el mapa</button>
@@ -435,7 +436,8 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
       /* La CIUDAD la valida la pagina 1 en los destinos. Pero el REMITENTE
          arranca en la pagina 2 y no pasa por ahi: sin esto se podia continuar
          sin ciudad y el resumen salia con «📍 Origen:» vacio. */
-      if (!esDestinos && !EF_DESLOCK){
+      /* La ciudad es obligatoria para todos, salvo que venga fija por la oficina. */
+      if (!EF_DESLOCK){
         var ciOk = !!(selCiudad && selCiudad.codigo); setErr("ciudad", !ciOk); ok = ok && ciOk;
       }
       if (!esOficina){
@@ -545,9 +547,8 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
        heredada de index.html y sin tocar. */
     function validarEnvio(){
       var ok = true;
-      if (!EF_DESLOCK){
-        var ciOk = !!(selCiudad && selCiudad.codigo); setErr("ciudad", !ciOk); ok = ok && ciOk;
-      }
+      /* La ciudad ya NO se valida aqui: su campo vive en la pagina 2, que es la
+         que TODOS ven. El remitente no pasa por esta pagina. */
       var tiOk = !!mnTipo; setErr("tipoenvio", !tiOk); ok = ok && tiOk;
       /* Documento: LAAR no pide contenido, ni peso, ni piezas, ni valor. */
       if (mnTipo === "documento") return ok;
