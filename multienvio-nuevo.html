@@ -99,9 +99,10 @@
       <input id="peso" type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*"
              placeholder="1 a 50 kg">
       <div class="errmsg" id="pesoerr">Máximo 50 kg POR PIEZA.</div>
-      <label>Piezas <span class="req">*</span></label>
-      <input id="piezas" type="number" inputmode="numeric" min="1" max="100" value="1"
-            >
+      <div class="fld" id="fld_piezas">
+        <label>📦 Número de piezas <span class="req">*</span></label>
+        <input id="piezas" type="number" inputmode="numeric" min="1" max="100" value="1">
+      </div>
       <label>Valor declarado (USD) <span class="req">*</span></label>
       <input id="valor" type="number" inputmode="numeric" min="0" placeholder="USD">
       <div class="errmsg" id="e_valor">Ingresa el valor declarado.</div>
