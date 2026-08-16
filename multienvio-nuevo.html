@@ -131,7 +131,7 @@
         <div class="hint">Ubica el pin y autocompletamos tu dirección. Luego solo completa lo que falte.</div>
         <input type="hidden" id="ef_lat"/><input type="hidden" id="ef_lon"/>
       </div>
-    <div class="seccion">Datos de quien envía</div>
+    <div class="seccion" id="mnSecPersona">Datos de quien envía</div>
     <div class="grp">
       <label id="l_cedula">Cédula (10) o RUC (13) <span class="req" id="req_cedula">*</span></label>
       <input id="cedula" inputmode="numeric" maxlength="13" placeholder="10 dígitos (cédula) o 13 (RUC)" />
@@ -552,6 +552,8 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
                      : (esOficina ? "Datos del destinatario (oficina)" : "Datos del destinatario");
         if (hs) hs.textContent = !esDestinos ? "Completa la información de quien envía."
                                              : "Completa la información de quien recibe.";
+        var sp = document.getElementById("mnSecPersona");
+        if (sp) sp.textContent = esDestinos ? "Datos de quien recibe" : "Datos de quien envía";
       }
     }
 
