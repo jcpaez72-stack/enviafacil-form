@@ -72,7 +72,7 @@
 
   <!-- DATOS DEL ENVIO — copiados de datos-envio.html. Solo en los destinos. -->
   <div id="bloque_envio">
-    <div class="seccion">Datos del envío</div>
+    <div class="seccion" id="mnSecEnvio">Datos del envío</div>
     <!-- Documento vs Paquete — copiado de datos-envio.html. Documento NO lleva
          peso, piezas ni valor: es regla de negocio, no una simplificacion. -->
     <div class="grp" id="tarjeta_tipo">
@@ -540,9 +540,13 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
     function mnCabecera(pag){
       var ht = document.getElementById("h_titulo");
       var hs = document.getElementById("h_sub");
+      var se = document.getElementById("mnSecEnvio");
       if (pag === 1){
         if (ht) ht.textContent = "Datos del envío";
         if (hs) hs.textContent = "Primero, qué vas a enviar.";
+        /* index.html renombra la PRIMERA .seccion segun `tipo`; al insertar esta
+           pantalla antes, le tocaba a la mia. Se restaura. */
+        if (se) se.textContent = "Datos del envío";
       } else {
         if (ht) ht.textContent = !esDestinos ? "Datos del remitente"
                      : (esOficina ? "Datos del destinatario (oficina)" : "Datos del destinatario");
