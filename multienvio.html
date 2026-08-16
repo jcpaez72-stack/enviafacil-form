@@ -238,6 +238,13 @@
     var CAT = [];
     var CAT_ESTADO = "cargando";
 
+    /* ⛔ 16-ago: index.html declara EF_KEY DENTRO del manejador del boton de
+       enviar, asi que al abrir el formulario aun no existe. El cargador de
+       ciudades la consultaba y, al no verla, creia que NO estaba en fenix y
+       llamaba a la funcion publica — que el CSP de LAAR bloquea, con razon.
+       Se declara aqui, una sola vez, antes de usarla. */
+    var EF_KEY = "__EF_API_KEY__";
+
     function cargarCiudades(){
       CAT_ESTADO = "cargando"; pintarEstadoCat();
       var _k = (typeof EF_KEY !== "undefined" && EF_KEY && EF_KEY.indexOf("__") !== 0) ? EF_KEY : null;
@@ -513,8 +520,7 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
       if (!enConf){ if(!validate()) return; irConf(); return; }
       // pantalla 2 -> enviar
       btn.disabled=true; btn.textContent="Enviando…";var _tEsp=setTimeout(function(){ if(btn.disabled) btn.textContent="Enviando… no cierres esta ventana"; },5000);
-      var PROXY="https://enviafacil-callback.fn.jelou.ai";var EF_KEY="__EF_API_KEY__";
-      var body=Object.assign({ executionId:executionId, success:true }, payloadDatos());
+      var PROXY="https://enviafacil-callback.fn.jelou.ai";var body=Object.assign({ executionId:executionId, success:true }, payloadDatos());
       try{
         var resp=await fetch(PROXY,{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) });
         var out={}; try{ out=await resp.json(); }catch(e){}
