@@ -432,7 +432,12 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
       var nOk=val("nombre").length>=3; setErr("nombre",!nOk); ok=ok&&nOk;
       var _ev=val("correo"), eOk; if(esDestino&&_ev===""){eOk=true;setErr("correo",false);} else {eOk=correoOk(_ev);setErr("correo",!eOk);} ok=ok&&eOk;
       var _cv=val("celular").replace(/\D/g,""), celOk; celOk=/^\d{10}$/.test(_cv); setErr("celular",!celOk); ok=ok&&celOk;
-      /* envio y ciudad se validan en la pagina 1 (validarEnvio) */
+      /* La CIUDAD la valida la pagina 1 en los destinos. Pero el REMITENTE
+         arranca en la pagina 2 y no pasa por ahi: sin esto se podia continuar
+         sin ciudad y el resumen salia con «📍 Origen:» vacio. */
+      if (!esDestinos && !EF_DESLOCK){
+        var ciOk = !!(selCiudad && selCiudad.codigo); setErr("ciudad", !ciOk); ok = ok && ciOk;
+      }
       if (!esOficina){
         var caOk=val("calle_principal").length>=2; setErr("calle_principal",!caOk); ok=ok&&caOk;
         var nuOk=val("numero_casa").length>=1; setErr("numero_casa",!nuOk); ok=ok&&nuOk;
