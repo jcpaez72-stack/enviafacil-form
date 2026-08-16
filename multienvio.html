@@ -534,12 +534,28 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
        El remitente no tiene datos de envio, asi que arranca en la 2. */
     var mnPagina = 1;
 
+    /* Cada pantalla habla de una cosa distinta. index.html fija el titulo UNA
+       vez segun `tipo`, y al partir en tres paginas la pagina que pide el ENVIO
+       seguia diciendo «Datos del destinatario». */
+    function mnCabecera(pag){
+      var ht = document.getElementById("h_titulo");
+      var hs = document.getElementById("h_sub");
+      if (pag === 1){
+        if (ht) ht.textContent = "Datos del envío";
+        if (hs) hs.textContent = "Primero, qué vas a enviar.";
+      } else {
+        if (ht) ht.textContent = !esDestinos ? "Datos del remitente"
+                     : (esOficina ? "Datos del destinatario (oficina)" : "Datos del destinatario");
+        if (hs) hs.textContent = !esDestinos ? "Completa la información de quien envía."
+                                             : "Completa la información de quien recibe.";
+      }
+    }
+
     function irDatos(){
       mnPagina = 2;
       document.getElementById("scr_envio").classList.add("hidden");
       document.getElementById("scr_datos").classList.remove("hidden");
-      var h = document.getElementById("h_sub");
-      if (h) h.textContent = "Completa la información de quien recibe.";
+      mnCabecera(2);
       btn.textContent = "Continuar";
     }
 
@@ -607,12 +623,12 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
         mnPagina = 2;
         if (se) se.classList.add("hidden");
         if (sd) sd.classList.remove("hidden");
+        mnCabecera(2);
       } else {
         mnPagina = 1;
         if (se) se.classList.remove("hidden");
         if (sd) sd.classList.add("hidden");
-        var h = document.getElementById("h_sub");
-        if (h) h.textContent = "Primero, qué vas a enviar.";
+        mnCabecera(1);
       }
 
       /* Los eventos se enganchan por codigo: los handlers inline del HTML
