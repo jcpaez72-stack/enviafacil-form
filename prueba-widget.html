@@ -24,68 +24,98 @@
   .paso b{color:#00637f}
   .aviso{background:#fff6e0;border-left:4px solid #f0ad00;padding:14px 18px;
          margin:22px 0 0;border-radius:0 8px 8px 0;line-height:1.6;font-size:15px}
-  .ok{background:#e8f7ee;border-left:4px solid #2e9e5b;padding:14px 18px;
-      margin:18px 0 0;border-radius:0 8px 8px 0;display:none;line-height:1.6}
   h2{font-size:17px;margin:30px 0 10px}
+  #estado{margin-top:16px;padding:14px 18px;border-radius:8px;display:none;
+          line-height:1.6;font-size:15px;white-space:pre-wrap}
+  .bien{background:#e8f7ee;border-left:4px solid #2e9e5b}
+  .mal{background:#fdeaea;border-left:4px solid #d63b3b}
 </style>
 </head>
 <body>
   <div class="caja">
     <h1>Prueba del chat de EnvíaFácil</h1>
-    <p class="sub">Esta página existe solo para abrir el chat fuera de WhatsApp
-       y ver qué funciona y qué no.</p>
+    <p class="sub">Segunda versión: ahora usando <b>WidgetService.connect()</b>,
+       que es el paso que faltaba.</p>
 
     <label for="k">Pegue aquí la llave del canal</label>
     <input id="k" type="text" placeholder="pegue la llave y toque el botón"
            autocomplete="off" spellcheck="false">
     <button id="b">Abrir el chat</button>
 
-    <div class="ok" id="ok">
-      ✅ <b>Chat cargado.</b> Busque el botón redondo abajo a la derecha y tóquelo.
-    </div>
+    <div id="estado"></div>
 
-    <h2>Qué vamos a mirar, en este orden</h2>
+    <h2>Qué vamos a mirar</h2>
 
-    <div class="paso"><b>1.</b> Que aparezca el botón del chat abajo a la derecha,
-      y que al tocarlo se abra la ventana.</div>
+    <div class="paso"><b>1.</b> Que arriba salga <b>«Conectado»</b> en verde.
+      Eso significa que la sesión sí se abrió — es lo que faltaba antes.</div>
 
-    <div class="paso"><b>2.</b> Escriba <b>hola</b>. Debe salir el menú con cuatro
-      opciones: Cotizar envío · Solicitar envío · Rastrear paquete · Preguntas frecuentes.</div>
+    <div class="paso"><b>2.</b> Toque el botón redondo y escriba <b>hola</b>.
+      Debe salir el menú de cuatro opciones.</div>
 
-    <div class="paso"><b>3.</b> Elija <b>Solicitar envío</b> y siga hasta que el bot
-      le pida los datos del remitente. <b>Ahí está lo importante:</b> ¿aparece un botón
-      para abrir el formulario, o no aparece nada?</div>
+    <div class="paso"><b>3.</b> Elija <b>Solicitar envío</b> hasta que le pida los
+      datos del remitente. <b>¿Aparece el botón del formulario?</b></div>
 
-    <div class="paso"><b>4.</b> Si aparece: ábralo, llénelo y envíelo.
-      ¿El chat siguió solo, o se quedó esperando?</div>
+    <div class="paso"><b>4.</b> Si aparece: llénelo y envíelo.
+      ¿El chat siguió solo o se quedó esperando?</div>
 
-    <div class="paso"><b>5.</b> Siga hasta el final. ¿Se dibuja la pantalla del
-      <b>método de pago</b>?</div>
+    <div class="paso"><b>5.</b> Siga hasta el final.
+      ¿Se dibuja la pantalla del <b>método de pago</b>?</div>
 
     <div class="aviso">
-      ⚠️ Este chat está conectado al <b>bot de producción</b>. Puede recorrer todo
-      el proceso, pero <b>no complete el pago</b>: sería dinero real y una guía real.
-      Llegue hasta la pantalla del pago y ahí pare.
+      ⚠️ Conectado al <b>bot de producción</b>. Recorra todo el proceso pero
+      <b>no complete el pago</b>: sería dinero real y una guía real.
     </div>
   </div>
 
+<!-- 1. el cargador, SIN data-init: la conexión la hacemos nosotros abajo -->
+<script src="https://cdn.jelou.ai/widgets/loader.js"></script>
+
 <script>
+  var est = document.getElementById('estado');
+  function di(txt, ok){
+    est.style.display = 'block';
+    est.className = ok ? 'bien' : 'mal';
+    est.textContent = txt;
+  }
+
   document.getElementById('b').onclick = function(){
     var k = document.getElementById('k').value.trim();
     if(!k){ alert('Pegue primero la llave del canal.'); return; }
-    var s = document.createElement('script');
-    s.src = 'https://cdn.jelou.ai/widgets/loader.js';
-    s.setAttribute('data-api-key', k);
-    s.setAttribute('data-init', 'true');
-    document.body.appendChild(s);
     this.disabled = true;
-    this.textContent = 'Cargando el chat…';
-    document.getElementById('ok').style.display = 'block';
-    var self = this;
-    setTimeout(function(){ self.textContent = 'Chat cargado'; }, 2500);
+    this.textContent = 'Conectando…';
+    di('Creando el servicio del widget…', true);
+
+    try {
+      if (typeof WidgetService === 'undefined') {
+        di('⛔ El cargador no expuso WidgetService.\nRevise la consola del navegador.', false);
+        return;
+      }
+      /* 2. Conecta WidgetService — ESTE es el paso que faltaba */
+      var widgetService = new WidgetService({ apiKey: k });
+      widgetService.connect({ names: 'Prueba EnviaFacil' })
+        .then(function(){
+          di('✅ Conectado.\nBusque el botón del chat abajo a la derecha y escriba «hola».', true);
+          document.getElementById('b').textContent = 'Conectado';
+        })
+        .catch(function(e){
+          di('⛔ connect() falló:\n' + (e && e.message ? e.message : String(e)), false);
+          document.getElementById('b').disabled = false;
+          document.getElementById('b').textContent = 'Reintentar';
+        });
+    } catch(e){
+      di('⛔ Error al crear el servicio:\n' + (e && e.message ? e.message : String(e)), false);
+      this.disabled = false;
+      this.textContent = 'Reintentar';
+    }
   };
+
   document.getElementById('k').addEventListener('keydown', function(e){
     if(e.key === 'Enter') document.getElementById('b').click();
+  });
+
+  /* por si el cargador avisa cuando termina */
+  document.addEventListener('jelou-widget:load', function(){
+    console.log('jelou-widget:load recibido');
   });
 </script>
 </body>
