@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prueba de oídos · EnvíaFácil</title>
+<style>
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+       margin:0;padding:18px;background:#f5f7f9;color:#1a2027;line-height:1.5}
+  .caja{max-width:520px;margin:0 auto;background:#fff;border-radius:14px;
+        padding:22px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  h1{font-size:19px;margin:0 0 4px}
+  .sub{font-size:14px;color:#5b6670;margin:0 0 18px}
+  .paso{background:#f8f9fb;border-left:4px solid #00637f;padding:12px 15px;
+        margin:10px 0;border-radius:0 8px 8px 0;font-size:15px}
+  .paso b{color:#00637f}
+  #log{margin-top:18px;background:#0f1720;color:#d7e3ea;border-radius:10px;
+       padding:14px;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;
+       white-space:pre-wrap;min-height:120px}
+  .ok{color:#7ee2a8}
+  .cod{font-size:26px;font-weight:700;letter-spacing:.08em;color:#00637f;
+       text-align:center;margin:14px 0 4px}
+</style>
+</head>
+<body>
+<div class="caja">
+  <h1>Prueba de oídos</h1>
+  <p class="sub">Sirve para saber si WhatsApp nos avisa cuando usted cierra un formulario.</p>
+
+  <div class="paso"><b>1.</b> Esta página ya avisó que se abrió. Debajo lo verá en verde.</div>
+  <div class="paso"><b>2.</b> Ahora <b>ciérrela</b> como cerraría un formulario: con la ✕ de arriba,
+      o volviendo a WhatsApp con el botón de atrás.</div>
+  <div class="paso"><b>3.</b> Eso es todo. Yo reviso del otro lado si el aviso llegó.</div>
+
+  <div id="log">esperando…</div>
+</div>
+
+<script>
+(function(){
+  var URL_LOCK = "https://enviafacil-formlock.fn.jelou.ai";
+  var EXEC = "oidos-prueba";
+  var log = document.getElementById('log');
+  var t0 = Date.now();
+
+  function pinta(txt, ok){
+    var l = document.createElement('div');
+    if(ok) l.className = 'ok';
+    l.textContent = txt;
+    if(log.textContent === 'esperando…') log.textContent = '';
+    log.appendChild(l);
+  }
+
+  // Avisa al servidor. Para los eventos de cierre usa sendBeacon, que es lo
+  // único que sobrevive a que la página se esté muriendo.
+  function avisa(evento, usarBeacon){
+    var cuerpo = JSON.stringify({
+      accion: "marcar",
+      exec: EXEC,
+      form: evento,
+      datos: { ms: Date.now() - t0, hora: new Date().toISOString(), ua: navigator.userAgent.slice(0,120) }
+    });
+    try{
+      if(usarBeacon && navigator.sendBeacon){
+        var blob = new Blob([cuerpo], {type: "application/json"});
+        var enviado = navigator.sendBeacon(URL_LOCK, blob);
+        pinta("→ " + evento + (enviado ? " (beacon aceptado)" : " (beacon RECHAZADO)"), enviado);
+        return;
+      }
+      fetch(URL_LOCK, {method:"POST", headers:{"Content-Type":"application/json"}, body:cuerpo, keepalive:true})
+        .then(function(){ pinta("→ " + evento + " (enviado)", true); })
+        .catch(function(e){ pinta("→ " + evento + " FALLÓ: " + e); });
+    }catch(e){ pinta("→ " + evento + " ERROR: " + e); }
+  }
+
+  // ── 1. se abrió ──
+  avisa("abierto", false);
+  pinta("navegador: " + navigator.userAgent.slice(0,90));
+
+  // ── 2. se ocultó / se cerró ── las tres formas, para ver cuál dispara
+  document.addEventListener('visibilitychange', function(){
+    avisa(document.hidden ? "oculto" : "visible", document.hidden);
+  });
+  window.addEventListener('pagehide', function(){ avisa("pagehide", true); });
+  window.addEventListener('beforeunload', function(){ avisa("beforeunload", true); });
+})();
+</script>
+</body>
+</html>
