@@ -62,7 +62,12 @@
     });
     try{
       if(usarBeacon && navigator.sendBeacon){
-        var blob = new Blob([cuerpo], {type: "application/json"});
+        // ⛔ 20-ago: con type "application/json" el navegador exige un permiso previo
+        // (preflight) que un beacon NO puede pedir mientras la página se muere → lo
+        // descarta EN SILENCIO. Probado: decía "aceptado" y nunca llegó al servidor.
+        // Con "text/plain" es una petición simple, no hay permiso previo, y sí llega.
+        // La función del candado acepta el cuerpo igual (verificado con curl).
+        var blob = new Blob([cuerpo], {type: "text/plain;charset=UTF-8"});
         var enviado = navigator.sendBeacon(URL_LOCK, blob);
         pinta("→ " + evento + (enviado ? " (beacon aceptado)" : " (beacon RECHAZADO)"), enviado);
         return;
