@@ -83,8 +83,10 @@
     var ec=qs.get('ciudadEsp')||'',ep=qs.get('provEsp')||'';
     if(!ec&&!ep)return {level:'none'};
     var ncg=efNorm(gc),ncp=efNorm(gp),nec=efNorm(ec),nep=efNorm(ep);
-    if(nep&&ncp&&nep!==ncp)return {level:'strong',msg:'Tu ubicación está en '+(gp||gc)+', pero tu envío es a '+(ep||ec)};
+    /* 24-ago-2026: la CIUDAD manda; provEsp puede venir arrastrado. Nunca se bloquea por provincia. */
+    if(nec&&ncg&&(nec===ncg||ncg.indexOf(nec)>=0||nec.indexOf(ncg)>=0))return {level:'ok'};
     if(nec&&ncg&&nec!==ncg&&ncg.indexOf(nec)<0&&nec.indexOf(ncg)<0)return {level:'soft',msg:'Ubicación en '+(gc||'')+' (tu envío es a '+ec+')'};
+    if(nep&&ncp&&nep!==ncp)return {level:'soft',msg:'Confirma que sea la dirección de entrega'};
     return {level:'ok'};
   }
 
