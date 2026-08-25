@@ -731,7 +731,7 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
         map.on('moveend',onMove);
         var _ec=qmap.get('ciudadEsp')||'', _ep=qmap.get('provEsp')||'';
-        if(_ec){ centerCity(_ec+(_ep?(', '+_ep):'')+', Ecuador'); } else { tryLoc(); }
+        if(_ec){ centerCity(_ec+', Ecuador'); } else { tryLoc(); }
       }
       setTimeout(function(){map.invalidateSize();onMove();},250);
     }
