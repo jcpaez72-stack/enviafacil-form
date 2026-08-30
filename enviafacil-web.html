@@ -343,7 +343,8 @@ function efPagarWeb(b,UNO){
  try{sessionStorage.setItem('ef_pago_ref',ref);}catch(e){}
  var base=location.href.split('#')[0].split('?')[0];
  var _k=(EF_KEY&&EF_KEY.indexOf("__")!==0)?EF_KEY:"";
- fetch(FN_PAGO+'/create-order',{method:'POST',headers:{'Content-Type':'application/json','X-EF-Key':_k},
+ var _hdr={'Content-Type':'application/json'}; if(_k){_hdr['X-EF-Key']=_k;}
+ fetch(FN_PAGO+'/create-order',{method:'POST',headers:_hdr,
    body:JSON.stringify({dev_reference:ref,
      user:{email:(b.remitente.correo||'sinemail@enviafacil.ec'),name:(b.remitente.nombre||'Cliente'),last_name:''},
      remitente:md.remitente,destinos:md.destinos,celular:md.celular,impresionGuias:false,
