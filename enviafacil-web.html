@@ -329,9 +329,9 @@ function mapMD(b){
    calle_principal:r.calle_principal,numero_casa:r.numero_casa,calle_secundaria:r.calle_secundaria,
    referencia_recoleccion:r.referencia,ciudadCodigo:r.ciudadCodigo,ciudadNombre:r.ciudad,lat:r.lat,lon:r.lon};
  var dest=(b.envios||[]).map(function(e){return {
-   nombres_completos:e.nombre,cedula:e.cedula,celular:e.celular,correo:e.correo,
-   calle_principal:e.calle_principal,numero_casa:e.numero_casa,calle_secundaria:e.calle_secundaria,
-   referencia_recoleccion:e.referencia,ciudadCodigo:e.ciudadCodigo,ciudadNombre:e.ciudad,lat:e.lat,lon:e.lon,
+   destinatario:{nombres_completos:e.nombre,cedula:e.cedula,celular:e.celular,correo:e.correo,
+     calle_principal:e.calle_principal,numero_casa:e.numero_casa,calle_secundaria:e.calle_secundaria,
+     referencia_recoleccion:e.referencia,ciudadCodigo:e.ciudadCodigo,ciudadNombre:e.ciudad,lat:e.lat,lon:e.lon},
    tipo:e.tipo,idServicio:e.idServicio,peso:e.peso,piezas:e.piezas,valorDeclarado:e.valor,contenido:e.contenido};});
  return {remitente:rem,destinos:dest,celular:r.celular};
 }
