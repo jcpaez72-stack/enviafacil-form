@@ -1,0 +1,170 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><title>Registro de vendedor · Contraentrega EnvíaFácil</title><style>
+:root{--laar:#FCE200;--laarD:#E4C201;--ink:#0F0F0F;--mut:#6b6b6b;--bg:#f5f5f5;--card:#fff;--line:#e4e4e4;--ok:#0a7a2f;--bad:#e11d48}
+*{box-sizing:border-box;margin:0;font-family:-apple-system,"Segoe UI",Roboto,sans-serif}
+body{background:var(--bg);color:var(--ink);padding:14px;max-width:460px;margin:0 auto}
+.head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.logo{width:42px;height:42px;border-radius:12px;background:var(--laar);color:var(--ink);display:flex;align-items:center;justify-content:center;font-size:22px}
+.head h1{font-size:17px}.head p{font-size:12px;color:var(--mut)}
+.card{background:var(--card);border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(20,60,70,.06);margin-bottom:12px}
+.sec{font-size:12px;color:#8a7500;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
+.fld{margin-bottom:12px;position:relative}
+.lbl{font-size:13px;font-weight:600;margin-bottom:6px;display:block}.req{color:#dc2626}
+input,select{width:100%;padding:12px 13px;border:1.5px solid var(--line);border-radius:11px;font-size:15px;outline:none;background:#fff}
+input:focus,select:focus{border-color:var(--laar)}
+input.bad,select.bad{border-color:var(--bad);background:#fff5f5}
+.hint{font-size:11px;color:var(--mut);margin-top:4px}
+.row{display:flex;gap:10px}.row .fld{flex:1}
+.chk{display:flex;align-items:center;gap:10px;font-size:13px;color:#333;margin:6px 0 4px}
+.chk input{width:auto}
+.btn{width:100%;padding:15px;border:none;border-radius:13px;background:var(--laar);color:var(--ink);font-size:16px;font-weight:700;cursor:pointer}
+.btn:disabled{background:#efe6a8;cursor:not-allowed}
+.msg{padding:12px;border-radius:11px;font-size:14px;margin-bottom:12px;display:none}
+.msg.err{background:#fff0f0;color:var(--bad);border:1px solid #fecaca;display:block}
+.msg.ok{background:#eef9f0;color:var(--ok);border:1px solid #bbecc4;display:block}
+.grey{background:#f7f7f7;color:#666}
+.hidden{display:none}
+</style></head><body>
+<div class="head">
+  <div class="logo">🛒</div>
+  <div><h1>Registro de vendedor</h1><p>EnvíaFácil · Contraentrega</p></div>
+</div>
+
+<div id="msg" class="msg"></div>
+
+<form id="frm" autocomplete="off">
+  <div class="card">
+    <div class="sec">DATOS DE LA EMPRESA</div>
+    <div class="fld">
+      <label class="lbl">RUC (13 dígitos) <span class="req">*</span></label>
+      <input id="ruc" inputmode="numeric" maxlength="13" placeholder="1791705726001">
+      <div class="hint">El RUC debe terminar en 001.</div>
+    </div>
+    <div class="fld">
+      <label class="lbl">Razón social <span class="req">*</span></label>
+      <input id="razon_social" maxlength="120" placeholder="Como aparece en el SRI">
+    </div>
+    <div class="fld">
+      <label class="lbl">Nombre comercial</label>
+      <input id="nombre_comercial" maxlength="80" placeholder="Opcional">
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sec">CONTACTO</div>
+    <div class="fld">
+      <label class="lbl">Nombres y apellidos completos <span class="req">*</span></label>
+      <input id="contacto_nombre" maxlength="80" placeholder="Ej. Juan Carlos Páez">
+    </div>
+    <div class="fld">
+      <label class="lbl">Celular WhatsApp <span class="req">*</span></label>
+      <input id="contacto_celular" class="grey" inputmode="numeric" maxlength="10" placeholder="09XXXXXXXX" readonly>
+      <div class="hint">Se toma del número desde donde entraste. Este será tu identificador.</div>
+    </div>
+    <div class="fld">
+      <label class="lbl">Correo electrónico</label>
+      <input id="contacto_correo" type="email" maxlength="80" placeholder="tucorreo@dominio.com">
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sec">CUENTA BANCARIA (donde te liquidamos)</div>
+    <div class="fld">
+      <label class="lbl">Banco <span class="req">*</span></label>
+      <select id="banco">
+        <option value="">Seleccionar…</option>
+        <option>Pichincha</option><option>Produbanco</option><option>Guayaquil</option>
+        <option>Pacífico</option><option>Bolivariano</option><option>Internacional</option>
+        <option>Austro</option><option>Loja</option><option>Machala</option>
+        <option>JEP</option><option>Jardín Azuayo</option><option>Solidario</option>
+        <option>Amazonas</option><option>Coopnacional</option><option>Otro</option>
+      </select>
+    </div>
+    <div class="fld">
+      <label class="lbl">Tipo de cuenta <span class="req">*</span></label>
+      <select id="tipo_cuenta">
+        <option value="">Seleccionar…</option>
+        <option value="ahorros">Ahorros</option>
+        <option value="corriente">Corriente</option>
+      </select>
+    </div>
+    <div class="fld">
+      <label class="lbl">Número de cuenta <span class="req">*</span></label>
+      <input id="numero_cuenta" inputmode="numeric" maxlength="20">
+    </div>
+    <div class="row">
+      <div class="fld">
+        <label class="lbl">Titular · nombre <span class="req">*</span></label>
+        <input id="titular_nombre" maxlength="80" placeholder="Nombres y apellidos">
+      </div>
+      <div class="fld">
+        <label class="lbl">Titular · cédula <span class="req">*</span></label>
+        <input id="titular_cedula" inputmode="numeric" maxlength="10">
+      </div>
+    </div>
+    <div class="hint">Necesitamos que el nombre del titular coincida con la cuenta para poder liquidarte.</div>
+  </div>
+
+  <div class="card">
+    <label class="chk"><input type="checkbox" id="tyc"> Acepto los términos de EnvíaFácil Contraentrega.</label>
+    <button class="btn" id="btnSend" type="submit">Enviar solicitud</button>
+  </div>
+</form>
+
+<script>
+// URL de la API. La misma para pruebas y para producción por ahora.
+var API = "https://enviafacil-cod-api.fn.jelou.ai";
+var qs = new URLSearchParams(location.search);
+var waRaw = String(qs.get("wa") || "").replace(/\D/g, "");
+// Normalización a 09XXXXXXXX (viene del bot como 5939… o 09…).
+var wa = waRaw;
+if (wa.indexOf("593") === 0) wa = "0" + wa.substr(3);
+if (wa.length === 9 && wa[0] === "9") wa = "0" + wa;
+document.getElementById("contacto_celular").value = wa;
+
+var $ = function (id) { return document.getElementById(id); };
+var msg = function (kind, text) { var m = $("msg"); m.className = "msg " + kind; m.textContent = text; window.scrollTo(0, 0); };
+var v = function (id) { return $(id).value.trim(); };
+var mark = function (id, bad) { $(id).classList.toggle("bad", !!bad); };
+
+document.getElementById("frm").addEventListener("submit", async function (ev) {
+  ev.preventDefault();
+  msg("", "");
+
+  var data = {
+    accion: "alta_vendedor",
+    ruc: v("ruc"), razon_social: v("razon_social"), nombre_comercial: v("nombre_comercial"),
+    contacto_nombre: v("contacto_nombre"), contacto_celular: wa, contacto_correo: v("contacto_correo"),
+    banco: v("banco"), tipo_cuenta: v("tipo_cuenta"), numero_cuenta: v("numero_cuenta"),
+    titular_nombre: v("titular_nombre"), titular_cedula: v("titular_cedula"),
+  };
+
+  // Chequeos rápidos del lado cliente (los reales viven en la API).
+  var faltantes = [];
+  ["ruc","razon_social","contacto_nombre","banco","tipo_cuenta","numero_cuenta","titular_nombre","titular_cedula"].forEach(function (id) {
+    if (!data[id]) { mark(id, true); faltantes.push(id); } else mark(id, false);
+  });
+  if (!wa) { mark("contacto_celular", true); faltantes.push("contacto_celular"); }
+  if (!$("tyc").checked) { msg("err", "Debes aceptar los términos para continuar."); return; }
+  if (faltantes.length) { msg("err", "Faltan datos obligatorios (los resaltados en rojo)."); return; }
+
+  $("btnSend").disabled = true; $("btnSend").textContent = "Enviando…";
+  try {
+    var r = await fetch(API, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data)
+    });
+    var j = await r.json();
+    if (j && j.ok) {
+      msg("ok", j.decir || "¡Solicitud enviada! Te avisamos por WhatsApp cuando la aprobemos.");
+      $("btnSend").textContent = "Enviado";
+    } else {
+      var detalle = (j && j.detalles) ? j.detalles.join(" · ") : (j && j.error) || "No pude enviar. Vuelve a intentar en un momento.";
+      msg("err", detalle);
+      $("btnSend").disabled = false; $("btnSend").textContent = "Enviar solicitud";
+    }
+  } catch (e) {
+    msg("err", "No pude conectar con el servidor. Revisa tu internet y vuelve a intentar.");
+    $("btnSend").disabled = false; $("btnSend").textContent = "Enviar solicitud";
+  }
+});
+</script>
+</body></html>
