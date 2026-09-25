@@ -1,0 +1,1033 @@
+<!doctype html>
+<html lang="es-EC">
+<head>
+<meta charset="utf-8">
+<title>EnvíaFácil web</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Poppins',sans-serif;background:#E5E7EB;color:#161C2D}
+*{box-sizing:border-box}
+a{color:#161C2D}a:hover{color:#161C2D}
+button{font-family:'Poppins',sans-serif;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:3px solid #161C2D;outline-offset:2px}
+.lb{display:block;font-size:13px;font-weight:600;margin:0 0 6px;color:#161C2D}
+.in{display:block;width:100%;height:50px;border:1.5px solid #D1D5DB;border-radius:10px;padding:0 14px;font:500 16px 'Poppins',sans-serif;color:#161C2D;background:#FFFFFF;outline:none}
+.in:focus{border-color:#161C2D;box-shadow:0 0 0 3px #FCE200}
+.in.err{border:2px solid #161C2D;background:#FFFFFF}
+.hint{font-size:12px;line-height:1.45;color:rgba(22,28,45,.72);margin:6px 0 0}
+.bp{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:54px;padding:12px 20px;border:0;border-radius:12px;background:#FCE200;color:#161C2D;font-size:16px;font-weight:700}
+.bp:hover{box-shadow:inset 0 0 0 2px #161C2D}
+.bs{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:50px;padding:10px 20px;border:1.5px solid #161C2D;border-radius:12px;background:#FFFFFF;color:#161C2D;font-size:15px;font-weight:600}
+.bx{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:54px;padding:12px 20px;border:0;border-radius:12px;background:#E5E7EB;color:rgba(22,28,45,.55);font-size:16px;font-weight:700;cursor:not-allowed}
+.spin{width:18px;height:18px;border:2.5px solid rgba(22,28,45,.25);border-top-color:#161C2D;border-radius:50%;animation:sp .8s linear infinite;display:inline-block;flex-shrink:0}
+.spin.w{border-color:rgba(255,255,255,.3);border-top-color:#FFFFFF}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</helmet>
+
+<div style="width: 100%; min-height: 100vh; background: #E5E7EB; color: #161C2D; font-family: 'Poppins', sans-serif;">
+
+  <!-- ===== Encabezado de la propuesta ===== -->
+  <header style="background: #161C2D; color: #FFFFFF;">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 28px 40px 24px; display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; flex-wrap: wrap;">
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <span style="align-self: flex-start; background: #FCE200; color: #161C2D; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 6px; letter-spacing: 0.04em; text-transform: uppercase;">Propuesta de diseño</span>
+        <h1 style="margin: 0; font-size: 30px; font-weight: 700; line-height: 1.15;">EnvíaFácil en la web · laarcourier.com/enviafacil</h1>
+        <p style="margin: 0; font-size: 14px; color: #D1D5DB;">Preparado por WDB S.A. para LAAR Courier · Septiembre 2026 · Toca los botones de cada pantalla o usa los pasos de abajo</p>
+      </div>
+      <div role="group" aria-label="Vista" style="display: flex; background: #FFFFFF; border-radius: 12px; padding: 4px; gap: 4px;">
+        <button type="button" aria-pressed="{{mPressed}}" onClick="{{setM}}" style="min-height: 44px; padding: 0 18px; border: 0; border-radius: 9px; font-size: 14px; font-weight: 600; background: {{mBg}}; color: #161C2D; display: flex; align-items: center; gap: 8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2.5"></rect><path d="M11 18h2"></path></svg>
+          Móvil · 375
+        </button>
+        <button type="button" aria-pressed="{{dPressed}}" onClick="{{setD}}" style="min-height: 44px; padding: 0 18px; border: 0; border-radius: 9px; font-size: 14px; font-weight: 600; background: {{dBg}}; color: #161C2D; display: flex; align-items: center; gap: 8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="2"></rect><path d="M8 21h8M12 17v4"></path></svg>
+          Escritorio · 1280
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== Empalme: cómo entra el cliente ===== -->
+  <section aria-label="Cómo entra el cliente al proceso web" style="background: #FFFFFF; border-bottom: 1.5px solid #D1D5DB;">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 36px 40px 40px;">
+
+      <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin-bottom: 8px;">
+        <div style="max-width: 720px;">
+          <span style="display: inline-block; background: #161C2D; color: #FFFFFF; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px; letter-spacing: 0.06em; text-transform: uppercase;">Antes del proceso</span>
+          <h2 style="margin: 12px 0 8px; font-size: 26px; font-weight: 700; line-height: 1.2;">Cómo entra el cliente</h2>
+          <p style="margin: 0; font-size: 15px; line-height: 1.55; color: rgba(22,28,45,.78);">Hoy las dos puertas de LAAR llevan a WhatsApp y ninguna al proceso web. Estas son las dos únicas piezas que hay que tocar del sitio actual: en cada una se agrega un botón, señalado en amarillo. Todo lo demás queda igual.</p>
+        </div>
+        <span style="flex-shrink: 0; border: 1.5px solid #D1D5DB; border-radius: 999px; padding: 7px 14px; font-size: 12px; font-weight: 600; color: rgba(22,28,45,.72);">Vista de escritorio · 1280</span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-top: 24px;">
+
+        <!-- ---- Puerta 1: la home ---- -->
+        <div>
+          <div style="display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px;">
+            <span style="flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; background: #161C2D; color: #FFFFFF; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center;">1</span>
+            <h3 style="margin: 0; font-size: 16px; font-weight: 700;">La portada · el carrusel</h3>
+          </div>
+
+          <div style="border: 1.5px solid #D1D5DB; border-radius: 14px; overflow: hidden; background: #FFFFFF;">
+            <div style="background: #E5E7EB; padding: 9px 12px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #D1D5DB;">
+              <span style="width: 9px; height: 9px; border-radius: 50%; background: #D1D5DB;"></span>
+              <span style="width: 9px; height: 9px; border-radius: 50%; background: #D1D5DB;"></span>
+              <span style="width: 9px; height: 9px; border-radius: 50%; background: #D1D5DB;"></span>
+              <span style="margin-left: 6px; background: #FFFFFF; border-radius: 6px; padding: 3px 10px; font-size: 11px; font-weight: 500; color: rgba(22,28,45,.72);">laarcourier.com</span>
+            </div>
+
+            <div style="background: #161C2D; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between;">
+              <span style="color: #FFFFFF; font-size: 14px; font-weight: 800; letter-spacing: 0.02em; font-style: italic;">LAAR<span style="color: #FCE200;">COURIER</span></span>
+              <span style="display: flex; gap: 14px; font-size: 10px; font-weight: 600; color: #D1D5DB;"><span>SERVICIOS</span><span>COTIZADOR</span><span>RASTREO</span><span>OFICINAS</span></span>
+            </div>
+
+            <div style="position: relative; background: #2A2F3C; padding: 26px 22px 22px;">
+              <span style="position: absolute; top: 10px; right: 12px; font-size: 10px; font-weight: 600; color: rgba(255,255,255,.55);">slide 2 de 4</span>
+              <p style="margin: 0 0 10px; font-size: 22px; font-weight: 700; line-height: 1.2; color: #FCE200;">Tu envío empieza<br>desde WhatsApp.</p>
+              <p style="margin: 0 0 16px; font-size: 12px; line-height: 1.5; color: #FFFFFF; max-width: 280px;">Cotiza, paga y empieza tu envío cuando lo necesites. Disponible 24/7.</p>
+              <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <span style="background: #FCE200; color: #161C2D; font-size: 12px; font-weight: 700; padding: 10px 18px; border-radius: 999px;">¡Enviar ahora!</span>
+                <span style="background: #FFFFFF; color: #161C2D; font-size: 12px; font-weight: 700; padding: 10px 18px; border-radius: 999px; box-shadow: 0 0 0 3px #FCE200;">Cotiza y paga en línea</span>
+              </div>
+            </div>
+
+            <div style="background: #FCE200; padding: 10px 18px; display: flex; align-items: center; gap: 8px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#161C2D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"></path></svg>
+              <span style="font-size: 12px; font-weight: 700; color: #161C2D;">El botón nuevo. Lleva a laarcourier.com/enviafacil.</span>
+            </div>
+          </div>
+
+          <p style="margin: 12px 0 0; font-size: 13px; line-height: 1.55; color: rgba(22,28,45,.78);">El slide ya existe y ya habla de WhatsApp. Se le suma el segundo botón: quien quiere chatear sigue yendo al chat, quien prefiere resolverlo solo entra a la web.</p>
+        </div>
+
+        <!-- ---- Puerta 2: la landing de EnvíaFácil ---- -->
+        <div>
+          <div style="display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px;">
+            <span style="flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; background: #161C2D; color: #FFFFFF; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center;">2</span>
+            <h3 style="margin: 0; font-size: 16px; font-weight: 700;">La página de EnvíaFácil</h3>
+          </div>
+
+          <div style="border: 1.5px solid #D1D5DB; border-radius: 14px; overflow: hidden; background: #FFFFFF;">
+            <div style="background: #E5E7EB; padding: 9px 12px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #D1D5DB;">
+              <span style="width: 9px; height: 9px; border-radius: 50%; background: #D1D5DB;"></span>
+              <span style="width: 9px; height: 9px; border-radius: 50%; background: #D1D5DB;"></span>
+              <span style="width: 9px; height: 9px; border-radius: 50%; background: #D1D5DB;"></span>
+              <span style="margin-left: 6px; background: #FFFFFF; border-radius: 6px; padding: 3px 10px; font-size: 11px; font-weight: 500; color: rgba(22,28,45,.72);">laarcourier.com/enviafacil</span>
+            </div>
+
+            <div style="background: #2A2F3C; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between;">
+              <span style="color: #FFFFFF; font-size: 14px; font-weight: 800; letter-spacing: 0.02em; font-style: italic;">LAAR<span style="color: #FCE200;">COURIER</span></span>
+              <span style="display: flex; gap: 14px; font-size: 10px; font-weight: 600; color: #D1D5DB;"><span>Qué es</span><span>Cómo funciona</span><span>Beneficios</span></span>
+            </div>
+
+            <div style="background: #232834; padding: 22px;">
+              <div style="display: inline-flex; align-items: center; gap: 7px; margin-bottom: 12px;">
+                <span style="width: 22px; height: 18px; border-radius: 4px; background: #FCE200; display: inline-block;"></span>
+                <span style="font-size: 15px; font-weight: 700; color: #FFFFFF;">Envía<span style="color: #FCE200;">Fácil</span></span>
+              </div>
+              <p style="margin: 0 0 10px; font-size: 21px; font-weight: 700; line-height: 1.18; color: #FFFFFF;">Tu courier ahora<br>está en <span style="color: #FCE200;">WhatsApp.</span></p>
+              <p style="margin: 0 0 16px; font-size: 12px; line-height: 1.5; color: #D1D5DB; max-width: 300px;">Desde un chat, cotiza, solicita y paga tu envío puerta a puerta a nivel nacional.</p>
+              <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <span style="background: #25D366; color: #FFFFFF; font-size: 12px; font-weight: 700; padding: 10px 16px; border-radius: 999px;">Escríbenos por WhatsApp</span>
+                <span style="background: #FCE200; color: #161C2D; font-size: 12px; font-weight: 700; padding: 10px 16px; border-radius: 999px; box-shadow: 0 0 0 3px rgba(252,226,0,.35);">Envía ahora por la web</span>
+              </div>
+            </div>
+
+            <div style="background: #FCE200; padding: 10px 18px; display: flex; align-items: center; gap: 8px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#161C2D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"></path></svg>
+              <span style="font-size: 12px; font-weight: 700; color: #161C2D;">El botón nuevo. Baja al proceso en la misma página.</span>
+            </div>
+          </div>
+
+          <p style="margin: 12px 0 0; font-size: 13px; line-height: 1.55; color: rgba(22,28,45,.78);">Esta página ya explica qué es y cómo funciona, pero su único llamado es el chat. El botón nuevo recoge al que acaba de leer y quiere hacerlo ya.</p>
+        </div>
+
+      </div>
+
+      <!-- ---- Lo que vimos en el teléfono ---- -->
+      <div style="margin-top: 28px; border: 1.5px solid #161C2D; border-radius: 14px; background: #E5E7EB; padding: 20px 22px;">
+        <h3 style="margin: 0 0 10px; font-size: 15px; font-weight: 700;">Lo que vimos al abrir la portada en un teléfono</h3>
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px;">
+          <p style="margin: 0; font-size: 13px; line-height: 1.55;"><strong style="font-weight: 700;">Un aviso tapa el botón.</strong> Al entrar aparece el anuncio del número nuevo y cubre justo la zona del llamado a la acción.</p>
+          <p style="margin: 0; font-size: 13px; line-height: 1.55;"><strong style="font-weight: 700;">El carrusel gira solo.</strong> El slide de EnvíaFácil se va a los pocos segundos y entra otro. El cliente puede perderlo antes de tocarlo.</p>
+          <p style="margin: 0; font-size: 13px; line-height: 1.55;"><strong style="font-weight: 700;">Por eso pedimos una entrada fija.</strong> Además del carrusel, una opción estable en el menú, para que la puerta no dependa de llegar a tiempo.</p>
+        </div>
+      </div>
+
+      <p style="margin: 20px 0 0; font-size: 14px; line-height: 1.55; color: rgba(22,28,45,.78);">Del botón hacia adentro empieza lo que ya está construido y probado. Las nueve pantallas del proceso están abajo.</p>
+
+    </div>
+  </section>
+
+  <!-- ===== Navegación de pantallas ===== -->
+  <nav aria-label="Pantallas de la propuesta" style="background: #FFFFFF; border-bottom: 1.5px solid #D1D5DB;">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 14px 40px; display: flex; align-items: center; gap: 10px;">
+      <button type="button" onClick="{{prev}}" disabled="{{prevDis}}" aria-label="Pantalla anterior" style="width: 44px; height: 44px; flex-shrink: 0; border: 1.5px solid #D1D5DB; border-radius: 10px; background: #FFFFFF; color: #161C2D; display: flex; align-items: center; justify-content: center;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>
+      </button>
+      <div style="flex-grow: 1; display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 6px;">
+        <sc-for list="{{chips}}" as="chip" hint-placeholder-count="9">
+          <button type="button" onClick="{{chip.pick}}" aria-current="{{chip.cur}}" style="min-height: 44px; padding: 6px 8px; border: 1.5px solid {{chip.bd}}; border-radius: 10px; background: {{chip.bg}}; color: #161C2D; display: flex; align-items: center; gap: 8px; text-align: left; min-width: 0;">
+            <span style="flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: #161C2D; color: #FFFFFF; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center;">{{chip.num}}</span>
+            <span style="font-size: 12px; font-weight: 600; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{chip.label}}</span>
+          </button>
+        </sc-for>
+      </div>
+      <button type="button" onClick="{{next}}" disabled="{{nextDis}}" aria-label="Pantalla siguiente" style="width: 44px; height: 44px; flex-shrink: 0; border: 0; border-radius: 10px; background: #161C2D; color: #FFFFFF; display: flex; align-items: center; justify-content: center;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"></path></svg>
+      </button>
+    </div>
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 40px 14px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+      <p style="margin: 0; font-size: 14px; font-weight: 500; flex-grow: 1; min-width: 280px;"><strong style="font-weight: 700;">{{capTitle}}.</strong> {{caption}}</p>
+      <sc-if value="{{hasVariants}}" hint-placeholder-val="{{yes}}">
+        <div role="group" aria-label="Estados de esta pantalla" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+          <span style="font-size: 12px; font-weight: 600; color: rgba(22,28,45,.72); margin-right: 4px;">Ver estado:</span>
+          <sc-for list="{{variants}}" as="vr" hint-placeholder-count="3">
+            <button type="button" onClick="{{vr.pick}}" aria-pressed="{{vr.pressed}}" style="min-height: 36px; padding: 0 12px; border: 1.5px solid #161C2D; border-radius: 999px; background: {{vr.bg}}; color: {{vr.fg}}; font-size: 12px; font-weight: 600;">{{vr.label}}</button>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+  </nav>
+
+  <!-- ===== Escenario: dispositivo ===== -->
+  <main style="padding: 40px 0 72px; display: flex; flex-direction: column; align-items: center; gap: 12px;">
+    <sc-if value="{{isM}}" hint-placeholder-val="{{yes}}">
+      <p style="margin: 0; font-size: 12px; font-weight: 600; color: rgba(22,28,45,.72);">{{url}}</p>
+    </sc-if>
+
+    <div style="box-sizing: border-box; {{frameStyle}}">
+      <sc-if value="{{isD}}" hint-placeholder-val="{{yes}}">
+        <div style="height: 44px; background: #E5E7EB; display: flex; align-items: center; gap: 14px; padding: 0 16px; border-bottom: 1px solid #D1D5DB;">
+          <div aria-hidden="true" style="display: flex; gap: 6px;">
+            <span style="width: 11px; height: 11px; border-radius: 50%; background: #D1D5DB;"></span>
+            <span style="width: 11px; height: 11px; border-radius: 50%; background: #D1D5DB;"></span>
+            <span style="width: 11px; height: 11px; border-radius: 50%; background: #D1D5DB;"></span>
+          </div>
+          <div style="flex-grow: 1; max-width: 520px; height: 28px; margin: 0 auto; background: #FFFFFF; border-radius: 8px; display: flex; align-items: center; gap: 8px; padding: 0 12px; font-size: 12px; font-weight: 500;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+            {{url}}
+          </div>
+        </div>
+      </sc-if>
+
+      <div style="overflow: hidden; background: #FFFFFF; {{screenStyle}}">
+
+        <!-- ================= SITIO LAAR (todas menos pasarela) ================= -->
+        <sc-if value="{{notGate}}" hint-placeholder-val="{{yes}}">
+
+          <!-- Cabecera del sitio principal -->
+          <sc-if value="{{isD}}" hint-placeholder-val="{{yes}}">
+            <div style="background: #161C2D; color: #FFFFFF; height: 64px; padding: 0 40px; display: flex; align-items: center; gap: 32px;">
+              <span style="font-size: 20px; font-weight: 800; letter-spacing: 0.02em;">LAAR<span style="color: #FCE200;">COURIER</span></span>
+              <div style="display: flex; gap: 24px; font-size: 14px; font-weight: 500; flex-grow: 1;">
+                <span>Inicio</span><span>Servicios</span><span>Rastrea tu guía</span><span>Cobertura</span><span>Contacto</span>
+              </div>
+              <span style="background: #FCE200; color: #161C2D; font-size: 14px; font-weight: 700; padding: 8px 16px; border-radius: 999px;">EnvíaFácil</span>
+            </div>
+          </sc-if>
+          <sc-if value="{{isM}}" hint-placeholder-val="{{yes}}">
+            <div style="background: #161C2D; color: #FFFFFF; height: 52px; padding: 0 16px 0 20px; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 16px; font-weight: 800; letter-spacing: 0.02em;">LAAR<span style="color: #FCE200;">COURIER</span></span>
+              <button type="button" aria-label="Menú del sitio" style="width: 44px; height: 44px; border: 0; background: transparent; color: #FFFFFF; display: flex; align-items: center; justify-content: center;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+              </button>
+            </div>
+          </sc-if>
+
+          <!-- Barra amarilla EnvíaFácil -->
+          <div style="background: #FCE200; min-height: 56px; display: flex; align-items: center; gap: 8px; {{barStyle}}">
+            <sc-if value="{{showBack}}" hint-placeholder-val="{{yes}}">
+              <button type="button" onClick="{{back}}" aria-label="Volver al paso anterior" style="width: 44px; height: 44px; margin-left: -10px; border: 0; background: transparent; color: #161C2D; display: flex; align-items: center; justify-content: center;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>
+              </button>
+            </sc-if>
+            <span style="font-size: 20px; font-weight: 800; letter-spacing: -0.01em;">EnvíaFácil</span>
+            <span aria-hidden="true" style="width: 1.5px; height: 22px; background: #161C2D; opacity: 0.35;"></span>
+            <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.06em;">LAARCOURIER</span>
+          </div>
+
+          <div style="box-sizing: border-box; {{wrapStyle}}">
+            <div style="min-width: 0;">
+
+              <!-- Progreso -->
+              <sc-if value="{{showProg}}" hint-placeholder-val="{{yes}}">
+                <div style="margin-bottom: 20px;">
+                  <p style="margin: 0 0 8px; font-size: 13px; font-weight: 600;">{{stepLabel}}</p>
+                  <div aria-hidden="true" style="display: flex; gap: 4px;">
+                    <sc-for list="{{segs}}" as="sg" hint-placeholder-count="6">
+                      <span style="flex: 1; height: 6px; border-radius: 3px; background: {{sg.bg}};"></span>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-if>
+
+              <!-- Mini resumen (móvil) -->
+              <sc-if value="{{showMini}}" hint-placeholder-val="{{yes}}">
+                <div style="margin: -4px 0 20px; padding: 10px 14px; border-radius: 10px; background: #E5E7EB; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+                  <span style="font-size: 13px; font-weight: 500; min-width: 0;">{{routeLabel}} · {{whatLabel}}</span>
+                  <span style="font-size: 15px; font-weight: 700; white-space: nowrap;">{{total}}</span>
+                </div>
+              </sc-if>
+
+              <!-- ============ 1. ENTRADA ============ -->
+              <sc-if value="{{s1}}" hint-placeholder-val="{{yes}}">
+                <section style="background: #161C2D; color: #FFFFFF;">
+                  <div style="display: flex; {{heroStyle}}">
+                    <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 18px;">
+                      <span style="align-self: flex-start; border: 1.5px solid #FCE200; color: #FCE200; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px;">Rápido, seguro y 100% digital</span>
+                      <h2 style="margin: 0; font-size: {{heroH1}}; line-height: 1.05; font-weight: 800; color: #FCE200; letter-spacing: -0.02em;">Envía sin salir de casa</h2>
+                      <p style="margin: 0; font-size: 16px; line-height: 1.55;">Cotiza, paga y envía en 1 minuto. Nosotros recolectamos en tu puerta.</p>
+                      <div style="display: flex; flex-direction: column; gap: 12px; max-width: 420px; margin-top: 4px;">
+                        <button type="button" onClick="{{startEnv}}" class="bp" style="flex-direction: column; align-items: flex-start; gap: 2px; min-height: 68px; text-align: left;">
+                          <span style="font-size: 17px; font-weight: 700;">Solicitar envío</span>
+                          <span style="font-size: 13px; font-weight: 500;">Arma tu envío y paga aquí mismo</span>
+                        </button>
+                        <button type="button" onClick="{{startCot}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 68px; padding: 12px 20px; border: 1.5px solid #FFFFFF; border-radius: 12px; background: transparent; color: #FFFFFF; text-align: left;">
+                          <span style="font-size: 17px; font-weight: 700;">Cotizar</span>
+                          <span style="font-size: 13px; font-weight: 500; color: #D1D5DB;">Conoce tu precio antes de decidir</span>
+                        </button>
+                      </div>
+                    </div>
+                    <div style="flex-shrink: 0; display: flex; justify-content: center; {{artStyle}}">
+                      <svg viewBox="0 0 320 230" width="100%" role="img" aria-label="Ilustración de cajas listas para enviar">
+                        <path d="M18 120h36M8 138h40M24 156h26" stroke="#FCE200" stroke-width="3" stroke-linecap="round"></path>
+                        <polygon points="130,75 200,110 130,145 60,110" fill="#FCE200" stroke="#161C2D" stroke-width="2"></polygon>
+                        <polygon points="60,110 130,145 130,215 60,180" fill="#FFFFFF" stroke="#161C2D" stroke-width="2"></polygon>
+                        <polygon points="130,145 200,110 200,180 130,215" fill="#D1D5DB" stroke="#161C2D" stroke-width="2"></polygon>
+                        <path d="M95 92.5L165 127.5" stroke="#161C2D" stroke-width="2"></path>
+                        <polygon points="78,142 110,158 110,176 78,160" fill="#FCE200" stroke="#161C2D" stroke-width="1.5"></polygon>
+                        <polygon points="125,30.5 160,48 125,65.5 90,48" fill="#FCE200" stroke="#161C2D" stroke-width="2"></polygon>
+                        <polygon points="90,48 125,65.5 125,95.5 90,78" fill="#FFFFFF" stroke="#161C2D" stroke-width="2"></polygon>
+                        <polygon points="125,65.5 160,48 160,78 125,95.5" fill="#D1D5DB" stroke="#161C2D" stroke-width="2"></polygon>
+                        <polygon points="235,117.5 280,140 235,162.5 190,140" fill="#FCE200" stroke="#161C2D" stroke-width="2"></polygon>
+                        <polygon points="190,140 235,162.5 235,207.5 190,185" fill="#FFFFFF" stroke="#161C2D" stroke-width="2"></polygon>
+                        <polygon points="235,162.5 280,140 280,185 235,207.5" fill="#D1D5DB" stroke="#161C2D" stroke-width="2"></polygon>
+                        <path d="M212.5 128.75L257.5 151.25" stroke="#161C2D" stroke-width="2"></path>
+                      </svg>
+                    </div>
+                  </div>
+                </section>
+                <div style="{{promiseStyle}}">
+                  <div style="display: flex; gap: 12px; align-items: flex-start;">
+                    <span style="flex-shrink: 0; width: 36px; height: 36px; border-radius: 10px; background: #FCE200; display: flex; align-items: center; justify-content: center;">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#161C2D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"></path></svg>
+                    </span>
+                    <div><p style="margin: 0; font-size: 15px; font-weight: 700;">Recolección en tu puerta</p><p class="hint" style="margin-top: 2px;">Pasamos por tu paquete a la dirección que nos des.</p></div>
+                  </div>
+                  <div style="display: flex; gap: 12px; align-items: flex-start;">
+                    <span style="flex-shrink: 0; width: 36px; height: 36px; border-radius: 10px; background: #FCE200; display: flex; align-items: center; justify-content: center;">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#161C2D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+                    </span>
+                    <div><p style="margin: 0; font-size: 15px; font-weight: 700;">¡Recolectamos el mismo día!</p><p class="hint" style="margin-top: 2px;">Si pagas hasta las 12h00.</p></div>
+                  </div>
+                  <div style="display: flex; gap: 12px; align-items: flex-start;">
+                    <span style="flex-shrink: 0; width: 36px; height: 36px; border-radius: 10px; background: #FCE200; display: flex; align-items: center; justify-content: center;">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#161C2D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"></rect><path d="M3 10h18M7 15h4"></path></svg>
+                    </span>
+                    <div><p style="margin: 0; font-size: 15px; font-weight: 700;">Cotiza, paga y envía</p><p class="hint" style="margin-top: 2px;">Pagas con tarjeta y recibes tu guía al instante.</p></div>
+                  </div>
+                </div>
+              </sc-if>
+
+              <!-- ============ 2. COTIZADOR ============ -->
+              <sc-if value="{{s2}}" hint-placeholder-val="{{yes}}">
+                <h2 style="margin: 0; font-size: {{h1}}; font-weight: 700; line-height: 1.2;">{{s2Title}}</h2>
+                <p class="hint" style="margin: 6px 0 22px; font-size: 14px;">Te toma menos de 1 minuto.</p>
+                <div style="display: flex; flex-direction: column; gap: 18px;">
+                  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;">
+                    <div>
+                      <label class="lb" for="c-origen">Ciudad de origen</label>
+                      <input id="c-origen" class="in" value="Quito" readOnly="{{yes}}">
+                    </div>
+                    <div>
+                      <label class="lb" for="c-destino">Ciudad de destino</label>
+                      <input id="c-destino" class="in {{destCls}}" value="{{destCity}}" readOnly="{{yes}}" aria-invalid="{{noCovAria}}">
+                    </div>
+                  </div>
+                  <sc-if value="{{isNoCov}}" hint-placeholder-val="{{yes}}">
+                    <div role="alert" style="margin-top: -6px; border: 2px solid #161C2D; border-radius: 12px; overflow: hidden;">
+                      <div style="background: #FCE200; padding: 10px 14px; display: flex; gap: 10px; align-items: center; font-size: 14px; font-weight: 700;">
+                        <span aria-hidden="true" style="width: 20px; height: 20px; border-radius: 50%; background: #161C2D; color: #FCE200; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center;">!</span>
+                        Aún no llegamos a Nuevo Rocafuerte
+                      </div>
+                      <div style="padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;">
+                        <p style="margin: 0; font-size: 14px; line-height: 1.5;">Elige otra ciudad de destino, o escríbenos y buscamos la mejor forma de que tu envío llegue.</p>
+                        <a href="#whatsapp" style="align-self: flex-start; display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 10px; background: #25D366; color: #161C2D; font-size: 14px; font-weight: 700; text-decoration: none;">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 11.5a8.5 8.5 0 0 1-12.6 7.4L3.5 20.5l1.3-4.3A8.5 8.5 0 1 1 20.5 11.5z"></path></svg>
+                          Escríbenos por WhatsApp
+                        </a>
+                      </div>
+                    </div>
+                  </sc-if>
+                  <div>
+                    <label class="lb" for="c-cel">Tu celular</label>
+                    <input id="c-cel" class="in {{celCls}}" value="{{celVal}}" readOnly="{{yes}}" inputMode="numeric" aria-invalid="{{errAria}}" aria-describedby="c-cel-msg">
+                    <sc-if value="{{isErr}}" hint-placeholder-val="{{yes}}">
+                      <div id="c-cel-msg" role="alert" style="display: flex; gap: 8px; align-items: flex-start; margin-top: 8px; padding: 8px 10px; background: #FCE200; border-radius: 8px; font-size: 13px; font-weight: 500; line-height: 1.4;">
+                        <span aria-hidden="true" style="flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%; background: #161C2D; color: #FCE200; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center;">!</span>
+                        <span>Te falta un número. Tu celular tiene 10 dígitos y empieza con 09.</span>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{notErr}}" hint-placeholder-val="{{yes}}">
+                      <p id="c-cel-msg" class="hint">Aquí te avisamos cuando recolectemos y entreguemos.</p>
+                    </sc-if>
+                  </div>
+                  <div>
+                    <span class="lb" id="c-tipo">¿Qué envías?</span>
+                    <div role="group" aria-labelledby="c-tipo" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;">
+                      <button type="button" onClick="{{docPick}}" aria-pressed="{{docPressed}}" style="min-height: 50px; border-radius: 10px; border: 1.5px solid #161C2D; background: {{docBg}}; color: {{docFg}}; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"></path><path d="M14 3v5h5M9 13h6M9 17h6"></path></svg>
+                        Documento
+                      </button>
+                      <button type="button" onClick="{{paqPick}}" aria-pressed="{{paqPressed}}" style="min-height: 50px; border-radius: 10px; border: 1.5px solid #161C2D; background: {{paqBg}}; color: {{paqFg}}; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8l-9-5-9 5v8l9 5 9-5z"></path><path d="M3 8l9 5 9-5M12 13v8"></path></svg>
+                        Paquete
+                      </button>
+                    </div>
+                  </div>
+                  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;">
+                    <div>
+                      <label class="lb" for="c-peso">Peso (kg)</label>
+                      <input id="c-peso" class="in" value="3" readOnly="{{yes}}" inputMode="decimal">
+                    </div>
+                    <div>
+                      <label class="lb" for="c-piezas">Piezas</label>
+                      <input id="c-piezas" class="in" value="1" readOnly="{{yes}}" inputMode="numeric">
+                    </div>
+                  </div>
+                  <div>
+                    <label class="lb" for="c-valor">Valor declarado (USD)</label>
+                    <input id="c-valor" class="in" value="$ 40,00" readOnly="{{yes}}" inputMode="decimal">
+                    <p class="hint">Cuánto vale lo que envías.</p>
+                  </div>
+                  <div>
+                    <label class="lb" for="c-cont">Contenido</label>
+                    <input id="c-cont" class="in" value="Ropa y zapatos" readOnly="{{yes}}">
+                  </div>
+                  <div style="margin-top: 6px;">
+                    <sc-if value="{{btnReady2}}" hint-placeholder-val="{{yes}}">
+                      <button type="button" class="bp" onClick="{{toPrice}}">Ver precio</button>
+                    </sc-if>
+                    <sc-if value="{{isLoad}}" hint-placeholder-val="{{yes}}">
+                      <button type="button" class="bp" aria-busy="true" disabled="{{yes}}" style="cursor: progress;"><span class="spin"></span>Calculando tu precio…</button>
+                    </sc-if>
+                    <sc-if value="{{isNoCov}}" hint-placeholder-val="{{yes}}">
+                      <button type="button" class="bx" disabled="{{yes}}">Ver precio</button>
+                    </sc-if>
+                  </div>
+                </div>
+              </sc-if>
+
+              <!-- ============ 3. PRECIO ============ -->
+              <sc-if value="{{s3}}" hint-placeholder-val="{{yes}}">
+                <h2 style="margin: 0 0 18px; font-size: {{h1}}; font-weight: 700; line-height: 1.2;">Tu precio</h2>
+                <div style="background: #161C2D; color: #FFFFFF; border-radius: 16px; padding: 22px 20px;">
+                  <p style="margin: 0; font-size: 14px; color: #D1D5DB;">Tu envío cuesta</p>
+                  <p style="margin: 2px 0 0; font-size: 48px; font-weight: 800; color: #FCE200; line-height: 1.05; letter-spacing: -0.02em;">$7,88</p>
+                  <p style="margin: 4px 0 18px; font-size: 13px; color: #D1D5DB;">IVA incluido</p>
+                  <div style="border-top: 1px solid rgba(209,213,219,.35); padding-top: 14px; display: flex; flex-direction: column; gap: 8px; font-size: 14px;">
+                    <div style="display: flex; justify-content: space-between; gap: 12px;"><span style="color: #D1D5DB;">Ruta</span><span style="font-weight: 600;">Quito → Guayaquil</span></div>
+                    <div style="display: flex; justify-content: space-between; gap: 12px;"><span style="color: #D1D5DB;">Qué envías</span><span style="font-weight: 600;">Paquete · 3 kg · 1 pieza</span></div>
+                    <div style="display: flex; justify-content: space-between; gap: 12px;"><span style="color: #D1D5DB;">Valor declarado</span><span style="font-weight: 600;">$40,00</span></div>
+                    <div style="display: flex; justify-content: space-between; gap: 12px;"><span style="color: #D1D5DB;">Contenido</span><span style="font-weight: 600;">Ropa y zapatos</span></div>
+                  </div>
+                  <div style="border-top: 1px solid rgba(209,213,219,.35); margin-top: 14px; padding-top: 14px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #D1D5DB;">
+                    <div style="display: flex; justify-content: space-between;"><span>Flete</span><span>$6,85</span></div>
+                    <div style="display: flex; justify-content: space-between;"><span>IVA 15%</span><span>$1,03</span></div>
+                  </div>
+                </div>
+                <div style="margin: 14px 0 22px; display: flex; gap: 10px; align-items: center; padding: 12px 14px; border-radius: 12px; background: #FCE200; font-size: 14px; font-weight: 600;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#161C2D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0;"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+                  <span>¡Recolectamos el mismo día! Si pagas hasta las 12h00.</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                  <button type="button" class="bp" onClick="{{toTipo}}">Continuar con este envío</button>
+                  <button type="button" class="bs" onClick="{{cambiar}}">Cambiar datos</button>
+                </div>
+                <p class="hint" style="text-align: center; margin-top: 12px;">Lo que ya cotizaste se queda guardado. No lo vuelves a escribir.</p>
+              </sc-if>
+
+              <!-- ============ 4. TIPO DE ENVÍO ============ -->
+              <sc-if value="{{s4}}" hint-placeholder-val="{{yes}}">
+                <h2 style="margin: 0; font-size: {{h1}}; font-weight: 700; line-height: 1.2;">¿A cuántos destinos envías?</h2>
+                <p class="hint" style="margin: 6px 0 22px; font-size: 14px;">Desde Quito, con una sola recolección en tu puerta.</p>
+                <div role="group" aria-label="Tipo de envío" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
+                  <button type="button" onClick="{{pickOne}}" aria-pressed="{{onePressed}}" style="display: flex; gap: 14px; align-items: flex-start; text-align: left; padding: 18px; border-radius: 14px; border: {{oneBorder}}; background: #FFFFFF; color: #161C2D;">
+                    <span aria-hidden="true" style="flex-shrink: 0; margin-top: 2px; width: 22px; height: 22px; border-radius: 50%; border: 2px solid #161C2D; display: flex; align-items: center; justify-content: center;"><span style="width: 12px; height: 12px; border-radius: 50%; background: {{oneDot}};"></span></span>
+                    <span style="display: flex; flex-direction: column; gap: 4px;">
+                      <span style="font-size: 16px; font-weight: 700;">Un destino</span>
+                      <span style="font-size: 14px; font-weight: 500; color: rgba(22,28,45,.72);">Quito → Guayaquil · $7,88</span>
+                    </span>
+                  </button>
+                  <button type="button" onClick="{{pickMulti}}" aria-pressed="{{multiPressed}}" style="display: flex; gap: 14px; align-items: flex-start; text-align: left; padding: 18px; border-radius: 14px; border: {{multiBorder}}; background: #FFFFFF; color: #161C2D;">
+                    <span aria-hidden="true" style="flex-shrink: 0; margin-top: 2px; width: 22px; height: 22px; border-radius: 50%; border: 2px solid #161C2D; display: flex; align-items: center; justify-content: center;"><span style="width: 12px; height: 12px; border-radius: 50%; background: {{multiDot}};"></span></span>
+                    <span style="display: flex; flex-direction: column; gap: 4px;">
+                      <span style="font-size: 16px; font-weight: 700;">Varios destinos <span style="font-size: 12px; font-weight: 700; background: #FCE200; padding: 2px 8px; border-radius: 999px; margin-left: 4px;">Multienvíos</span></span>
+                      <span style="font-size: 14px; font-weight: 500; color: rgba(22,28,45,.72);">Tú envías, varias personas reciben. Pagas todo junto.</span>
+                    </span>
+                  </button>
+                </div>
+                <button type="button" class="bp" onClick="{{toRem}}">Continuar</button>
+              </sc-if>
+
+              <!-- ============ 5. REMITENTE ============ -->
+              <sc-if value="{{s5}}" hint-placeholder-val="{{yes}}">
+                <h2 style="margin: 0; font-size: {{h1}}; font-weight: 700; line-height: 1.2;">¿Quién envía?</h2>
+                <p class="hint" style="margin: 6px 0 22px; font-size: 14px;">Aquí recolectamos tu paquete.</p>
+                <div style="display: flex; flex-direction: column; gap: 18px;">
+                  <div>
+                    <label class="lb" for="r-id">Cédula o RUC</label>
+                    <input id="r-id" class="in" value="1718293046" readOnly="{{yes}}" inputMode="numeric">
+                  </div>
+                  <div>
+                    <label class="lb" for="r-nom">Nombres y apellidos</label>
+                    <input id="r-nom" class="in" value="María José Andrade Vera" readOnly="{{yes}}">
+                  </div>
+                  <div>
+                    <label class="lb" for="r-mail">Correo</label>
+                    <input id="r-mail" class="in {{mailCls}}" value="{{mailVal}}" readOnly="{{yes}}" inputMode="email" aria-invalid="{{errAria}}" aria-describedby="r-mail-msg">
+                    <sc-if value="{{isErr}}" hint-placeholder-val="{{yes}}">
+                      <div id="r-mail-msg" role="alert" style="display: flex; gap: 8px; align-items: flex-start; margin-top: 8px; padding: 8px 10px; background: #FCE200; border-radius: 8px; font-size: 13px; font-weight: 500; line-height: 1.4;">
+                        <span aria-hidden="true" style="flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%; background: #161C2D; color: #FCE200; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center;">!</span>
+                        <span>A tu correo le falta el final. Por ejemplo: mjandrade@gmail.com</span>
+                      </div>
+                    </sc-if>
+                  </div>
+                  <div>
+                    <label class="lb" for="r-cel">Celular</label>
+                    <input id="r-cel" class="in" value="0987 654 321" readOnly="{{yes}}" inputMode="numeric">
+                    <p class="hint">Lo trajimos de tu cotización.</p>
+                  </div>
+                  <div>
+                    <label class="lb" for="r-dir">Dirección de recolección</label>
+                    <input id="r-dir" class="in" value="Av. República de El Salvador N34-127 y Suiza, dpto. 5B" readOnly="{{yes}}">
+                  </div>
+                  <div>
+                    <label class="lb" for="r-ref">Referencia</label>
+                    <input id="r-ref" class="in" value="Edificio Torre Sol, frente al parque La Carolina" readOnly="{{yes}}">
+                  </div>
+                  <div>
+                    <span class="lb">Ubicación en el mapa</span>
+                    <div style="border: 1.5px solid #D1D5DB; border-radius: 12px; overflow: hidden;">
+                      <svg viewBox="0 0 360 170" width="100%" role="img" aria-label="Mapa con el pin en la dirección de recolección, Quito" style="display: block;">
+                        <rect width="360" height="170" fill="#E5E7EB"></rect>
+                        <rect x="14" y="12" width="92" height="52" rx="4" fill="#D1D5DB"></rect>
+                        <rect x="126" y="12" width="104" height="52" rx="4" fill="#D1D5DB"></rect>
+                        <rect x="250" y="12" width="96" height="52" rx="4" fill="#D1D5DB"></rect>
+                        <rect x="14" y="84" width="92" height="74" rx="4" fill="#D1D5DB"></rect>
+                        <rect x="126" y="84" width="104" height="74" rx="4" fill="#FFFFFF" stroke="#D1D5DB" stroke-width="2" stroke-dasharray="4 4"></rect>
+                        <rect x="250" y="84" width="96" height="74" rx="4" fill="#D1D5DB"></rect>
+                        <text x="178" y="126" text-anchor="middle" font-family="Poppins" font-size="10" font-weight="600" fill="#161C2D" opacity="0.6">Parque La Carolina</text>
+                        <path d="M0 74h360M116 0v170M240 0v170" stroke="#FFFFFF" stroke-width="10"></path>
+                        <g transform="translate(240 50)">
+                          <path d="M0 -30c-9 0-16 7-16 16 0 12 16 26 16 26s16-14 16-26c0-9-7-16-16-16z" fill="#161C2D"></path>
+                          <circle cx="0" cy="-14" r="6" fill="#FCE200"></circle>
+                        </g>
+                      </svg>
+                      <div style="padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; border-top: 1.5px solid #D1D5DB;">
+                        <span style="font-size: 12px; font-weight: 500; color: rgba(22,28,45,.72);">Mueve el pin hasta tu puerta</span>
+                        <button type="button" style="min-height: 44px; padding: 0 12px; border: 0; background: transparent; color: #161C2D; font-size: 13px; font-weight: 700; text-decoration: underline;">Usar mi ubicación</button>
+                      </div>
+                    </div>
+                  </div>
+                  <button type="button" class="bp" onClick="{{toDest}}" style="margin-top: 6px;">Continuar</button>
+                </div>
+              </sc-if>
+
+              <!-- ============ 6. DESTINATARIO ============ -->
+              <sc-if value="{{s6}}" hint-placeholder-val="{{yes}}">
+                <h2 style="margin: 0; font-size: {{h1}}; font-weight: 700; line-height: 1.2;">¿Quién recibe?</h2>
+                <p class="hint" style="margin: 6px 0 18px; font-size: 14px;">A esta persona le entregamos en {{dest.city}}.</p>
+                <sc-if value="{{isMulti}}" hint-placeholder-val="{{yes}}">
+                  <div role="tablist" aria-label="Destinos" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; margin-bottom: 18px;">
+                    <sc-for list="{{dTabs}}" as="tb" hint-placeholder-count="2">
+                      <button type="button" role="tab" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="min-height: 48px; padding: 6px 10px; border: 1.5px solid #161C2D; border-radius: 10px; background: {{tb.bg}}; color: {{tb.fg}}; font-size: 13px; font-weight: 600; line-height: 1.25;">{{tb.label}}</button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+                <div style="display: flex; flex-direction: column; gap: 18px;">
+                  <div>
+                    <label class="lb" for="d-id">Cédula o RUC</label>
+                    <input id="d-id" class="in" value="{{dest.id}}" readOnly="{{yes}}" inputMode="numeric">
+                  </div>
+                  <div>
+                    <label class="lb" for="d-nom">Nombres y apellidos</label>
+                    <input id="d-nom" class="in" value="{{dest.name}}" readOnly="{{yes}}">
+                  </div>
+                  <div>
+                    <label class="lb" for="d-mail">Correo</label>
+                    <input id="d-mail" class="in" value="{{dest.mail}}" readOnly="{{yes}}" inputMode="email">
+                  </div>
+                  <div>
+                    <label class="lb" for="d-cel">Celular</label>
+                    <input id="d-cel" class="in" value="{{dest.cel}}" readOnly="{{yes}}" inputMode="numeric">
+                  </div>
+                  <div>
+                    <label class="lb" for="d-dir">Dirección de entrega</label>
+                    <input id="d-dir" class="in" value="{{dest.dir}}" readOnly="{{yes}}">
+                  </div>
+                  <div>
+                    <label class="lb" for="d-ref">Referencia</label>
+                    <input id="d-ref" class="in" value="{{dest.ref}}" readOnly="{{yes}}">
+                  </div>
+                  <div>
+                    <span class="lb">Ubicación en el mapa</span>
+                    <div style="border: 1.5px solid #D1D5DB; border-radius: 12px; overflow: hidden;">
+                      <svg viewBox="0 0 360 150" width="100%" role="img" aria-label="Mapa con el pin en la dirección de entrega" style="display: block;">
+                        <rect width="360" height="150" fill="#E5E7EB"></rect>
+                        <rect x="12" y="10" width="140" height="56" rx="4" fill="#D1D5DB"></rect>
+                        <rect x="172" y="10" width="176" height="56" rx="4" fill="#D1D5DB"></rect>
+                        <rect x="12" y="86" width="84" height="54" rx="4" fill="#D1D5DB"></rect>
+                        <rect x="116" y="86" width="120" height="54" rx="4" fill="#D1D5DB"></rect>
+                        <rect x="256" y="86" width="92" height="54" rx="4" fill="#D1D5DB"></rect>
+                        <path d="M0 76h360M162 0v76M106 76v74M246 76v74" stroke="#FFFFFF" stroke-width="10"></path>
+                        <g transform="translate(162 70)">
+                          <path d="M0 -30c-9 0-16 7-16 16 0 12 16 26 16 26s16-14 16-26c0-9-7-16-16-16z" fill="#161C2D"></path>
+                          <circle cx="0" cy="-14" r="6" fill="#FCE200"></circle>
+                        </g>
+                      </svg>
+                      <div style="padding: 10px 12px; border-top: 1.5px solid #D1D5DB; font-size: 12px; font-weight: 500; color: rgba(22,28,45,.72);">Mueve el pin hasta la puerta de quien recibe</div>
+                    </div>
+                  </div>
+                  <sc-if value="{{isMulti}}" hint-placeholder-val="{{yes}}">
+                    <button type="button" class="bs">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+                      Agregar otro destino
+                    </button>
+                  </sc-if>
+                  <button type="button" class="bp" onClick="{{toConf}}">Continuar</button>
+                </div>
+              </sc-if>
+
+              <!-- ============ 7. CONFIRMACIÓN ============ -->
+              <sc-if value="{{s7}}" hint-placeholder-val="{{yes}}">
+                <h2 style="margin: 0; font-size: {{h1}}; font-weight: 700; line-height: 1.2;">Revisa y paga</h2>
+                <p class="hint" style="margin: 6px 0 20px; font-size: 14px;">Si algo no cuadra, lo cambias aquí mismo.</p>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                  <div style="border: 1.5px solid #D1D5DB; border-radius: 14px; padding: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                      <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;">Recolección</span>
+                      <button type="button" onClick="{{editRem}}" style="min-height: 44px; padding: 0 4px; border: 0; background: transparent; color: #161C2D; font-size: 13px; font-weight: 700; text-decoration: underline;">Editar</button>
+                    </div>
+                    <p style="margin: 0; font-size: 15px; font-weight: 600;">María José Andrade Vera</p>
+                    <p class="hint" style="margin-top: 2px; font-size: 13px;">Av. República de El Salvador N34-127 y Suiza, dpto. 5B · Quito</p>
+                  </div>
+                  <sc-for list="{{envios}}" as="en" hint-placeholder-count="1">
+                    <div style="border: 1.5px solid #D1D5DB; border-radius: 14px; padding: 16px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;">{{en.tag}}</span>
+                        <button type="button" onClick="{{editDest}}" style="min-height: 44px; padding: 0 4px; border: 0; background: transparent; color: #161C2D; font-size: 13px; font-weight: 700; text-decoration: underline;">Editar</button>
+                      </div>
+                      <p style="margin: 0; font-size: 15px; font-weight: 600;">{{en.name}}</p>
+                      <p class="hint" style="margin-top: 2px; font-size: 13px;">{{en.dir}} · {{en.city}}</p>
+                      <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed #D1D5DB; display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+                        <span style="font-size: 13px; font-weight: 500;">Quito → {{en.city}} · {{en.what}}</span>
+                        <span style="font-size: 15px; font-weight: 700;">{{en.price}}</span>
+                      </div>
+                    </div>
+                  </sc-for>
+                  <div style="background: #161C2D; color: #FFFFFF; border-radius: 14px; padding: 16px 18px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                      <p style="margin: 0; font-size: 14px; font-weight: 600;">Total a pagar</p>
+                      <p style="margin: 2px 0 0; font-size: 12px; color: #D1D5DB;">IVA incluido · {{countLabel}}</p>
+                    </div>
+                    <span style="font-size: 32px; font-weight: 800; color: #FCE200;">{{total}}</span>
+                  </div>
+                  <div style="display: flex; gap: 10px; align-items: center; padding: 10px 12px; font-size: 13px; font-weight: 500;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#161C2D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0;"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+                    <span>Paga hasta las 12h00 y recolectamos hoy mismo.</span>
+                  </div>
+                  <sc-if value="{{notLoad}}" hint-placeholder-val="{{yes}}">
+                    <button type="button" class="bp" onClick="{{pay}}">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+                      Pagar {{total}} con tarjeta
+                    </button>
+                  </sc-if>
+                  <sc-if value="{{isLoad}}" hint-placeholder-val="{{yes}}">
+                    <button type="button" class="bp" aria-busy="true" disabled="{{yes}}" style="cursor: progress;"><span class="spin"></span>Te llevamos a pagar…</button>
+                  </sc-if>
+                  <p class="hint" style="text-align: center; margin: 0;">Vas a la página segura de pago con tarjeta y vuelves aquí por tu guía.</p>
+                </div>
+              </sc-if>
+
+              <!-- ============ 9. LISTO ============ -->
+              <sc-if value="{{s9}}" hint-placeholder-val="{{yes}}">
+                <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; margin-bottom: 22px;">
+                  <span style="width: 64px; height: 64px; border-radius: 50%; background: #FCE200; display: flex; align-items: center; justify-content: center;">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#161C2D" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+                  </span>
+                  <h2 style="margin: 8px 0 0; font-size: {{h1}}; font-weight: 700; line-height: 1.2;">¡Listo, María José!</h2>
+                  <p style="margin: 0; font-size: 15px; font-weight: 500;">Tu envío está pagado. Pasamos por él hoy a tu puerta.</p>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
+                  <sc-for list="{{guias}}" as="gu" hint-placeholder-count="1">
+                    <div style="border: 1.5px solid #D1D5DB; border-radius: 14px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+                      <div style="min-width: 0;">
+                        <p style="margin: 0; font-size: 12px; font-weight: 600; color: rgba(22,28,45,.72);">N.º de guía · a {{gu.city}}</p>
+                        <p style="margin: 2px 0 0; font-size: 22px; font-weight: 700; letter-spacing: 0.04em;">{{gu.num}}</p>
+                      </div>
+                      <button type="button" aria-label="Copiar número de guía" style="flex-shrink: 0; width: 44px; height: 44px; border: 1.5px solid #D1D5DB; border-radius: 10px; background: #FFFFFF; color: #161C2D; display: flex; align-items: center; justify-content: center;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a1 1 0 0 1 1-1h10"></path></svg>
+                      </button>
+                    </div>
+                  </sc-for>
+                  <div style="border: 1.5px solid #D1D5DB; border-radius: 14px; padding: 14px 16px;">
+                    <p style="margin: 0; font-size: 12px; font-weight: 600; color: rgba(22,28,45,.72);">N.º de recolección</p>
+                    <p style="margin: 2px 0 0; font-size: 22px; font-weight: 700; letter-spacing: 0.04em;">REC-58214</p>
+                  </div>
+                </div>
+                <div style="background: #E5E7EB; border-radius: 14px; padding: 16px; margin-bottom: 16px;">
+                  <div aria-label="Vista previa de la etiqueta" role="img" style="background: #FFFFFF; border: 1.5px solid #161C2D; border-radius: 6px; overflow: hidden; max-width: 300px; margin: 0 auto;">
+                    <div style="background: #FCE200; padding: 6px 10px; display: flex; justify-content: space-between; font-size: 10px; font-weight: 800;"><span>EnvíaFácil</span><span>LAARCOURIER</span></div>
+                    <div style="padding: 10px; display: flex; flex-direction: column; gap: 6px;">
+                      <div style="height: 44px; background: repeating-linear-gradient(90deg, #161C2D 0 2px, #FFFFFF 2px 4px, #161C2D 4px 5px, #FFFFFF 5px 8px, #161C2D 8px 11px, #FFFFFF 11px 12px, #161C2D 12px 13px, #FFFFFF 13px 16px);"></div>
+                      <p style="margin: 0; text-align: center; font-size: 11px; font-weight: 700; letter-spacing: 0.1em;">{{firstGuia}}</p>
+                      <div style="display: flex; justify-content: space-between; font-size: 9px; font-weight: 600; border-top: 1px solid #D1D5DB; padding-top: 6px;"><span>QUITO → {{firstCityUp}}</span><span>3 KG · 1/1</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                  <button type="button" class="bp">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg>
+                    Descargar etiqueta (PDF)
+                  </button>
+                  <p class="hint" style="text-align: center; margin: 0 0 6px;">Imprímela y pégala en tu paquete antes de que lleguemos.</p>
+                  <button type="button" class="bs" onClick="{{nuevo}}">Hacer otro envío</button>
+                </div>
+              </sc-if>
+
+            </div>
+
+            <!-- Resumen fijo (escritorio) -->
+            <sc-if value="{{showAside}}" hint-placeholder-val="{{yes}}">
+              <aside aria-label="Resumen de tu envío" style="position: sticky; top: 24px; border: 1.5px solid #D1D5DB; border-radius: 16px; overflow: hidden; background: #FFFFFF;">
+                <div style="background: #161C2D; color: #FFFFFF; padding: 14px 20px; font-size: 15px; font-weight: 600;">Tu envío</div>
+                <div style="padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; font-size: 14px;">
+                  <sc-if value="{{s2}}" hint-placeholder-val="{{yes}}">
+                    <p style="margin: 0; font-weight: 500; color: rgba(22,28,45,.72); line-height: 1.5;">Completa los datos y aquí ves tu precio al instante.</p>
+                  </sc-if>
+                  <sc-if value="{{afterQuote}}" hint-placeholder-val="{{yes}}">
+                    <div style="display: flex; justify-content: space-between; gap: 12px;"><span style="color: rgba(22,28,45,.72);">Ruta</span><span style="font-weight: 600; text-align: right;">{{routeLabel}}</span></div>
+                    <div style="display: flex; justify-content: space-between; gap: 12px;"><span style="color: rgba(22,28,45,.72);">Qué envías</span><span style="font-weight: 600; text-align: right;">{{whatLabel}}</span></div>
+                    <div style="display: flex; justify-content: space-between; gap: 12px;"><span style="color: rgba(22,28,45,.72);">Envíos</span><span style="font-weight: 600;">{{countLabel}}</span></div>
+                    <div style="border-top: 1.5px solid #E5E7EB; padding-top: 12px; display: flex; justify-content: space-between; align-items: baseline;"><span style="font-weight: 600;">Total</span><span style="font-size: 28px; font-weight: 800;">{{total}}</span></div>
+                  </sc-if>
+                  <div style="display: flex; gap: 8px; align-items: center; padding: 10px 12px; border-radius: 10px; background: #FCE200; font-size: 13px; font-weight: 600;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#161C2D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0;"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+                    ¡Recolectamos el mismo día! Hasta las 12h00.
+                  </div>
+                </div>
+              </aside>
+            </sc-if>
+          </div>
+
+          <!-- Pie con ayuda -->
+          <footer id="whatsapp" style="border-top: 1.5px solid #E5E7EB; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; {{footStyle}}">
+            <span style="font-size: 13px; font-weight: 500;">¿Te ayudamos?</span>
+            <a href="#whatsapp" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 10px; background: #25D366; color: #161C2D; font-size: 14px; font-weight: 700; text-decoration: none;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 11.5a8.5 8.5 0 0 1-12.6 7.4L3.5 20.5l1.3-4.3A8.5 8.5 0 1 1 20.5 11.5z"></path></svg>
+              Escríbenos por WhatsApp
+            </a>
+          </footer>
+        </sc-if>
+
+        <!-- ============ 8. PAGO (pasarela) ============ -->
+        <sc-if value="{{s8}}" hint-placeholder-val="{{yes}}">
+          <div style="background: #E5E7EB; {{gateStyle}}">
+            <div style="max-width: 420px; margin: 0 auto; background: #FFFFFF; border-radius: 16px; overflow: hidden; border: 1.5px solid #D1D5DB;">
+              <div style="padding: 14px 18px; border-bottom: 1.5px solid #E5E7EB; display: flex; align-items: center; justify-content: space-between;">
+                <span style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+                  Pago seguro
+                </span>
+                <span style="font-size: 12px; font-weight: 600; color: rgba(22,28,45,.72);">[Pasarela de pago]</span>
+              </div>
+              <div style="padding: 18px; display: flex; flex-direction: column; gap: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 12px;">
+                  <div><p style="margin: 0; font-size: 12px; color: rgba(22,28,45,.72);">Pagas a</p><p style="margin: 2px 0 0; font-size: 15px; font-weight: 600;">LAAR Courier · EnvíaFácil</p></div>
+                  <span style="font-size: 26px; font-weight: 800;">{{total}}</span>
+                </div>
+                <sc-if value="{{isRej}}" hint-placeholder-val="{{yes}}">
+                  <div role="alert" style="display: flex; gap: 10px; align-items: flex-start; padding: 12px; border: 2px solid #161C2D; border-radius: 10px; background: #FCE200; font-size: 13px; font-weight: 500; line-height: 1.45;">
+                    <span aria-hidden="true" style="flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; background: #161C2D; color: #FCE200; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center;">!</span>
+                    <span><strong style="font-weight: 700;">Tu banco no aprobó el pago.</strong> No se hizo ningún cobro. Prueba con otra tarjeta.</span>
+                  </div>
+                </sc-if>
+                <div>
+                  <label class="lb" for="p-num">Número de tarjeta</label>
+                  <input id="p-num" class="in" value="4557 8810 •••• 2231" readOnly="{{yes}}" inputMode="numeric">
+                </div>
+                <div>
+                  <label class="lb" for="p-tit">Nombre como aparece en la tarjeta</label>
+                  <input id="p-tit" class="in" value="MARIA J ANDRADE" readOnly="{{yes}}">
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;">
+                  <div><label class="lb" for="p-ven">Vence</label><input id="p-ven" class="in" value="08/29" readOnly="{{yes}}" inputMode="numeric"></div>
+                  <div><label class="lb" for="p-cvv">CVV</label><input id="p-cvv" class="in" value="•••" readOnly="{{yes}}" inputMode="numeric"></div>
+                </div>
+                <sc-if value="{{payNormal}}" hint-placeholder-val="{{yes}}">
+                  <button type="button" onClick="{{gatePay}}" style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 54px; border: 0; border-radius: 12px; background: #161C2D; color: #FFFFFF; font-size: 16px; font-weight: 700;">Pagar {{total}}</button>
+                </sc-if>
+                <sc-if value="{{isLoad}}" hint-placeholder-val="{{yes}}">
+                  <button type="button" aria-busy="true" disabled="{{yes}}" style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 54px; border: 0; border-radius: 12px; background: #161C2D; color: #FFFFFF; font-size: 16px; font-weight: 700; cursor: progress;"><span class="spin w"></span>Procesando pago…</button>
+                </sc-if>
+                <sc-if value="{{isRej}}" hint-placeholder-val="{{yes}}">
+                  <button type="button" onClick="{{retry}}" style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 54px; border: 0; border-radius: 12px; background: #161C2D; color: #FFFFFF; font-size: 16px; font-weight: 700;">Usar otra tarjeta</button>
+                </sc-if>
+                <button type="button" onClick="{{cancel}}" style="min-height: 44px; border: 0; background: transparent; color: #161C2D; font-size: 14px; font-weight: 600; text-decoration: underline;">Cancelar y volver a EnvíaFácil</button>
+              </div>
+            </div>
+            <p style="max-width: 420px; margin: 14px auto 0; text-align: center; font-size: 12px; font-weight: 500; color: rgba(22,28,45,.72);">Al terminar vuelves solo a EnvíaFácil, donde te espera tu guía.</p>
+          </div>
+        </sc-if>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== Decisiones de diseño ===== -->
+  <section aria-labelledby="dec-t" style="background: #FFFFFF; border-top: 1.5px solid #D1D5DB;">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 64px 40px 80px;">
+      <p style="margin: 0 0 8px; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;">Para LAAR Courier</p>
+      <h2 id="dec-t" style="margin: 0 0 12px; font-size: 36px; font-weight: 800; line-height: 1.15;">Qué decidimos y por qué</h2>
+      <p style="margin: 0 0 40px; max-width: 760px; font-size: 16px; line-height: 1.6; color: rgba(22,28,45,.8);">El proceso es el mismo que tus clientes ya usan en WhatsApp. No agregamos pasos ni pedimos datos nuevos: le dimos forma de página para que se pueda cotizar, armar el envío y pagar desde laarcourier.com.</p>
+
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-bottom: 40px;">
+        <div style="background: #161C2D; color: #FFFFFF; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 14px;">
+          <h3 style="margin: 0; font-size: 20px; font-weight: 700; color: #FCE200;">Vive dentro de tu sitio, no en un iframe</h3>
+          <p style="margin: 0; font-size: 15px; line-height: 1.6;">EnvíaFácil tiene su propia dirección, laarcourier.com/enviafacil, con la cabecera de LAAR arriba. Esa misma dirección va en los anuncios. Desde el sitio principal se entra por un botón amarillo en el menú y por una franja en la portada:</p>
+          <div aria-hidden="true" style="background: #FFFFFF; border-radius: 10px; overflow: hidden; color: #161C2D;">
+            <div style="background: #161C2D; border-bottom: 1px solid rgba(209,213,219,.3); color: #FFFFFF; padding: 10px 14px; display: flex; align-items: center; gap: 14px; font-size: 11px;">
+              <span style="font-weight: 800;">LAAR<span style="color: #FCE200;">COURIER</span></span>
+              <span style="flex-grow: 1;">Inicio · Servicios · Rastrea tu guía</span>
+              <span style="background: #FCE200; color: #161C2D; font-weight: 700; padding: 4px 10px; border-radius: 999px;">EnvíaFácil</span>
+            </div>
+            <div style="padding: 14px; display: flex; flex-direction: column; gap: 10px;">
+              <div style="height: 34px; border-radius: 6px; background: #E5E7EB; display: flex; align-items: center; padding: 0 12px; font-size: 11px; font-weight: 500; color: rgba(22,28,45,.6);">[Portada actual de laarcourier.com]</div>
+              <div style="background: #FCE200; border-radius: 8px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+                <span style="font-size: 13px; font-weight: 700;">¿Envías desde casa? Cotiza, paga y envía en 1 minuto.</span>
+                <span style="background: #161C2D; color: #FFFFFF; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 8px; white-space: nowrap;">Empieza aquí →</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="border: 1.5px solid #D1D5DB; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 12px;">
+          <h3 style="margin: 0; font-size: 20px; font-weight: 700;">Pensado para el teléfono</h3>
+          <p style="margin: 0; font-size: 15px; line-height: 1.6;">Casi todos llegan desde un anuncio en el celular. Por eso es una sola columna, con el botón principal al alcance del pulgar y de 54 px de alto. Los campos usan letra de 16 px para que el teléfono no haga zoom al escribir, y los números abren el teclado numérico (celular, cédula, peso, valor).</p>
+          <p style="margin: 0; font-size: 15px; line-height: 1.6;">En escritorio el formulario queda a la izquierda y el resumen del envío se queda fijo a la derecha, con el total siempre a la vista.</p>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px;">
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <span style="width: 32px; height: 32px; border-radius: 50%; background: #FCE200; font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center;">1</span>
+          <h3 style="margin: 4px 0 0; font-size: 17px; font-weight: 700;">Mismo orden que WhatsApp</h3>
+          <p style="margin: 0; font-size: 14px; line-height: 1.6; color: rgba(22,28,45,.8);">Quien ya envió por el bot reconoce cada paso. Lo cotizado viaja contigo: el celular de la cotización aparece ya lleno en el remitente.</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <span style="width: 32px; height: 32px; border-radius: 50%; background: #FCE200; font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center;">2</span>
+          <h3 style="margin: 4px 0 0; font-size: 17px; font-weight: 700;">Siempre sabes dónde vas</h3>
+          <p style="margin: 0; font-size: 14px; line-height: 1.6; color: rgba(22,28,45,.8);">Una barra de 6 tramos y el texto “Paso 3 de 6 · Remitente”. Volver atrás está siempre arriba a la izquierda, sin perder lo escrito.</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <span style="width: 32px; height: 32px; border-radius: 50%; background: #FCE200; font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center;">3</span>
+          <h3 style="margin: 4px 0 0; font-size: 17px; font-weight: 700;">El amarillo es para actuar</h3>
+          <p style="margin: 0; font-size: 14px; line-height: 1.6; color: rgba(22,28,45,.8);">Un solo botón amarillo por pantalla: el siguiente paso. El titular grande amarillo sobre azul, como en tus anuncios, solo en la entrada. Lo demás es un formulario tranquilo.</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <span style="width: 32px; height: 32px; border-radius: 50%; background: #FCE200; font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center;">4</span>
+          <h3 style="margin: 4px 0 0; font-size: 17px; font-weight: 700;">Errores sin rojo</h3>
+          <p style="margin: 0; font-size: 14px; line-height: 1.6; color: rgba(22,28,45,.8);">Tu paleta no tiene rojo y no lo agregamos. Un error se marca con borde azul grueso, franja amarilla, ícono y una frase que dice cómo corregirlo. No depende del color, así que también lo ve quien no distingue colores.</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <span style="width: 32px; height: 32px; border-radius: 50%; background: #FCE200; font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center;">5</span>
+          <h3 style="margin: 4px 0 0; font-size: 17px; font-weight: 700;">Texto que se lee al sol</h3>
+          <p style="margin: 0; font-size: 14px; line-height: 1.6; color: rgba(22,28,45,.8);">El gris medio no se lee sobre blanco en un celular afuera. Lo usamos en bordes y como texto sobre azul; sobre blanco, el texto secundario es el mismo azul profundo, más suave.</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <span style="width: 32px; height: 32px; border-radius: 50%; background: #FCE200; font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center;">6</span>
+          <h3 style="margin: 4px 0 0; font-size: 17px; font-weight: 700;">Verde solo para WhatsApp</h3>
+          <p style="margin: 0; font-size: 14px; line-height: 1.6; color: rgba(22,28,45,.8);">Cada pantalla tiene una salida a WhatsApp para pedir ayuda, y es lo único verde. Cuando una ciudad no tiene cobertura, esa salida sube al lugar del problema.</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <span style="width: 32px; height: 32px; border-radius: 50%; background: #FCE200; font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center;">7</span>
+          <h3 style="margin: 4px 0 0; font-size: 17px; font-weight: 700;">El pago se anuncia</h3>
+          <p style="margin: 0; font-size: 14px; line-height: 1.6; color: rgba(22,28,45,.8);">Antes de salir a la pasarela lo decimos: “Vas a la página segura de pago y vuelves aquí”. Al volver, la persona aterriza directo en su guía. Si el banco rechaza, se dice que no hubo cobro.</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <span style="width: 32px; height: 32px; border-radius: 50%; background: #FCE200; font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center;">8</span>
+          <h3 style="margin: 4px 0 0; font-size: 17px; font-weight: 700;">La promesa con su condición</h3>
+          <p style="margin: 0; font-size: 14px; line-height: 1.6; color: rgba(22,28,45,.8);">“¡Recolectamos el mismo día!” aparece siempre con “hasta las 12h00” al lado. Así nadie se siente engañado si paga a las 3 de la tarde.</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <span style="width: 32px; height: 32px; border-radius: 50%; background: #FCE200; font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center;">9</span>
+          <h3 style="margin: 4px 0 0; font-size: 17px; font-weight: 700;">El precio, primero y grande</h3>
+          <p style="margin: 0; font-size: 14px; line-height: 1.6; color: rgba(22,28,45,.8);">Es lo que la persona vino a saber. Lo mostramos en grande, con IVA incluido, y con el detalle debajo para quien lo quiera revisar.</p>
+        </div>
+      </div>
+
+      <div style="margin-top: 48px; padding: 24px 28px; border-radius: 16px; background: #E5E7EB;">
+        <h3 style="margin: 0 0 10px; font-size: 17px; font-weight: 700;">Por confirmar con LAAR antes de construir</h3>
+        <p style="margin: 0; font-size: 14px; line-height: 1.7;">Logotipos oficiales de EnvíaFácil y LAARCOURIER en vector (aquí van como texto en Poppins) · La pasarela de pago que se va a usar · Tarifas reales: los precios de esta propuesta son de ejemplo · Lista de ciudades con cobertura para el mensaje de “aún no llegamos”.</p>
+      </div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2700}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { s: 1, mode: 'm', multi: false, v: 'normal', d: 0, doc: 'paquete', entry: 'env' };
+  }
+  renderVals() {
+    const st = this.state;
+    const s = st.s;
+    const v = st.v;
+    const isM = st.mode === 'm';
+    const isD = !isM;
+    const noop = () => {};
+    const go = (n) => () => this.setState({ s: n, v: 'normal', d: 0 });
+
+    const names = ['Entrada', 'Cotizador', 'Precio', 'Tipo de envío', 'Remitente', 'Destinatario', 'Confirmación', 'Pago', 'Listo'];
+    const caps = [
+      'Llega desde el anuncio. Dos caminos, uno por intención: saber el precio o enviar ya.',
+      'Los mismos datos que pide el bot, en el mismo orden. Prueba los estados de error, sin cobertura y cargando.',
+      'El precio primero y en grande. Lo cotizado sigue contigo.',
+      'Un destino o varios. Prueba elegir “Varios destinos” y sigue hasta el destinatario.',
+      'Quién envía. El celular ya viene lleno desde la cotización.',
+      'Quién recibe. En multienvíos, una pestaña por destino.',
+      'Todo en una vista antes de pagar, con el total y la salida al pago.',
+      'Página de la pasarela, referencial. Aquí solo definimos la salida y el regreso.',
+      'Número de guía, número de recolección y la etiqueta en PDF.'
+    ];
+    const chips = names.map((label, i) => {
+      const on = i + 1 === s;
+      return { num: String(i + 1), label: label, pick: go(i + 1), bg: on ? '#FCE200' : '#FFFFFF', bd: on ? '#161C2D' : '#D1D5DB', cur: on ? 'step' : 'false' };
+    });
+
+    const VB = {
+      2: [['normal', 'Normal'], ['err', 'Campo con error'], ['nocov', 'Ciudad sin cobertura'], ['load', 'Botón cargando']],
+      5: [['normal', 'Normal'], ['err', 'Campo con error']],
+      7: [['normal', 'Normal'], ['load', 'Botón cargando']],
+      8: [['normal', 'Normal'], ['load', 'Procesando'], ['rej', 'Pago rechazado']]
+    };
+    const variants = (VB[s] || []).map((p) => ({
+      label: p[1], pick: () => this.setState({ v: p[0] }),
+      bg: v === p[0] ? '#161C2D' : '#FFFFFF', fg: v === p[0] ? '#FFFFFF' : '#161C2D', pressed: v === p[0] ? 'true' : 'false'
+    }));
+
+    const SM = { 2: 1, 3: 1, 4: 2, 5: 3, 6: 4, 7: 5, 8: 6 };
+    const SN = ['Cotiza', 'Envío', 'Remitente', 'Destinatario', 'Confirma', 'Paga'];
+    const cur = SM[s] || 0;
+    const segs = SN.map((n, i) => ({ bg: i < cur ? '#161C2D' : '#E5E7EB' }));
+
+    const dests = [
+      { city: 'Guayaquil', name: 'Carlos Alberto Mendoza Loor', id: '0923456781', mail: 'carlos.mendoza@hotmail.com', cel: '0991 234 567', dir: 'Urdesa Central, Circunvalación Sur 214 y Todos los Santos', ref: 'Casa esquinera de rejas blancas', what: 'Paquete 3 kg', price: '$7,88', guia: '7004 3189 25' },
+      { city: 'Cuenca', name: 'Ana Lucía Pesántez Ordóñez', id: '0104567893', mail: 'analu.pesantez@gmail.com', cel: '0998 765 012', dir: 'Av. Remigio Crespo Toral 3-45 y Av. Solano', ref: 'Edificio crema junto a la farmacia, 2.º piso', what: 'Paquete 2 kg', price: '$6,79', guia: '7004 3189 26' }
+    ];
+    const multi = st.multi;
+    const dIdx = multi ? st.d : 0;
+    const list = multi ? dests : [dests[0]];
+    const total = multi ? '$14,67' : '$7,88';
+
+    const isErr = v === 'err', isLoad = v === 'load', isNoCov = v === 'nocov', isRej = v === 'rej';
+    const errBorder = '2px solid #161C2D', offBorder = '1.5px solid #D1D5DB';
+
+    return {
+      yes: true,
+      s1: s === 1, s2: s === 2, s3: s === 3, s4: s === 4, s5: s === 5, s6: s === 6, s7: s === 7, s8: s === 8, s9: s === 9,
+      isM: isM, isD: isD,
+      chips: chips,
+      capTitle: s + ' · ' + names[s - 1], caption: caps[s - 1],
+      hasVariants: variants.length > 0, variants: variants,
+      prev: s > 1 ? go(s - 1) : noop, next: s < 9 ? go(s + 1) : noop,
+      prevDis: s === 1, nextDis: s === 9,
+      setM: () => this.setState({ mode: 'm' }), setD: () => this.setState({ mode: 'd' }),
+      mBg: isM ? '#FCE200' : '#FFFFFF', dBg: isD ? '#FCE200' : '#FFFFFF',
+      mPressed: isM ? 'true' : 'false', dPressed: isD ? 'true' : 'false',
+      url: s === 8 ? 'pagos.[pasarela].com/checkout' : 'laarcourier.com/enviafacil',
+      frameStyle: isM
+        ? 'width: 395px; padding: 10px; background: #161C2D; border-radius: 44px; box-shadow: 0 24px 60px rgba(22,28,45,.22);'
+        : 'width: 1280px; background: #FFFFFF; border-radius: 14px; border: 1px solid #D1D5DB; overflow: hidden; box-shadow: 0 24px 60px rgba(22,28,45,.16);',
+      screenStyle: isM ? 'border-radius: 34px; min-height: 780px;' : 'min-height: 820px;',
+      notGate: s !== 8,
+      barStyle: isD ? 'padding: 0 40px;' : 'padding: 0 20px;',
+      showAside: isD && s >= 2 && s <= 7,
+      wrapStyle: s === 1 ? 'display: block;'
+        : (isD
+          ? ((s >= 2 && s <= 7)
+            ? 'display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 56px; max-width: 1080px; margin: 0 auto; padding: 40px 40px 56px; align-items: start;'
+            : 'display: block; max-width: 560px; margin: 0 auto; padding: 48px 40px 64px;')
+          : 'display: block; padding: 20px 20px 28px;'),
+      heroStyle: isD ? 'flex-direction: row; align-items: center; padding: 72px 80px; gap: 56px;' : 'flex-direction: column; padding: 32px 20px 28px; gap: 20px;',
+      artStyle: isD ? 'width: 400px;' : 'width: 100%; max-width: 280px; align-self: center;',
+      promiseStyle: isD ? 'display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; padding: 32px 80px;' : 'display: flex; flex-direction: column; gap: 18px; padding: 24px 20px;',
+      footStyle: isD ? 'padding: 16px 40px;' : 'padding: 14px 20px 20px;',
+      gateStyle: isD ? 'min-height: 820px; padding: 64px 40px;' : 'min-height: 780px; padding: 28px 14px;',
+      heroH1: isD ? '60px' : '40px',
+      h1: isD ? '30px' : '24px',
+      startEnv: () => this.setState({ s: 2, v: 'normal', entry: 'env' }),
+      startCot: () => this.setState({ s: 2, v: 'normal', entry: 'cot' }),
+      showProg: s >= 2 && s <= 7,
+      stepLabel: cur ? ('Paso ' + cur + ' de 6 · ' + SN[cur - 1]) : '',
+      segs: segs,
+      showMini: isM && s >= 3 && s <= 6,
+      routeLabel: multi ? 'Quito → Guayaquil, Cuenca' : 'Quito → Guayaquil',
+      whatLabel: multi ? 'Paquetes 3 kg y 2 kg' : 'Paquete 3 kg',
+      countLabel: multi ? '2 envíos' : '1 envío',
+      afterQuote: s >= 3,
+      total: total,
+      showBack: s >= 2 && s <= 7,
+      back: s > 1 ? go(s - 1) : noop,
+      s2Title: st.entry === 'cot' ? 'Cotiza tu envío' : 'Arma tu envío',
+      isErr: isErr, notErr: !isErr, isLoad: isLoad, notLoad: !isLoad, isNoCov: isNoCov, isRej: isRej,
+      payNormal: v === 'normal',
+      errAria: isErr ? 'true' : 'false', noCovAria: isNoCov ? 'true' : 'false',
+      celVal: isErr ? '098765432' : '0987 654 321', celCls: isErr ? 'err' : '',
+      destCity: isNoCov ? 'Nuevo Rocafuerte' : 'Guayaquil', destCls: isNoCov ? 'err' : '',
+      btnReady2: !isLoad && !isNoCov,
+      toPrice: v === 'normal' ? go(3) : noop,
+      docPick: () => this.setState({ doc: 'documento' }), paqPick: () => this.setState({ doc: 'paquete' }),
+      docBg: st.doc === 'documento' ? '#161C2D' : '#FFFFFF', docFg: st.doc === 'documento' ? '#FFFFFF' : '#161C2D',
+      paqBg: st.doc === 'paquete' ? '#161C2D' : '#FFFFFF', paqFg: st.doc === 'paquete' ? '#FFFFFF' : '#161C2D',
+      docPressed: st.doc === 'documento' ? 'true' : 'false', paqPressed: st.doc === 'paquete' ? 'true' : 'false',
+      toTipo: go(4), cambiar: go(2),
+      pickOne: () => this.setState({ multi: false }), pickMulti: () => this.setState({ multi: true }),
+      onePressed: multi ? 'false' : 'true', multiPressed: multi ? 'true' : 'false',
+      oneBorder: multi ? offBorder : errBorder, multiBorder: multi ? errBorder : offBorder,
+      oneDot: multi ? 'transparent' : '#161C2D', multiDot: multi ? '#161C2D' : 'transparent',
+      isMulti: multi,
+      toRem: go(5),
+      mailVal: isErr ? 'mjandrade@gmail' : 'mjandrade@gmail.com', mailCls: isErr ? 'err' : '',
+      toDest: go(6),
+      dest: dests[dIdx],
+      dTabs: dests.map((x, i) => ({ label: 'Destino ' + (i + 1) + ' · ' + x.city, pick: () => this.setState({ d: i }), bg: i === dIdx ? '#161C2D' : '#FFFFFF', fg: i === dIdx ? '#FFFFFF' : '#161C2D', sel: i === dIdx ? 'true' : 'false' })),
+      toConf: go(7),
+      envios: list.map((x, i) => ({ tag: multi ? ('Entrega ' + (i + 1) + ' de 2') : 'Entrega', name: x.name, dir: x.dir, city: x.city, what: x.what, price: x.price })),
+      editRem: go(5), editDest: go(6),
+      pay: v === 'normal' ? go(8) : noop,
+      gatePay: go(9),
+      retry: () => this.setState({ v: 'normal' }),
+      cancel: go(7),
+      guias: list.map((x) => ({ city: x.city, num: x.guia })),
+      firstGuia: dests[0].guia, firstCityUp: 'GUAYAQUIL',
+      nuevo: () => this.setState({ s: 1, v: 'normal', d: 0, multi: false })
+    };
+  }
+}
+</script>
+</body>
+</html>
