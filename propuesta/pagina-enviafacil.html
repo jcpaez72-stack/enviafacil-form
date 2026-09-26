@@ -199,8 +199,8 @@ h2{margin:0;font-size:36px;line-height:1.14;font-weight:700;letter-spacing:-.02e
     <stop offset="100%" stop-color="#F6EBD8"/>
   </radialGradient>
   <linearGradient id="gorra" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%"  stop-color="#3C3C46"/>
-    <stop offset="100%" stop-color="#1B1B21"/>
+    <stop offset="0%"  stop-color="#5A5A68"/>
+    <stop offset="100%" stop-color="#2B2B34"/>
   </linearGradient>
   <radialGradient id="halo" cx="50%" cy="46%" r="52%">
     <stop offset="0%"  stop-color="#FCE200" stop-opacity=".22"/>
@@ -221,86 +221,111 @@ h2{margin:0;font-size:36px;line-height:1.14;font-weight:700;letter-spacing:-.02e
   <filter id="difuso"><feGaussianBlur stdDeviation="10"/></filter>
   <filter id="difusito"><feGaussianBlur stdDeviation="4"/></filter>
 
-  <!-- ░░ Cuerpo entero ░░ -->
-  <symbol id="muse" viewBox="0 0 520 590">
-    <ellipse cx="260" cy="280" rx="258" ry="292" fill="url(#halo)"/>
+  <!-- ░░ Cuerpo entero ░░
+       Proporciones tomadas de la referencia: capucha ancha y baja, cuerpo
+       MUCHO más ancho que la cabeza (1,45×), patitas cortas que asoman.  -->
+  <symbol id="muse" viewBox="0 0 540 720">
+    <ellipse cx="270" cy="350" rx="270" ry="360" fill="url(#halo)"/>
 
-    <!-- patitas -->
+    <!-- patitas: asoman por debajo -->
     <g filter="url(#pelusa)" fill="url(#lana)">
-      <ellipse cx="206" cy="510" rx="54" ry="31"/>
-      <ellipse cx="314" cy="510" rx="54" ry="31"/>
+      <rect x="152" y="540" width="80" height="130" rx="40"/>
+      <rect x="308" y="540" width="80" height="130" rx="40"/>
     </g>
-    <!-- capucha y cuerpo: UNA sola silueta continua, como el peluche -->
+    <!-- cuerpo: el ancho es lo que hace la silueta -->
     <g filter="url(#pelusa)" fill="url(#lana)">
-      <path d="M260 50c92 0 154 64 154 158 0 34-10 56-10 74 46 24 62 72 62 116 0 66-92 106-206 106
-               S54 464 54 398c0-44 16-92 62-116 0-18-10-40-10-74C106 114 168 50 260 50z"/>
+      <ellipse cx="270" cy="420" rx="218" ry="180"/>
+    </g>
+    <!-- capucha -->
+    <g filter="url(#pelusa)" fill="url(#lana)">
+      <ellipse cx="270" cy="182" rx="148" ry="146"/>
     </g>
 
     <!-- rostro -->
-    <rect x="150" y="130" width="220" height="188" rx="94" fill="url(#rostro)"/>
+    <rect x="165" y="100" width="210" height="180" rx="82" fill="url(#rostro)"/>
     <!-- cachetes -->
     <g filter="url(#difuso)" opacity=".8">
-      <ellipse cx="180" cy="254" rx="25" ry="19" fill="#F0A296"/>
-      <ellipse cx="340" cy="254" rx="25" ry="19" fill="#F0A296"/>
+      <ellipse cx="192" cy="204" rx="26" ry="19" fill="#F0A296"/>
+      <ellipse cx="348" cy="204" rx="26" ry="19" fill="#F0A296"/>
     </g>
     <!-- ojos -->
-    <ellipse cx="212" cy="218" rx="17.5" ry="20.5" fill="#1B1B21"/>
-    <ellipse cx="308" cy="218" rx="17.5" ry="20.5" fill="#1B1B21"/>
-    <circle cx="218" cy="210" r="5.6" fill="#fff"/>
-    <circle cx="314" cy="210" r="5.6" fill="#fff"/>
+    <ellipse cx="222" cy="170" rx="18" ry="21" fill="#1B1B21"/>
+    <ellipse cx="318" cy="170" rx="18" ry="21" fill="#1B1B21"/>
+    <circle cx="228" cy="162" r="5.8" fill="#fff"/>
+    <circle cx="324" cy="162" r="5.8" fill="#fff"/>
     <!-- sonrisa -->
-    <path d="M240 260q20 17 40 0" stroke="#4A3428" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+    <path d="M248 212q22 19 44 0" stroke="#4A3428" stroke-width="5.5" fill="none" stroke-linecap="round"/>
 
     <!-- gorra LAARCOURIER -->
-    <path d="M128 150C128 72 186 34 260 34s132 38 132 116z" fill="url(#gorra)"/>
-    <path d="M152 108c22-38 78-54 128-46-42 2-96 18-118 52z" fill="#50505C" opacity=".55"/>
-    <ellipse cx="260" cy="150" rx="152" ry="27" fill="#16161C"/>
-    <path d="M170 106c40-28 146-28 184-4" stroke="#FCE200" stroke-width="11"
+    <path d="M140 104C140 42 194 16 270 16s130 26 130 88z" fill="url(#gorra)"
+          stroke="rgba(255,255,255,.22)" stroke-width="2.5"/>
+    <path d="M164 66c22-34 78-48 126-40-40 2-92 16-112 46z" fill="#787888" opacity=".45"/>
+    <ellipse cx="270" cy="104" rx="140" ry="25" fill="#22222A"
+             stroke="rgba(255,255,255,.16)" stroke-width="2"/>
+    <path d="M182 62c38-26 140-26 176-4" stroke="#FCE200" stroke-width="11"
           fill="none" stroke-linecap="round"/>
 
-    <!-- el logo de EnvíaFácil, abrazado -->
-    <path d="M182 312h156a24 24 0 0 1 24 24v82a24 24 0 0 1-24 24H228l-44 36v-36h-2a24 24 0 0 1-24-24
-             v-82a24 24 0 0 1 24-24z" fill="#FCE200"/>
-    <circle cx="222" cy="377" r="15" fill="#1C1C21"/>
-    <circle cx="260" cy="377" r="15" fill="#1C1C21"/>
-    <circle cx="298" cy="377" r="15" fill="#1C1C21"/>
+    <!-- el logo de EnvíaFácil, abrazado sobre la barriga -->
+    <path d="M186 292h168a26 26 0 0 1 26 26v88a26 26 0 0 1-26 26H240l-46 38v-38h-8a26 26 0 0 1-26-26
+             v-88a26 26 0 0 1 26-26z" fill="#FCE200"/>
+    <circle cx="228" cy="362" r="17" fill="#1C1C21"/>
+    <circle cx="270" cy="362" r="17" fill="#1C1C21"/>
+    <circle cx="312" cy="362" r="17" fill="#1C1C21"/>
 
     <!-- manoplas, encima del logo: lo está sosteniendo -->
     <g filter="url(#pelusa)" fill="url(#lana)">
-      <ellipse cx="148" cy="392" rx="48" ry="42"/>
-      <ellipse cx="372" cy="392" rx="48" ry="42"/>
+      <ellipse cx="146" cy="408" rx="52" ry="46"/>
+      <ellipse cx="394" cy="408" rx="52" ry="46"/>
     </g>
 
     <!-- va rápido: rayitas y un paquetito -->
-    <g stroke="#FCE200" stroke-width="9" stroke-linecap="round" opacity=".55">
-      <path d="M22 236h56"/><path d="M4 278h62"/><path d="M30 320h44"/>
+    <g stroke="#FCE200" stroke-width="9" stroke-linecap="round" opacity=".5">
+      <path d="M26 212h54"/><path d="M8 254h60"/><path d="M34 296h42"/>
     </g>
     <g opacity=".9">
-      <polygon points="466,96 500,112 466,128 432,112" fill="#FCE200"/>
-      <polygon points="432,112 466,128 466,160 432,144" fill="#FFF8EA"/>
-      <polygon points="466,128 500,112 500,144 466,160" fill="#D9CBB2"/>
+      <polygon points="486,72 518,88 486,104 454,88" fill="#FCE200"/>
+      <polygon points="454,88 486,104 486,136 454,120" fill="#FFF8EA"/>
+      <polygon points="486,104 518,88 518,120 486,136" fill="#D9CBB2"/>
+    </g>
+  </symbol>
+
+  <!-- ░░ La silueta sola ░░ -->
+  <symbol id="muse-silueta" viewBox="0 0 540 720">
+    <g filter="url(#pelusa)" fill="currentColor">
+      <rect x="152" y="540" width="80" height="130" rx="40"/>
+      <rect x="308" y="540" width="80" height="130" rx="40"/>
+      <ellipse cx="270" cy="420" rx="218" ry="180"/>
+      <ellipse cx="270" cy="182" rx="148" ry="146"/>
+      <ellipse cx="146" cy="408" rx="52" ry="46"/>
+      <ellipse cx="394" cy="408" rx="52" ry="46"/>
+    </g>
+    <g fill="currentColor">
+      <path d="M140 104C140 42 194 16 270 16s130 26 130 88z"/>
+      <ellipse cx="270" cy="104" rx="140" ry="25"/>
     </g>
   </symbol>
 
   <!-- ░░ Solo cara y hombros, para el círculo de acceso ░░ -->
   <symbol id="muse-cara" viewBox="0 0 200 200">
     <g filter="url(#pelusilla)" fill="url(#lana)">
-      <ellipse cx="100" cy="188" rx="86" ry="56"/>
-      <ellipse cx="100" cy="104" rx="72" ry="70"/>
+      <ellipse cx="100" cy="196" rx="94" ry="62"/>
+      <ellipse cx="100" cy="106" rx="70" ry="69"/>
     </g>
-    <rect x="48" y="66" width="104" height="90" rx="45" fill="url(#rostro)"/>
+    <rect x="52" y="68" width="96" height="86" rx="40" fill="url(#rostro)"/>
     <g filter="url(#difusito)" opacity=".8">
-      <ellipse cx="62" cy="124" rx="12" ry="9" fill="#F0A296"/>
-      <ellipse cx="138" cy="124" rx="12" ry="9" fill="#F0A296"/>
+      <ellipse cx="66" cy="122" rx="12" ry="9" fill="#F0A296"/>
+      <ellipse cx="134" cy="122" rx="12" ry="9" fill="#F0A296"/>
     </g>
-    <ellipse cx="80" cy="106" rx="8.5" ry="10" fill="#1B1B21"/>
-    <ellipse cx="120" cy="106" rx="8.5" ry="10" fill="#1B1B21"/>
-    <circle cx="83" cy="102" r="2.8" fill="#fff"/>
-    <circle cx="123" cy="102" r="2.8" fill="#fff"/>
-    <path d="M92 128q8 8 16 0" stroke="#4A3428" stroke-width="3" fill="none" stroke-linecap="round"/>
-    <path d="M36 76C36 38 64 20 100 20s64 18 64 56z" fill="url(#gorra)"/>
-    <ellipse cx="100" cy="76" rx="74" ry="13" fill="#16161C"/>
-    <path d="M58 54c20-14 72-14 90-2" stroke="#FCE200" stroke-width="5.5"
+    <ellipse cx="82" cy="104" rx="8.5" ry="10" fill="#1B1B21"/>
+    <ellipse cx="118" cy="104" rx="8.5" ry="10" fill="#1B1B21"/>
+    <circle cx="85" cy="100" r="2.8" fill="#fff"/>
+    <circle cx="121" cy="100" r="2.8" fill="#fff"/>
+    <path d="M92 126q8 8 16 0" stroke="#4A3428" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M38 70C38 34 66 16 100 16s62 18 62 54z" fill="url(#gorra)"
+          stroke="rgba(255,255,255,.24)" stroke-width="2"/>
+    <ellipse cx="100" cy="70" rx="68" ry="12" fill="#22222A"
+             stroke="rgba(255,255,255,.18)" stroke-width="1.6"/>
+    <path d="M60 50c18-13 66-13 84-2" stroke="#FCE200" stroke-width="5.5"
           fill="none" stroke-linecap="round"/>
   </symbol>
 
@@ -370,7 +395,7 @@ h2{margin:0;font-size:36px;line-height:1.14;font-weight:700;letter-spacing:-.02e
   <!-- El muñeco de EnvíaFácil · dibujo de referencia, hace falta el archivo real -->
   <div class="hero-art">
     <div class="piso"></div>
-    <svg width="380" viewBox="0 0 520 590" role="img" aria-label="El personaje de EnvíaFácil">
+    <svg width="360" viewBox="0 0 540 720" role="img" aria-label="El personaje de EnvíaFácil">
       <use href="#muse"/>
     </svg>
   </div>
@@ -400,8 +425,17 @@ h2{margin:0;font-size:36px;line-height:1.14;font-weight:700;letter-spacing:-.02e
      subirse a esa ola con un personaje propio.</p>
 
   <div class="personaje">
-    <div class="retrato"><svg viewBox="0 0 520 590" role="img"
-      aria-label="El personaje de EnvíaFácil"><use href="#muse"/></svg></div>
+    <div class="retratos">
+      <div class="retrato">
+        <svg viewBox="0 0 540 720" role="img" aria-label="El personaje de EnvíaFácil"><use href="#muse"/></svg>
+        <span class="pieP">el personaje</span>
+      </div>
+      <div class="retrato claro">
+        <svg viewBox="0 0 540 720" role="img" aria-label="La silueta del personaje"
+             style="color:#1C1C21"><use href="#muse-silueta"/></svg>
+        <span class="pieP">la silueta sola</span>
+      </div>
+    </div>
 
     <div class="rasgos">
       <div class="rasgo">
@@ -439,12 +473,17 @@ h2{margin:0;font-size:36px;line-height:1.14;font-weight:700;letter-spacing:-.02e
 </div></section>
 
 <style>
-.personaje{display:grid;grid-template-columns:.9fr 1.1fr;gap:44px;align-items:center;margin-top:48px}
-.retrato{background:
+.personaje{display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center;margin-top:48px}
+.retratos{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.retrato{position:relative;background:
     radial-gradient(ellipse 62% 58% at 50% 46%, rgba(120,120,30,.5) 0%, rgba(78,78,28,0) 64%),
     var(--carbon);
-  border-radius:22px;padding:26px;display:flex;justify-content:center}
-.retrato svg{max-width:330px}
+  border-radius:22px;padding:24px 18px 40px;display:flex;justify-content:center}
+.retrato.claro{background:#fff;border:1px solid var(--gris-linea)}
+.retrato svg{max-width:100%}
+.pieP{position:absolute;bottom:14px;left:0;right:0;text-align:center;font-size:11px;
+  font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:#8A8F98}
+.retrato:not(.claro) .pieP{color:#7C8088}
 .rasgos{display:grid;gap:22px}
 .rasgo h3{margin:0 0 5px;font-size:17.5px;font-weight:700}
 .rasgo p{margin:0;font-size:14.5px;color:var(--gris-texto)}
