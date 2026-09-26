@@ -3,20 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>EnvíaFácil · propuesta de diseño de la página</title>
+<title>EnvíaFácil · propuesta de diseño</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  /* Identidad medida en laarcourier.com el 25-sep-2026 */
-  --amarillo:#FCE200;        /* rgb(252,226,0) — el color de ACTUAR */
-  --amarillo-oscuro:#E0C900;
-  --verde:#4DC247;           /* rgb(77,194,71) — el verde de WhatsApp del sitio */
-  --verde-oscuro:#3DA838;
-  --tinta:#12161F;           /* fondo de autoridad */
-  --tinta-suave:#1B212E;
-  --negro:#000000;           /* el color de texto del sitio */
+  /* Medido en la página real de EnvíaFácil y en laarcourier.com — 25-sep-2026 */
+  --amarillo:#FCE200;
+  --amarillo-oscuro:#E3CC00;
+  --carbon:#17171A;          /* el fondo de la página de EnvíaFácil */
+  --carbon-nav:#2B2B2B;      /* su barra superior */
+  --oliva:#4E4E1C;           /* el resplandor verde oliva del hero */
+  --negro:#000000;
   --gris-texto:#5A6170;
   --gris-linea:#E5E7EB;
   --gris-fondo:#F7F8FA;
@@ -24,86 +23,113 @@
   --max:1180px;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  margin:0;font-family:Poppins,sans-serif;color:var(--negro);
-  background:var(--blanco);-webkit-font-smoothing:antialiased;line-height:1.55;
-}
+body{margin:0;font-family:Poppins,sans-serif;color:var(--negro);background:#fff;
+  -webkit-font-smoothing:antialiased;line-height:1.55}
 .wrap{max-width:var(--max);margin:0 auto;padding:0 32px}
-img,svg{display:block;max-width:100%}
+svg{display:block;max-width:100%}
 
-/* ───────── Cinta de la propuesta (NO es parte del diseño) ───────── */
-.meta{background:#101319;color:#fff;padding:14px 0;font-size:13px}
+/* ───────── Cinta de la propuesta · NO es parte del diseño ───────── */
+.meta{background:#0C0E12;color:#fff;padding:13px 0;font-size:13px}
 .meta .wrap{display:flex;gap:18px;align-items:baseline;flex-wrap:wrap}
-.meta strong{font-weight:600}
-.meta span{color:#9AA1AE}
+.meta strong{font-weight:600}.meta span{color:#9AA1AE}
+.meta code{color:var(--amarillo);font-size:12.5px}
 
-/* ───────── Cabecera de laarcourier.com (se conserva igual) ───────── */
-.laar-nav{border-bottom:1px solid var(--gris-linea);background:#fff}
-.laar-nav .wrap{display:flex;align-items:center;gap:28px;height:74px}
-.marca{display:flex;align-items:center;gap:10px;flex-shrink:0}
-.marca-caja{width:44px;height:44px;border-radius:8px;background:var(--amarillo);
-  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:19px}
-.marca-txt{font-weight:700;font-size:15px;letter-spacing:.02em}
-.laar-nav ul{display:flex;gap:22px;list-style:none;margin:0;padding:0;
-  font-size:12.5px;font-weight:600;letter-spacing:.04em;color:#3A4049}
-.laar-nav .ingresar{margin-left:auto;border:1.5px solid var(--negro);border-radius:6px;
-  padding:8px 18px;font-size:12.5px;font-weight:600;letter-spacing:.04em}
+/* ───────── Barra del sitio (como está hoy) ───────── */
+.nav{background:var(--carbon-nav)}
+.nav .wrap{display:flex;align-items:center;height:78px;gap:28px}
+.nav ul{display:flex;gap:22px;list-style:none;margin:0 0 0 auto;padding:0;
+  font-size:12.5px;font-weight:600;letter-spacing:.05em;color:#D8D8D8}
 
-/* ───────── Portada del servicio ───────── */
-.hero{background:var(--tinta);color:#fff;position:relative;overflow:hidden}
-.hero .wrap{display:grid;grid-template-columns:1.12fr .88fr;gap:56px;
-  align-items:center;padding:78px 32px 74px}
-.eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:11.5px;font-weight:600;
-  letter-spacing:.14em;color:var(--amarillo);margin:0 0 22px}
-.eyebrow::before{content:"";width:26px;height:2px;background:var(--amarillo)}
-h1{margin:0;font-size:57px;line-height:1.02;font-weight:800;letter-spacing:-.025em}
+/* ───────── Portada ───────── */
+.hero{
+  background:
+    radial-gradient(ellipse 70% 62% at 26% 42%, rgba(120,120,30,.55) 0%, rgba(78,78,28,0) 62%),
+    var(--carbon);
+  color:#fff;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:1.28fr .72fr;gap:40px;
+  align-items:center;padding:72px 32px 78px}
+.logo-ef{display:flex;align-items:center;gap:14px;margin-bottom:26px}
+.logo-ef .palabra{font-size:34px;font-weight:700;letter-spacing:-.01em;line-height:1}
+.logo-ef .palabra b{color:var(--amarillo);font-weight:700}
+h1{margin:0;font-size:60px;line-height:1.02;font-weight:800;letter-spacing:-.03em}
 h1 em{font-style:normal;color:var(--amarillo)}
-.bajada{margin:22px 0 0;font-size:18.5px;line-height:1.5;color:#D4D8E0;max-width:29em}
+.bajada{margin:24px 0 0;font-size:19px;line-height:1.5;color:#C9CBD2;max-width:25em}
 
-.acciones{display:flex;gap:14px;margin:34px 0 0;flex-wrap:wrap}
-.btn{display:inline-flex;flex-direction:column;justify-content:center;gap:2px;
-  min-width:245px;min-height:66px;padding:12px 26px;border:none;border-radius:10px;
-  font-family:inherit;text-decoration:none;color:var(--negro);cursor:pointer;
-  transition:transform .12s ease, box-shadow .12s ease}
-.btn b{font-size:16.5px;font-weight:700;line-height:1.2}
-.btn small{font-size:12.5px;font-weight:500;opacity:.78}
-.btn:hover{transform:translateY(-1px)}
-.btn-web{background:var(--amarillo)}
-.btn-web:hover{background:var(--amarillo-oscuro)}
-.btn-wa{background:var(--verde);color:#fff}
-.btn-wa:hover{background:var(--verde-oscuro)}
-.btn-fila{display:flex;align-items:center;gap:10px}
-.btn-fila b{white-space:nowrap}
-
-.tranquiliza{display:flex;gap:26px;margin:30px 0 0;flex-wrap:wrap;
-  font-size:13.5px;color:#AEB4C0}
+.pills{display:flex;gap:16px;margin:38px 0 0;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:11px;min-height:64px;padding:0 26px;
+  border:none;border-radius:999px;background:var(--amarillo);color:var(--negro);
+  font-family:inherit;font-size:16px;font-weight:700;text-decoration:none;cursor:pointer;white-space:nowrap;
+  box-shadow:0 0 34px rgba(252,226,0,.34);transition:transform .12s,box-shadow .12s}
+.pill:hover{transform:translateY(-2px);box-shadow:0 0 44px rgba(252,226,0,.5)}
+.pill.fantasma{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.75);
+  box-shadow:none}
+.pill.fantasma:hover{border-color:var(--amarillo);color:var(--amarillo);box-shadow:none}
+.tranquiliza{display:flex;gap:26px;margin:32px 0 0;flex-wrap:wrap;font-size:13.5px;color:#9FA3AC}
 .tranquiliza i{font-style:normal;color:var(--amarillo);margin-right:7px;font-weight:700}
+.hero-art{display:flex;justify-content:center;position:relative}
+.hero-art .piso{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);
+  width:62%;height:26px;border-radius:50%;background:rgba(252,226,0,.13);filter:blur(14px)}
 
-/* ───────── Los pasos ───────── */
+/* ───────── Secciones claras ───────── */
 section.bloque{padding:84px 0}
 .bloque.gris{background:var(--gris-fondo)}
-.titulo{max-width:none}
 h2{margin:0;font-size:36px;line-height:1.14;font-weight:700;letter-spacing:-.02em}
-.sub{margin:14px 0 0;font-size:17px;color:var(--gris-texto);max-width:36em}
+.sub{margin:14px 0 0;font-size:17px;color:var(--gris-texto);max-width:38em}
 .pasos{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:48px}
-.paso{background:#fff;border:1px solid var(--gris-linea);border-radius:14px;padding:26px 24px 28px;
-  position:relative}
-.paso .num{width:36px;height:36px;border-radius:9px;background:var(--amarillo);
-  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;margin-bottom:18px}
+.paso{background:#fff;border:1px solid var(--gris-linea);border-radius:14px;padding:26px 24px 28px}
+.paso .num{width:36px;height:36px;border-radius:9px;background:var(--amarillo);display:flex;
+  align-items:center;justify-content:center;font-weight:800;font-size:16px;margin-bottom:18px}
 .paso h3{margin:0 0 8px;font-size:17.5px;font-weight:700;line-height:1.25}
-.paso p{margin:0;font-size:14.5px;color:var(--gris-texto);line-height:1.55}
+.paso p{margin:0;font-size:14.5px;color:var(--gris-texto)}
 
-/* ───────── La promesa ───────── */
+/* ───────── El acceso flotante (la idea nueva) ───────── */
+.acceso{background:var(--carbon);color:#fff}
+.acceso .wrap{padding:82px 32px}
+.acceso h2{color:#fff}
+.acceso .sub{color:#A8ACB5}
+.estados{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:50px}
+.estado{background:#1F1F24;border:1px solid #2C2C33;border-radius:16px;overflow:hidden}
+.estado .lienzo{height:230px;background:
+    radial-gradient(ellipse 60% 55% at 70% 65%, rgba(120,120,30,.35), rgba(0,0,0,0) 65%),
+    #F2F3F5;
+  position:relative;overflow:hidden}
+.estado .paginita{position:absolute;inset:0;padding:16px}
+.estado .barrita{height:9px;border-radius:5px;background:#D9DCE1;margin-bottom:9px}
+.estado .barrita.c{width:58%}.estado .barrita.d{width:80%}.estado .barrita.e{width:38%}
+.estado .bloquecito{height:52px;border-radius:8px;background:#E4E7EB;margin:14px 0}
+.estado .pie{padding:20px 22px 24px}
+.estado h3{margin:0 0 7px;font-size:16.5px;font-weight:700}
+.estado p{margin:0;font-size:13.5px;color:#9FA3AC;line-height:1.5}
+
+/* la burbuja flotante, dibujada dentro de cada lienzo */
+.burbuja{position:absolute;right:16px;bottom:16px;width:82px;height:82px;border-radius:50%;
+  background:radial-gradient(circle at 50% 26%, #45452F 0%, #23232A 72%);
+  border:2.5px solid var(--amarillo);overflow:hidden;
+  box-shadow:0 8px 24px rgba(0,0,0,.28), 0 0 0 7px rgba(252,226,0,.16);
+  display:flex;align-items:flex-end;justify-content:center}
+.burbuja svg{width:88%}
+.globito{position:absolute;right:108px;bottom:34px;background:#fff;border-radius:12px;
+  padding:10px 15px;font-size:12.5px;font-weight:600;color:var(--negro);white-space:nowrap;
+  box-shadow:0 8px 22px rgba(0,0,0,.18)}
+.globito::after{content:"";position:absolute;right:-6px;bottom:14px;width:12px;height:12px;
+  background:#fff;transform:rotate(45deg)}
+.panelito{position:absolute;right:16px;bottom:108px;width:210px;background:#fff;border-radius:16px;
+  padding:14px;box-shadow:0 14px 34px rgba(0,0,0,.24)}
+.panelito .tit{font-size:12px;font-weight:700;color:#8A8F98;letter-spacing:.06em;margin-bottom:10px}
+.panelito .op{display:flex;align-items:center;gap:9px;background:var(--amarillo);border-radius:9px;
+  padding:10px 12px;font-size:13px;font-weight:700;margin-bottom:8px}
+.panelito .op.sec{background:#F1F2F4}
+.panelito .op:last-child{margin-bottom:0}
+
+/* ───────── Promesa ───────── */
 .promesa{background:var(--amarillo)}
-.promesa .wrap{display:grid;grid-template-columns:auto 1fr;gap:34px;
-  align-items:center;padding:52px 32px}
-.promesa .reloj{width:78px;height:78px;border-radius:50%;background:var(--tinta);
-  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.promesa .wrap{display:grid;grid-template-columns:auto 1fr;gap:34px;align-items:center;padding:54px 32px}
+.promesa .reloj{width:78px;height:78px;border-radius:50%;background:var(--carbon);display:flex;
+  align-items:center;justify-content:center;flex-shrink:0}
 .promesa h2{font-size:31px;max-width:24em}
 .promesa p{margin:12px 0 0;font-size:15.5px;color:#4A4200;max-width:46em}
 
-/* ───────── Qué puedes enviar ───────── */
+/* ───────── Tarjetas y cifras ───────── */
 .tarjetas{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
 .tarjeta{border:1px solid var(--gris-linea);border-radius:14px;overflow:hidden;background:#fff}
 .tarjeta .tapa{height:6px;background:var(--amarillo)}
@@ -114,95 +140,99 @@ h2{margin:0;font-size:36px;line-height:1.14;font-weight:700;letter-spacing:-.02e
 .lista li{display:flex;gap:10px;padding:5px 0;color:#2C313B}
 .lista li::before{content:"";flex-shrink:0;width:7px;height:7px;border-radius:50%;
   background:var(--amarillo);margin-top:7px}
-
-/* ───────── Cobertura ───────── */
-.cifras{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:46px;
+.cifras{display:grid;grid-template-columns:repeat(3,1fr);margin-top:46px;
   border:1px solid var(--gris-linea);border-radius:14px;overflow:hidden;background:#fff}
 .cifra{padding:36px 30px;border-right:1px solid var(--gris-linea)}
 .cifra:last-child{border-right:none}
 .cifra b{display:block;font-size:44px;font-weight:800;line-height:1;letter-spacing:-.03em}
 .cifra span{display:block;margin-top:9px;font-size:14.5px;color:var(--gris-texto)}
 
-/* ───────── Preguntas ───────── */
-.preguntas{margin-top:44px;border-top:1px solid var(--gris-linea)}
-details{border-bottom:1px solid var(--gris-linea)}
-summary{padding:21px 0;font-size:16.5px;font-weight:600;cursor:pointer;
-  list-style:none;display:flex;justify-content:space-between;gap:20px;align-items:center}
-summary::-webkit-details-marker{display:none}
-summary::after{content:"+";font-size:23px;font-weight:400;color:var(--gris-texto);flex-shrink:0}
-details[open] summary::after{content:"–"}
-details p{margin:0 0 22px;font-size:15px;color:var(--gris-texto);max-width:52em}
-
 /* ───────── Cierre ───────── */
-.cierre{background:var(--tinta);color:#fff;text-align:center}
-.cierre .wrap{padding:76px 32px}
-.cierre h2{font-size:38px}
+.cierre{background:
+    radial-gradient(ellipse 60% 70% at 50% 40%, rgba(120,120,30,.42) 0%, rgba(78,78,28,0) 62%),
+    var(--carbon);
+  color:#fff;text-align:center}
+.cierre .wrap{padding:78px 32px}
+.cierre h2{font-size:38px;color:#fff}
 .cierre h2 em{font-style:normal;color:var(--amarillo)}
-.cierre .acciones{justify-content:center;margin-top:34px}
+.cierre .pills{justify-content:center;margin-top:34px}
 .cierre .nota{margin:26px 0 0;font-size:13.5px;color:#9AA1AE}
 
-/* ───────── Notas de la propuesta (fuera del diseño) ───────── */
-.notas{background:#101319;color:#D4D8E0;padding:62px 0 70px;font-size:14.5px}
+/* ───────── Notas ───────── */
+.notas{background:#0C0E12;color:#D4D8E0;padding:64px 0 72px;font-size:14.5px}
 .notas h2{color:#fff;font-size:25px}
-.notas ul{margin:24px 0 0;padding:0;list-style:none;display:grid;gap:14px;max-width:62em}
+.notas ul{margin:24px 0 0;padding:0;list-style:none;display:grid;gap:14px;max-width:64em}
 .notas li{display:flex;gap:13px;line-height:1.55}
 .notas li b{color:var(--amarillo);flex-shrink:0;font-weight:600}
-.notas .pie{margin:34px 0 0;padding-top:22px;border-top:1px solid #262C38;color:#8B92A0;font-size:13px}
+.notas .pie{margin:34px 0 0;padding-top:22px;border-top:1px solid #23262E;color:#8B92A0;font-size:13px}
 
 @media (max-width:980px){
-  .hero .wrap{grid-template-columns:1fr;gap:38px;padding:56px 24px}
-  h1{font-size:40px}
-  .pasos,.tarjetas{grid-template-columns:repeat(2,1fr)}
+  .hero .wrap{grid-template-columns:1fr;gap:30px;padding:54px 24px}
+  h1{font-size:40px}.pasos,.tarjetas,.estados{grid-template-columns:repeat(2,1fr)}
   .cifras{grid-template-columns:1fr}
   .cifra{border-right:none;border-bottom:1px solid var(--gris-linea)}
-  .laar-nav ul{display:none}
-  .wrap{padding:0 24px}
-  .promesa .wrap{grid-template-columns:1fr}
+  .nav ul{display:none}.wrap{padding:0 24px}.promesa .wrap{grid-template-columns:1fr}
+  .hero-art svg{max-width:300px;margin:0 auto}
 }
 @media (max-width:620px){
-  h1{font-size:33px}.pasos,.tarjetas{grid-template-columns:1fr}
-  section.bloque{padding:56px 0}h2{font-size:28px}
-  .btn{min-width:100%}
+  h1{font-size:33px}.pasos,.tarjetas,.estados{grid-template-columns:1fr}
+  section.bloque{padding:56px 0}h2{font-size:28px}.pill{width:100%;justify-content:center}
 }
 </style>
 </head>
 <body>
 
-<!-- ══════════ Cinta de la propuesta · no es parte del diseño ══════════ -->
+<!-- ══════════ Cinta de la propuesta · fuera del diseño ══════════ -->
 <div class="meta"><div class="wrap">
   <strong>Propuesta de diseño</strong>
-  <span>La página de EnvíaFácil · <code>laarcourier.com/enviafacil</code></span>
-  <span>WDB para LAARCOURIER · 25 de septiembre de 2026</span>
+  <span>La página de EnvíaFácil + el acceso con el muñeco</span>
+  <code>laarcourier.com/enviafacil</code>
+  <span>WDB para LAARCOURIER · 25-sep-2026</span>
 </div></div>
 
-<!-- ══════════ La cabecera del sitio, tal como está hoy ══════════ -->
-<nav class="laar-nav"><div class="wrap">
-  <div class="marca">
-    <div class="marca-caja">L</div>
-    <div class="marca-txt">LAARCOURIER</div>
-  </div>
-  <ul>
-    <li>CONÓCENOS</li><li>SERVICIOS</li><li>COTIZADOR</li>
-    <li>RASTREO</li><li>OFICINAS</li><li>OTROS</li>
-  </ul>
-  <div class="ingresar">INGRESAR</div>
+<!-- ══════════ Barra del sitio, como está hoy ══════════ -->
+<nav class="nav"><div class="wrap">
+  <!-- Logotipo LAARCOURIER · dibujado. Hace falta el archivo real -->
+  <svg width="188" height="34" viewBox="0 0 188 34" role="img" aria-label="LAARCOURIER">
+    <text x="0" y="19" font-family="Poppins,sans-serif" font-size="20" font-weight="800"
+          font-style="italic" fill="#FFFFFF" letter-spacing="-0.5">LAARCOURIER</text>
+    <path d="M2 27c46-7 108-7 160-2" stroke="#FCE200" stroke-width="5" fill="none" stroke-linecap="round"/>
+  </svg>
+  <ul><li>CONÓCENOS</li><li>SERVICIOS</li><li>COTIZADOR</li><li>RASTREO</li><li>OFICINAS</li></ul>
 </div></nav>
 
-<!-- ══════════ Portada del servicio ══════════ -->
+<!-- ══════════ Portada ══════════ -->
 <header class="hero"><div class="wrap">
   <div>
-    <p class="eyebrow">ENVÍAFÁCIL · ENCOMIENDAS A DOMICILIO</p>
-    <h1>Tu envío empieza <em>aquí</em>.</h1>
-    <p class="bajada">Cotiza, paga y nosotros pasamos por tu paquete. Sin filas y sin ir a una oficina, cuando tú puedas.</p>
+    <!-- Logotipo EnvíaFácil · dibujado a partir del real. Hace falta el archivo -->
+    <div class="logo-ef">
+      <svg width="58" height="52" viewBox="0 0 58 52" role="img" aria-label="EnvíaFácil">
+        <path d="M4 4h50v34H22L10 50V38H4z" fill="#FCE200"/>
+        <circle cx="18" cy="21" r="3.4" fill="#17171A"/>
+        <circle cx="29" cy="21" r="3.4" fill="#17171A"/>
+        <circle cx="40" cy="21" r="3.4" fill="#17171A"/>
+      </svg>
+      <div class="palabra">Envía<b>Fácil</b></div>
+    </div>
 
-    <div class="acciones">
-      <a class="btn btn-web" href="#">
-        <b>Envía ahora por la web</b>
-        <small>Cotiza y paga en línea</small>
+    <h1>Tu courier ahora está<br>en WhatsApp<br><em>y en la web.</em></h1>
+    <p class="bajada">Desde un chat o desde aquí mismo: cotiza, solicita y paga tu envío
+       puerta a puerta a nivel nacional.</p>
+
+    <div class="pills">
+      <a class="pill" href="#">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="2.5" y="4" width="19" height="14" rx="2.5"/><path d="M2.5 8.5h19M7 13h5"/>
+        </svg>
+        Envía ahora por la web
       </a>
-      <a class="btn btn-wa" href="#">
-        <b>Escríbenos por WhatsApp</b>
-        <small>Te atiende Sofía, 24/7</small>
+      <a class="pill fantasma" href="#">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.5L3 20.5l1.6-5.4A8.4 8.4 0 1 1 21 11.5z"/>
+        </svg>
+        Escríbenos por WhatsApp
       </a>
     </div>
 
@@ -213,126 +243,215 @@ details p{margin:0 0 22px;font-size:15px;color:var(--gris-texto);max-width:52em}
     </div>
   </div>
 
-  <!-- Ilustración: cajas listas para salir -->
-  <svg viewBox="0 0 400 320" role="img" aria-label="Cajas listas para enviar">
-    <circle cx="228" cy="150" r="128" fill="#1B212E"/>
-    <path d="M28 150h44M14 172h52M38 194h30" stroke="#FCE200" stroke-width="3.5" stroke-linecap="round" opacity=".55"/>
-    <!-- caja grande -->
-    <polygon points="198,96 282,138 198,180 114,138" fill="#FCE200"/>
-    <polygon points="114,138 198,180 198,264 114,222" fill="#FFFFFF"/>
-    <polygon points="198,180 282,138 282,222 198,264" fill="#C9CDD6"/>
-    <path d="M156 117L240 159" stroke="#12161F" stroke-width="2.5" opacity=".35"/>
-    <!-- caja chica arriba -->
-    <polygon points="196,32 238,53 196,74 154,53" fill="#FCE200"/>
-    <polygon points="154,53 196,74 196,110 154,89" fill="#FFFFFF"/>
-    <polygon points="196,74 238,53 238,89 196,110" fill="#C9CDD6"/>
-    <!-- caja chica derecha -->
-    <polygon points="320,156 358,175 320,194 282,175" fill="#FCE200"/>
-    <polygon points="282,175 320,194 320,232 282,213" fill="#FFFFFF"/>
-    <polygon points="320,194 358,175 358,213 320,232" fill="#C9CDD6"/>
-    <!-- etiqueta -->
-    <rect x="132" y="196" width="40" height="26" rx="4" fill="#FCE200" transform="rotate(-6 152 209)"/>
-    <path d="M140 205h24M140 212h16" stroke="#12161F" stroke-width="2" stroke-linecap="round" transform="rotate(-6 152 209)"/>
-  </svg>
+  <!-- El muñeco de EnvíaFácil · dibujo de referencia, hace falta el archivo real -->
+  <div class="hero-art">
+    <div class="piso"></div>
+    <svg width="340" viewBox="0 0 260 348" role="img" aria-label="El muñeco de EnvíaFácil">
+      <defs>
+        <radialGradient id="foco" cx="50%" cy="46%" r="52%">
+          <stop offset="0%" stop-color="#FCE200" stop-opacity=".20"/>
+          <stop offset="100%" stop-color="#FCE200" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <!-- foco: separa al muñeco del fondo oscuro -->
+      <ellipse cx="130" cy="168" rx="130" ry="168" fill="url(#foco)"/>
+
+      <!-- piernas -->
+      <rect x="88" y="266" width="32" height="54" rx="11" fill="#3A3A43"/>
+      <rect x="140" y="266" width="32" height="54" rx="11" fill="#3A3A43"/>
+      <!-- zapatos -->
+      <rect x="76" y="306" width="50" height="24" rx="10" fill="#26262D"/>
+      <rect x="134" y="306" width="50" height="24" rx="10" fill="#26262D"/>
+      <rect x="76" y="324" width="50" height="6" rx="3" fill="#FCE200" opacity=".85"/>
+      <rect x="134" y="324" width="50" height="6" rx="3" fill="#FCE200" opacity=".85"/>
+
+      <!-- mangas y manos -->
+      <rect x="30" y="190" width="28" height="60" rx="14" fill="#FCE200"/>
+      <rect x="202" y="190" width="28" height="60" rx="14" fill="#FCE200"/>
+      <circle cx="44" cy="256" r="14" fill="#DFA274"/>
+      <circle cx="216" cy="256" r="14" fill="#DFA274"/>
+      <!-- torso -->
+      <rect x="54" y="184" width="152" height="90" rx="20" fill="#FCE200"/>
+      <!-- cuello del polo -->
+      <path d="M106 184h48l-24 32z" fill="#2A2A31"/>
+      <path d="M104 184l26 32-7 7-28-30z" fill="#2A2A31"/>
+      <path d="M156 184l-26 32 7 7 28-30z" fill="#2A2A31"/>
+      <!-- logo bordado en el pecho -->
+      <rect x="150" y="206" width="42" height="5" rx="2.5" fill="#2A2A31" opacity=".8"/>
+
+      <!-- cabeza -->
+      <rect x="40" y="30" width="180" height="152" rx="58" fill="#DFA274"/>
+      <!-- gorra: gris carbón, NO negro, para que se vea sobre el fondo -->
+      <path d="M40 94V74C40 36 78 16 130 16s90 20 90 58v20z" fill="#34343C"/>
+      <path d="M52 56C70 30 110 22 146 26c-30 2-62 14-80 36z" fill="#45454F"/>
+      <ellipse cx="130" cy="95" rx="99" ry="17" fill="#26262D"/>
+      <path d="M64 64c30-22 104-22 132-2" stroke="#FCE200" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <!-- ojos -->
+      <ellipse cx="98" cy="130" rx="17" ry="19" fill="#0D0D0F"/>
+      <ellipse cx="162" cy="130" rx="17" ry="19" fill="#0D0D0F"/>
+      <circle cx="104" cy="122" r="5" fill="#FFFFFF"/>
+      <circle cx="168" cy="122" r="5" fill="#FFFFFF"/>
+      <!-- sonrisa -->
+      <path d="M114 160q16 12 32 0" stroke="#8A5230" stroke-width="3.6" fill="none" stroke-linecap="round"/>
+    </svg>
+  </div>
 </div></header>
 
 <!-- ══════════ Cómo funciona ══════════ -->
 <section class="bloque"><div class="wrap">
-  <div class="titulo">
-    <h2>Cuatro pasos y listo</h2>
-    <p class="sub">Todo pasa en esta página. No hay que descargar nada ni crear una cuenta.</p>
-  </div>
+  <h2>Cuatro pasos y listo</h2>
+  <p class="sub">Todo pasa en esta página. No hay que descargar nada ni crear una cuenta.</p>
   <div class="pasos">
-    <article class="paso">
-      <div class="num">1</div>
-      <h3>Cotiza</h3>
-      <p>Dinos de dónde a dónde y qué envías. El precio es el de LAAR, con impuestos incluidos.</p>
-    </article>
-    <article class="paso">
-      <div class="num">2</div>
-      <h3>Llena tus datos</h3>
-      <p>Quién envía, quién recibe y en qué dirección pasamos a recoger. El mapa te autocompleta la calle.</p>
-    </article>
-    <article class="paso">
-      <div class="num">3</div>
-      <h3>Paga en línea</h3>
-      <p>Con tarjeta de crédito o débito, o con De Una desde tu banco. Tú eliges.</p>
-    </article>
-    <article class="paso">
-      <div class="num">4</div>
-      <h3>Pasamos por tu paquete</h3>
-      <p>Recibes tu guía al instante y nosotros vamos a la dirección que nos diste.</p>
-    </article>
+    <article class="paso"><div class="num">1</div><h3>Cotiza</h3>
+      <p>Dinos de dónde a dónde y qué envías. El precio es el de LAAR, con impuestos incluidos.</p></article>
+    <article class="paso"><div class="num">2</div><h3>Llena tus datos</h3>
+      <p>Quién envía, quién recibe y dónde pasamos a recoger. El mapa te autocompleta la calle.</p></article>
+    <article class="paso"><div class="num">3</div><h3>Paga en línea</h3>
+      <p>Con tarjeta de crédito o débito, o con De Una desde tu banco. Tú eliges.</p></article>
+    <article class="paso"><div class="num">4</div><h3>Pasamos por tu paquete</h3>
+      <p>Recibes tu guía al instante y vamos a la dirección que nos diste.</p></article>
   </div>
 </div></section>
 
-<!-- ══════════ La promesa ══════════ -->
+<!-- ══════════ EL ACCESO · la idea nueva ══════════ -->
+<section class="acceso"><div class="wrap">
+  <h2>El muñeco como puerta de entrada</h2>
+  <p class="sub">Igual que Meta AI en WhatsApp: no es un botón escondido dentro de una página,
+     es una puerta que te acompaña. El muñeco de EnvíaFácil flota en una esquina de
+     laarcourier.com y desde cualquier parte del sitio te lleva a hacer tu envío.</p>
+
+  <div class="estados">
+
+    <!-- 1. En reposo -->
+    <article class="estado">
+      <div class="lienzo">
+        <div class="paginita">
+          <div class="barrita d"></div><div class="barrita c"></div>
+          <div class="bloquecito"></div>
+          <div class="barrita d"></div><div class="barrita e"></div>
+        </div>
+        <div class="burbuja">
+          <svg viewBox="0 0 120 110" aria-hidden="true">
+            <rect x="24" y="78" width="72" height="34" rx="15" fill="#FCE200"/>
+            <path d="M48 78h24l-12 15z" fill="#2A2A31"/>
+            <rect x="22" y="20" width="76" height="64" rx="25" fill="#DFA274"/>
+            <path d="M22 48v-6c0-17 17-27 38-27s38 10 38 27v6z" fill="#34343C"/>
+            <ellipse cx="60" cy="48" rx="41" ry="7" fill="#26262D"/>
+            <path d="M32 33c12-11 44-11 57-2" stroke="#FCE200" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+            <ellipse cx="45" cy="60" rx="8" ry="9" fill="#0D0D0F"/>
+            <ellipse cx="75" cy="60" rx="8" ry="9" fill="#0D0D0F"/>
+            <circle cx="48" cy="56" r="2.5" fill="#fff"/><circle cx="78" cy="56" r="2.5" fill="#fff"/>
+          </svg>
+        </div>
+      </div>
+      <div class="pie"><h3>1 · Siempre ahí</h3>
+        <p>En la esquina, sobre cualquier página del sitio. Con un aro amarillo que lo separa
+           del fondo, igual que el círculo de Meta AI.</p></div>
+    </article>
+
+    <!-- 2. Al pasar el mouse -->
+    <article class="estado">
+      <div class="lienzo">
+        <div class="paginita">
+          <div class="barrita d"></div><div class="barrita c"></div>
+          <div class="bloquecito"></div>
+          <div class="barrita d"></div><div class="barrita e"></div>
+        </div>
+        <div class="globito">¿Hacemos tu envío?</div>
+        <div class="burbuja">
+          <svg viewBox="0 0 120 110" aria-hidden="true">
+            <rect x="24" y="78" width="72" height="34" rx="15" fill="#FCE200"/>
+            <path d="M48 78h24l-12 15z" fill="#2A2A31"/>
+            <rect x="22" y="20" width="76" height="64" rx="25" fill="#DFA274"/>
+            <path d="M22 48v-6c0-17 17-27 38-27s38 10 38 27v6z" fill="#34343C"/>
+            <ellipse cx="60" cy="48" rx="41" ry="7" fill="#26262D"/>
+            <path d="M32 33c12-11 44-11 57-2" stroke="#FCE200" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+            <ellipse cx="45" cy="60" rx="8" ry="9" fill="#0D0D0F"/>
+            <ellipse cx="75" cy="60" rx="8" ry="9" fill="#0D0D0F"/>
+            <circle cx="48" cy="56" r="2.5" fill="#fff"/><circle cx="78" cy="56" r="2.5" fill="#fff"/>
+          </svg>
+        </div>
+      </div>
+      <div class="pie"><h3>2 · Te habla</h3>
+        <p>Al pasar por encima suelta una frase corta. Aparece una sola vez por visita, para que
+           no moleste a quien vino a otra cosa.</p></div>
+    </article>
+
+    <!-- 3. Abierto -->
+    <article class="estado">
+      <div class="lienzo">
+        <div class="paginita">
+          <div class="barrita d"></div><div class="barrita c"></div>
+          <div class="bloquecito"></div>
+          <div class="barrita d"></div><div class="barrita e"></div>
+        </div>
+        <div class="panelito">
+          <div class="tit">EMPIEZA TU ENVÍO</div>
+          <div class="op">▸ Por la web</div>
+          <div class="op sec">▸ Por WhatsApp</div>
+        </div>
+        <div class="burbuja">
+          <svg viewBox="0 0 120 110" aria-hidden="true">
+            <rect x="24" y="78" width="72" height="34" rx="15" fill="#FCE200"/>
+            <path d="M48 78h24l-12 15z" fill="#2A2A31"/>
+            <rect x="22" y="20" width="76" height="64" rx="25" fill="#DFA274"/>
+            <path d="M22 48v-6c0-17 17-27 38-27s38 10 38 27v6z" fill="#34343C"/>
+            <ellipse cx="60" cy="48" rx="41" ry="7" fill="#26262D"/>
+            <path d="M32 33c12-11 44-11 57-2" stroke="#FCE200" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+            <ellipse cx="45" cy="60" rx="8" ry="9" fill="#0D0D0F"/>
+            <ellipse cx="75" cy="60" rx="8" ry="9" fill="#0D0D0F"/>
+            <circle cx="48" cy="56" r="2.5" fill="#fff"/><circle cx="78" cy="56" r="2.5" fill="#fff"/>
+          </svg>
+        </div>
+      </div>
+      <div class="pie"><h3>3 · Abre los dos caminos</h3>
+        <p>Un toque y salen las dos puertas, con el mismo peso: la web o WhatsApp. El cliente
+           elige, no nosotros.</p></div>
+    </article>
+
+  </div>
+</div></section>
+
+<!-- ══════════ Promesa ══════════ -->
 <section class="promesa"><div class="wrap">
   <div class="reloj">
     <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#FCE200" stroke-width="2"
          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2.2"/>
-    </svg>
+      <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2.2"/></svg>
   </div>
   <div>
     <h2>Si pagas antes de las dos de la tarde, pasamos esa misma tarde.</h2>
-    <p>La recolección es lo que te prometemos por escrito. El viaje de tu paquete lo sigues con tu número
-       de guía, desde el rastreo de LAARCOURIER.</p>
+    <p>La recolección es lo que te prometemos por escrito. El viaje de tu paquete lo sigues con tu
+       número de guía, desde el rastreo de LAARCOURIER.</p>
   </div>
 </div></section>
 
 <!-- ══════════ Qué puedes enviar ══════════ -->
 <section class="bloque gris"><div class="wrap">
-  <div class="titulo">
-    <h2>Qué puedes enviar</h2>
-    <p class="sub">Cada tipo pide lo que de verdad necesita. Nada más.</p>
-  </div>
+  <h2>Qué puedes enviar</h2>
+  <p class="sub">Cada tipo pide lo que de verdad necesita. Nada más.</p>
   <div class="tarjetas">
-    <article class="tarjeta">
-      <div class="tapa"></div>
-      <div class="cuerpo">
-        <h3>Documentos</h3>
-        <p>Papeles, contratos, títulos. Sin peso ni valor declarado.</p>
-        <ul class="lista">
-          <li>Solo de dónde a dónde</li>
-          <li>Tarifa única</li>
-          <li>Sobre incluido</li>
-        </ul>
-      </div>
-    </article>
-    <article class="tarjeta">
-      <div class="tapa"></div>
-      <div class="cuerpo">
-        <h3>Paquetes</h3>
-        <p>Cajas y encomiendas hasta 50 kilos por pieza.</p>
-        <ul class="lista">
-          <li>Peso y número de piezas</li>
-          <li>Qué va dentro y cuánto vale</li>
-          <li>El precio sale al instante</li>
-        </ul>
-      </div>
-    </article>
-    <article class="tarjeta">
-      <div class="tapa"></div>
-      <div class="cuerpo">
-        <h3>Multienvíos</h3>
-        <p>Varios destinos en un solo trámite. Para quien vende en línea.</p>
-        <ul class="lista">
-          <li>Una guía por cada destino</li>
-          <li>Una sola recolección</li>
-          <li>Un solo pago</li>
-        </ul>
-      </div>
-    </article>
+    <article class="tarjeta"><div class="tapa"></div><div class="cuerpo">
+      <h3>Documentos</h3><p>Papeles, contratos, títulos. Sin peso ni valor declarado.</p>
+      <ul class="lista"><li>Solo de dónde a dónde</li><li>Tarifa única</li><li>Sobre incluido</li></ul>
+    </div></article>
+    <article class="tarjeta"><div class="tapa"></div><div class="cuerpo">
+      <h3>Paquetes</h3><p>Cajas y encomiendas hasta 50 kilos por pieza.</p>
+      <ul class="lista"><li>Peso y número de piezas</li><li>Qué va dentro y cuánto vale</li>
+        <li>El precio sale al instante</li></ul>
+    </div></article>
+    <article class="tarjeta"><div class="tapa"></div><div class="cuerpo">
+      <h3>Multienvíos</h3><p>Varios destinos en un solo trámite. Para quien vende en línea.</p>
+      <ul class="lista"><li>Una guía por cada destino</li><li>Una sola recolección</li>
+        <li>Un solo pago</li></ul>
+    </div></article>
   </div>
 </div></section>
 
 <!-- ══════════ Cobertura ══════════ -->
 <section class="bloque"><div class="wrap">
-  <div class="titulo">
-    <h2>Llegamos donde tú necesitas</h2>
-    <p class="sub">La misma red de LAARCOURIER que ya mueve el país.</p>
-  </div>
+  <h2>Llegamos donde tú necesitas</h2>
+  <p class="sub">La misma red de LAARCOURIER que ya mueve el país.</p>
   <div class="cifras">
     <div class="cifra"><b>+400</b><span>destinos nacionales</span></div>
     <div class="cifra"><b>+45</b><span>puntos de recolección y entrega</span></div>
@@ -340,41 +459,12 @@ details p{margin:0 0 22px;font-size:15px;color:var(--gris-texto);max-width:52em}
   </div>
 </div></section>
 
-<!-- ══════════ Preguntas ══════════ -->
-<section class="bloque gris"><div class="wrap">
-  <div class="titulo"><h2>Preguntas que nos hacen</h2></div>
-  <div class="preguntas">
-    <details open>
-      <summary>¿Necesito crear una cuenta?</summary>
-      <p>No. Cotizas, llenas tus datos y pagas. Nada más.</p>
-    </details>
-    <details>
-      <summary>¿Puedo pagar con transferencia?</summary>
-      <p>Por ahora con tarjeta de crédito o débito, y con De Una desde la aplicación de tu banco.</p>
-    </details>
-    <details>
-      <summary>¿Cómo sé cuándo llega mi paquete?</summary>
-      <p>Con tu número de guía, en el rastreo de LAARCOURIER. Lo que nosotros te confirmamos por
-         escrito es la recolección.</p>
-    </details>
-    <details>
-      <summary>¿Y si prefiero que alguien me atienda?</summary>
-      <p>Escríbenos por WhatsApp al 0991344747. El mismo envío se puede hacer por ahí, conversando.</p>
-    </details>
-    <details>
-      <summary>¿Tengo que estar en casa para la recolección?</summary>
-      <p>Alguien tiene que entregar el paquete en la dirección que nos diste. Puede ser cualquier
-         persona, no tienes que ser tú.</p>
-    </details>
-  </div>
-</div></section>
-
 <!-- ══════════ Cierre ══════════ -->
 <section class="cierre"><div class="wrap">
   <h2>¿Empezamos <em>tu envío</em>?</h2>
-  <div class="acciones">
-    <a class="btn btn-web" href="#"><b>Envía ahora por la web</b><small>Cotiza y paga en línea</small></a>
-    <a class="btn btn-wa" href="#"><b>Escríbenos por WhatsApp</b><small>0991344747 · 24/7</small></a>
+  <div class="pills">
+    <a class="pill" href="#">Envía ahora por la web</a>
+    <a class="pill fantasma" href="#">Escríbenos por WhatsApp · 0991344747</a>
   </div>
   <p class="nota">Servicio de LAARCOURIER · Grupo LAAR</p>
 </div></section>
@@ -383,20 +473,89 @@ details p{margin:0 0 22px;font-size:15px;color:var(--gris-texto);max-width:52em}
 <section class="notas"><div class="wrap">
   <h2>Notas de esta propuesta</h2>
   <ul>
-    <li><b>Identidad:</b> los colores y la tipografía se midieron en laarcourier.com el 25-sep-2026 —
-        Poppins, amarillo #FCE200 y el verde #4DC247 que el sitio ya usa para WhatsApp. No se inventó ninguno.</li>
-    <li><b>Logotipos:</b> los de esta maqueta están dibujados. Hacen falta los archivos reales de
-        LAARCOURIER y de EnvíaFácil en SVG o PNG con fondo transparente.</li>
-    <li><b>Por confirmar:</b> la hora de corte de la recolección («antes de las dos de la tarde») y el
-        texto exacto de los dos botones, que son de la voz de campaña de LAAR.</li>
-    <li><b>La cabecera</b> de arriba es la del sitio actual, sin cambios. Esta página vive dentro de
-        laarcourier.com como página completa, no en un iframe: el pago redirige y un iframe lo rompe.</li>
-    <li><b>Los formularios del proceso</b> no cambian. Ya están construidos, probados y con su diseño
-        aprobado; esta propuesta es solo la página que los presenta y les da entrada.</li>
-    <li><b>Móvil:</b> esta vista es de escritorio. Se replica en teléfono cuando LAAR apruebe el diseño.</li>
+    <li><b>De dónde salen los colores:</b> medidos en la página real de EnvíaFácil y en
+        laarcourier.com el 25-sep-2026. Poppins, amarillo #FCE200, fondo carbón con resplandor
+        verde oliva. No se inventó ninguno.</li>
+    <li><b>El titular</b> respeta su campaña: hoy dice «Tu courier ahora está en WhatsApp».
+        Aquí solo se le suma la web, sin quitarle nada.</li>
+    <li><b>Los dos botones</b> pesan igual, como se decidió. El de WhatsApp se dejó como en su
+        página, con la misma jerarquía que el de la web.</li>
+    <li><b>El muñeco y los logotipos de esta maqueta están dibujados.</b> Hacen falta los archivos
+        reales: el muñeco 3D que ya usan en redes (PNG con fondo transparente, de frente y de
+        medio cuerpo) y los logotipos de LAARCOURIER y EnvíaFácil en SVG.</li>
+    <li><b>Ojo con el widget de chat</b> que el sitio ya tiene en esa misma esquina (Llamada,
+        LAARCOURIER, LAARBOX, UPS, TEMU, ENVÍA FÁCIL). Dos cosas flotando en el mismo rincón se
+        pelean. Hay que decidir si el muñeco lo reemplaza o si convive arriba de él.</li>
+    <li><b>Por confirmar:</b> la hora de corte de la recolección («antes de las dos de la tarde»)
+        y el texto exacto de los botones, que son de la voz de campaña de LAAR.</li>
+    <li><b>Los formularios del proceso no cambian.</b> Ya están construidos, probados y con su
+        diseño aprobado. Esta propuesta es la página que los presenta y el acceso que lleva a ellos.</li>
+    <li><b>Móvil:</b> esta vista es de escritorio. Se replica en teléfono cuando LAAR apruebe.</li>
   </ul>
   <p class="pie">WDB · propuesta de diseño para LAARCOURIER · 25 de septiembre de 2026</p>
 </div></section>
+
+<!-- ══════════ El acceso, funcionando ══════════ -->
+<input type="checkbox" id="abrir-acceso" class="interruptor">
+<div class="flotante">
+  <div class="etiqueta">así se vería</div>
+  <div class="dialogo">
+    <div class="dialogo-tit">EMPIEZA TU ENVÍO</div>
+    <a class="dialogo-op" href="#">Por la web</a>
+    <a class="dialogo-op sec" href="#">Por WhatsApp</a>
+  </div>
+  <div class="frase">¿Hacemos tu envío?</div>
+  <label class="disco" for="abrir-acceso" title="Empieza tu envío">
+    <svg viewBox="0 0 120 110" aria-hidden="true">
+      <rect x="24" y="78" width="72" height="34" rx="15" fill="#FCE200"/>
+      <path d="M48 78h24l-12 15z" fill="#2A2A31"/>
+      <rect x="22" y="20" width="76" height="64" rx="25" fill="#DFA274"/>
+      <path d="M22 48v-6c0-17 17-27 38-27s38 10 38 27v6z" fill="#34343C"/>
+      <ellipse cx="60" cy="48" rx="41" ry="7" fill="#26262D"/>
+      <path d="M32 33c12-11 44-11 57-2" stroke="#FCE200" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+      <ellipse cx="45" cy="60" rx="8" ry="9" fill="#0D0D0F"/>
+      <ellipse cx="75" cy="60" rx="8" ry="9" fill="#0D0D0F"/>
+      <circle cx="48" cy="56" r="2.5" fill="#fff"/><circle cx="78" cy="56" r="2.5" fill="#fff"/>
+    </svg>
+  </label>
+</div>
+
+<style>
+.interruptor{position:fixed;opacity:0;pointer-events:none}
+.flotante{position:fixed;right:26px;bottom:26px;z-index:60;width:88px;height:88px}
+.flotante .etiqueta{position:absolute;right:0;bottom:calc(100% + 12px);
+  background:#0C0E12;color:#FCE200;font-size:10.5px;font-weight:600;white-space:nowrap;
+  letter-spacing:.09em;text-transform:uppercase;padding:4px 9px;border-radius:5px;opacity:.9;
+  transition:opacity .2s}
+.disco{width:88px;height:88px;border-radius:50%;cursor:pointer;overflow:hidden;
+  background:radial-gradient(circle at 50% 26%, #45452F 0%, #23232A 72%);
+  border:3px solid var(--amarillo);
+  box-shadow:0 12px 30px rgba(0,0,0,.34), 0 0 0 9px rgba(252,226,0,.15);
+  display:flex;align-items:flex-end;justify-content:center;
+  transition:transform .18s ease, box-shadow .18s ease}
+.disco svg{width:86%}
+.disco:hover{transform:translateY(-3px) scale(1.04);
+  box-shadow:0 16px 36px rgba(0,0,0,.4), 0 0 0 13px rgba(252,226,0,.22)}
+.frase{position:absolute;right:calc(100% + 14px);bottom:24px;white-space:nowrap;
+  background:#fff;color:#000;font-size:13.5px;font-weight:600;padding:11px 16px;
+  border-radius:13px;box-shadow:0 10px 26px rgba(0,0,0,.2);
+  opacity:0;transform:translateX(6px);transition:opacity .2s,transform .2s;pointer-events:none}
+.flotante:hover .frase{opacity:1;transform:translateX(0)}
+.dialogo{position:absolute;right:0;bottom:calc(100% + 12px);
+  width:232px;background:#fff;border-radius:18px;padding:16px;
+  box-shadow:0 20px 44px rgba(0,0,0,.28);
+  opacity:0;transform:translateY(10px) scale(.96);transform-origin:bottom right;
+  transition:opacity .2s,transform .2s;pointer-events:none}
+.dialogo-tit{font-size:11.5px;font-weight:700;color:#8A8F98;letter-spacing:.09em;margin-bottom:11px}
+.dialogo-op{display:block;background:var(--amarillo);border-radius:11px;padding:13px 15px;
+  font-size:14px;font-weight:700;color:#000;text-decoration:none;margin-bottom:9px}
+.dialogo-op.sec{background:#F1F2F4;margin-bottom:0}
+.dialogo-op:hover{filter:brightness(.95)}
+.interruptor:checked ~ .flotante .dialogo{opacity:1;transform:none;pointer-events:auto}
+.interruptor:checked ~ .flotante .frase{display:none}
+.interruptor:checked ~ .flotante .etiqueta{opacity:0}
+@media (max-width:620px){.flotante{right:16px;bottom:16px}.disco{width:72px;height:72px}}
+</style>
 
 </body>
 </html>
