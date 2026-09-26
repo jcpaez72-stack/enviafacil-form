@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EnvíaFácil · propuesta de diseño de la página</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Identidad medida en laarcourier.com el 25-sep-2026 */
+  --amarillo:#FCE200;        /* rgb(252,226,0) — el color de ACTUAR */
+  --amarillo-oscuro:#E0C900;
+  --verde:#4DC247;           /* rgb(77,194,71) — el verde de WhatsApp del sitio */
+  --verde-oscuro:#3DA838;
+  --tinta:#12161F;           /* fondo de autoridad */
+  --tinta-suave:#1B212E;
+  --negro:#000000;           /* el color de texto del sitio */
+  --gris-texto:#5A6170;
+  --gris-linea:#E5E7EB;
+  --gris-fondo:#F7F8FA;
+  --blanco:#FFFFFF;
+  --max:1180px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;font-family:Poppins,sans-serif;color:var(--negro);
+  background:var(--blanco);-webkit-font-smoothing:antialiased;line-height:1.55;
+}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 32px}
+img,svg{display:block;max-width:100%}
+
+/* ───────── Cinta de la propuesta (NO es parte del diseño) ───────── */
+.meta{background:#101319;color:#fff;padding:14px 0;font-size:13px}
+.meta .wrap{display:flex;gap:18px;align-items:baseline;flex-wrap:wrap}
+.meta strong{font-weight:600}
+.meta span{color:#9AA1AE}
+
+/* ───────── Cabecera de laarcourier.com (se conserva igual) ───────── */
+.laar-nav{border-bottom:1px solid var(--gris-linea);background:#fff}
+.laar-nav .wrap{display:flex;align-items:center;gap:28px;height:74px}
+.marca{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.marca-caja{width:44px;height:44px;border-radius:8px;background:var(--amarillo);
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:19px}
+.marca-txt{font-weight:700;font-size:15px;letter-spacing:.02em}
+.laar-nav ul{display:flex;gap:22px;list-style:none;margin:0;padding:0;
+  font-size:12.5px;font-weight:600;letter-spacing:.04em;color:#3A4049}
+.laar-nav .ingresar{margin-left:auto;border:1.5px solid var(--negro);border-radius:6px;
+  padding:8px 18px;font-size:12.5px;font-weight:600;letter-spacing:.04em}
+
+/* ───────── Portada del servicio ───────── */
+.hero{background:var(--tinta);color:#fff;position:relative;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:1.12fr .88fr;gap:56px;
+  align-items:center;padding:78px 32px 74px}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:11.5px;font-weight:600;
+  letter-spacing:.14em;color:var(--amarillo);margin:0 0 22px}
+.eyebrow::before{content:"";width:26px;height:2px;background:var(--amarillo)}
+h1{margin:0;font-size:57px;line-height:1.02;font-weight:800;letter-spacing:-.025em}
+h1 em{font-style:normal;color:var(--amarillo)}
+.bajada{margin:22px 0 0;font-size:18.5px;line-height:1.5;color:#D4D8E0;max-width:29em}
+
+.acciones{display:flex;gap:14px;margin:34px 0 0;flex-wrap:wrap}
+.btn{display:inline-flex;flex-direction:column;justify-content:center;gap:2px;
+  min-width:245px;min-height:66px;padding:12px 26px;border:none;border-radius:10px;
+  font-family:inherit;text-decoration:none;color:var(--negro);cursor:pointer;
+  transition:transform .12s ease, box-shadow .12s ease}
+.btn b{font-size:16.5px;font-weight:700;line-height:1.2}
+.btn small{font-size:12.5px;font-weight:500;opacity:.78}
+.btn:hover{transform:translateY(-1px)}
+.btn-web{background:var(--amarillo)}
+.btn-web:hover{background:var(--amarillo-oscuro)}
+.btn-wa{background:var(--verde);color:#fff}
+.btn-wa:hover{background:var(--verde-oscuro)}
+.btn-fila{display:flex;align-items:center;gap:10px}
+.btn-fila b{white-space:nowrap}
+
+.tranquiliza{display:flex;gap:26px;margin:30px 0 0;flex-wrap:wrap;
+  font-size:13.5px;color:#AEB4C0}
+.tranquiliza i{font-style:normal;color:var(--amarillo);margin-right:7px;font-weight:700}
+
+/* ───────── Los pasos ───────── */
+section.bloque{padding:84px 0}
+.bloque.gris{background:var(--gris-fondo)}
+.titulo{max-width:none}
+h2{margin:0;font-size:36px;line-height:1.14;font-weight:700;letter-spacing:-.02em}
+.sub{margin:14px 0 0;font-size:17px;color:var(--gris-texto);max-width:36em}
+.pasos{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:48px}
+.paso{background:#fff;border:1px solid var(--gris-linea);border-radius:14px;padding:26px 24px 28px;
+  position:relative}
+.paso .num{width:36px;height:36px;border-radius:9px;background:var(--amarillo);
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;margin-bottom:18px}
+.paso h3{margin:0 0 8px;font-size:17.5px;font-weight:700;line-height:1.25}
+.paso p{margin:0;font-size:14.5px;color:var(--gris-texto);line-height:1.55}
+
+/* ───────── La promesa ───────── */
+.promesa{background:var(--amarillo)}
+.promesa .wrap{display:grid;grid-template-columns:auto 1fr;gap:34px;
+  align-items:center;padding:52px 32px}
+.promesa .reloj{width:78px;height:78px;border-radius:50%;background:var(--tinta);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.promesa h2{font-size:31px;max-width:24em}
+.promesa p{margin:12px 0 0;font-size:15.5px;color:#4A4200;max-width:46em}
+
+/* ───────── Qué puedes enviar ───────── */
+.tarjetas{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
+.tarjeta{border:1px solid var(--gris-linea);border-radius:14px;overflow:hidden;background:#fff}
+.tarjeta .tapa{height:6px;background:var(--amarillo)}
+.tarjeta .cuerpo{padding:28px 26px 30px}
+.tarjeta h3{margin:0 0 10px;font-size:19px;font-weight:700}
+.tarjeta p{margin:0 0 16px;font-size:14.5px;color:var(--gris-texto)}
+.lista{list-style:none;margin:0;padding:0;font-size:14px}
+.lista li{display:flex;gap:10px;padding:5px 0;color:#2C313B}
+.lista li::before{content:"";flex-shrink:0;width:7px;height:7px;border-radius:50%;
+  background:var(--amarillo);margin-top:7px}
+
+/* ───────── Cobertura ───────── */
+.cifras{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:46px;
+  border:1px solid var(--gris-linea);border-radius:14px;overflow:hidden;background:#fff}
+.cifra{padding:36px 30px;border-right:1px solid var(--gris-linea)}
+.cifra:last-child{border-right:none}
+.cifra b{display:block;font-size:44px;font-weight:800;line-height:1;letter-spacing:-.03em}
+.cifra span{display:block;margin-top:9px;font-size:14.5px;color:var(--gris-texto)}
+
+/* ───────── Preguntas ───────── */
+.preguntas{margin-top:44px;border-top:1px solid var(--gris-linea)}
+details{border-bottom:1px solid var(--gris-linea)}
+summary{padding:21px 0;font-size:16.5px;font-weight:600;cursor:pointer;
+  list-style:none;display:flex;justify-content:space-between;gap:20px;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-size:23px;font-weight:400;color:var(--gris-texto);flex-shrink:0}
+details[open] summary::after{content:"–"}
+details p{margin:0 0 22px;font-size:15px;color:var(--gris-texto);max-width:52em}
+
+/* ───────── Cierre ───────── */
+.cierre{background:var(--tinta);color:#fff;text-align:center}
+.cierre .wrap{padding:76px 32px}
+.cierre h2{font-size:38px}
+.cierre h2 em{font-style:normal;color:var(--amarillo)}
+.cierre .acciones{justify-content:center;margin-top:34px}
+.cierre .nota{margin:26px 0 0;font-size:13.5px;color:#9AA1AE}
+
+/* ───────── Notas de la propuesta (fuera del diseño) ───────── */
+.notas{background:#101319;color:#D4D8E0;padding:62px 0 70px;font-size:14.5px}
+.notas h2{color:#fff;font-size:25px}
+.notas ul{margin:24px 0 0;padding:0;list-style:none;display:grid;gap:14px;max-width:62em}
+.notas li{display:flex;gap:13px;line-height:1.55}
+.notas li b{color:var(--amarillo);flex-shrink:0;font-weight:600}
+.notas .pie{margin:34px 0 0;padding-top:22px;border-top:1px solid #262C38;color:#8B92A0;font-size:13px}
+
+@media (max-width:980px){
+  .hero .wrap{grid-template-columns:1fr;gap:38px;padding:56px 24px}
+  h1{font-size:40px}
+  .pasos,.tarjetas{grid-template-columns:repeat(2,1fr)}
+  .cifras{grid-template-columns:1fr}
+  .cifra{border-right:none;border-bottom:1px solid var(--gris-linea)}
+  .laar-nav ul{display:none}
+  .wrap{padding:0 24px}
+  .promesa .wrap{grid-template-columns:1fr}
+}
+@media (max-width:620px){
+  h1{font-size:33px}.pasos,.tarjetas{grid-template-columns:1fr}
+  section.bloque{padding:56px 0}h2{font-size:28px}
+  .btn{min-width:100%}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ Cinta de la propuesta · no es parte del diseño ══════════ -->
+<div class="meta"><div class="wrap">
+  <strong>Propuesta de diseño</strong>
+  <span>La página de EnvíaFácil · <code>laarcourier.com/enviafacil</code></span>
+  <span>WDB para LAARCOURIER · 25 de septiembre de 2026</span>
+</div></div>
+
+<!-- ══════════ La cabecera del sitio, tal como está hoy ══════════ -->
+<nav class="laar-nav"><div class="wrap">
+  <div class="marca">
+    <div class="marca-caja">L</div>
+    <div class="marca-txt">LAARCOURIER</div>
+  </div>
+  <ul>
+    <li>CONÓCENOS</li><li>SERVICIOS</li><li>COTIZADOR</li>
+    <li>RASTREO</li><li>OFICINAS</li><li>OTROS</li>
+  </ul>
+  <div class="ingresar">INGRESAR</div>
+</div></nav>
+
+<!-- ══════════ Portada del servicio ══════════ -->
+<header class="hero"><div class="wrap">
+  <div>
+    <p class="eyebrow">ENVÍAFÁCIL · ENCOMIENDAS A DOMICILIO</p>
+    <h1>Tu envío empieza <em>aquí</em>.</h1>
+    <p class="bajada">Cotiza, paga y nosotros pasamos por tu paquete. Sin filas y sin ir a una oficina, cuando tú puedas.</p>
+
+    <div class="acciones">
+      <a class="btn btn-web" href="#">
+        <b>Envía ahora por la web</b>
+        <small>Cotiza y paga en línea</small>
+      </a>
+      <a class="btn btn-wa" href="#">
+        <b>Escríbenos por WhatsApp</b>
+        <small>Te atiende Sofía, 24/7</small>
+      </a>
+    </div>
+
+    <div class="tranquiliza">
+      <span><i>◆</i>Recolección en tu puerta</span>
+      <span><i>◆</i>Pago con tarjeta o De Una</span>
+      <span><i>◆</i>Tu guía al instante</span>
+    </div>
+  </div>
+
+  <!-- Ilustración: cajas listas para salir -->
+  <svg viewBox="0 0 400 320" role="img" aria-label="Cajas listas para enviar">
+    <circle cx="228" cy="150" r="128" fill="#1B212E"/>
+    <path d="M28 150h44M14 172h52M38 194h30" stroke="#FCE200" stroke-width="3.5" stroke-linecap="round" opacity=".55"/>
+    <!-- caja grande -->
+    <polygon points="198,96 282,138 198,180 114,138" fill="#FCE200"/>
+    <polygon points="114,138 198,180 198,264 114,222" fill="#FFFFFF"/>
+    <polygon points="198,180 282,138 282,222 198,264" fill="#C9CDD6"/>
+    <path d="M156 117L240 159" stroke="#12161F" stroke-width="2.5" opacity=".35"/>
+    <!-- caja chica arriba -->
+    <polygon points="196,32 238,53 196,74 154,53" fill="#FCE200"/>
+    <polygon points="154,53 196,74 196,110 154,89" fill="#FFFFFF"/>
+    <polygon points="196,74 238,53 238,89 196,110" fill="#C9CDD6"/>
+    <!-- caja chica derecha -->
+    <polygon points="320,156 358,175 320,194 282,175" fill="#FCE200"/>
+    <polygon points="282,175 320,194 320,232 282,213" fill="#FFFFFF"/>
+    <polygon points="320,194 358,175 358,213 320,232" fill="#C9CDD6"/>
+    <!-- etiqueta -->
+    <rect x="132" y="196" width="40" height="26" rx="4" fill="#FCE200" transform="rotate(-6 152 209)"/>
+    <path d="M140 205h24M140 212h16" stroke="#12161F" stroke-width="2" stroke-linecap="round" transform="rotate(-6 152 209)"/>
+  </svg>
+</div></header>
+
+<!-- ══════════ Cómo funciona ══════════ -->
+<section class="bloque"><div class="wrap">
+  <div class="titulo">
+    <h2>Cuatro pasos y listo</h2>
+    <p class="sub">Todo pasa en esta página. No hay que descargar nada ni crear una cuenta.</p>
+  </div>
+  <div class="pasos">
+    <article class="paso">
+      <div class="num">1</div>
+      <h3>Cotiza</h3>
+      <p>Dinos de dónde a dónde y qué envías. El precio es el de LAAR, con impuestos incluidos.</p>
+    </article>
+    <article class="paso">
+      <div class="num">2</div>
+      <h3>Llena tus datos</h3>
+      <p>Quién envía, quién recibe y en qué dirección pasamos a recoger. El mapa te autocompleta la calle.</p>
+    </article>
+    <article class="paso">
+      <div class="num">3</div>
+      <h3>Paga en línea</h3>
+      <p>Con tarjeta de crédito o débito, o con De Una desde tu banco. Tú eliges.</p>
+    </article>
+    <article class="paso">
+      <div class="num">4</div>
+      <h3>Pasamos por tu paquete</h3>
+      <p>Recibes tu guía al instante y nosotros vamos a la dirección que nos diste.</p>
+    </article>
+  </div>
+</div></section>
+
+<!-- ══════════ La promesa ══════════ -->
+<section class="promesa"><div class="wrap">
+  <div class="reloj">
+    <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#FCE200" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2.2"/>
+    </svg>
+  </div>
+  <div>
+    <h2>Si pagas antes de las dos de la tarde, pasamos esa misma tarde.</h2>
+    <p>La recolección es lo que te prometemos por escrito. El viaje de tu paquete lo sigues con tu número
+       de guía, desde el rastreo de LAARCOURIER.</p>
+  </div>
+</div></section>
+
+<!-- ══════════ Qué puedes enviar ══════════ -->
+<section class="bloque gris"><div class="wrap">
+  <div class="titulo">
+    <h2>Qué puedes enviar</h2>
+    <p class="sub">Cada tipo pide lo que de verdad necesita. Nada más.</p>
+  </div>
+  <div class="tarjetas">
+    <article class="tarjeta">
+      <div class="tapa"></div>
+      <div class="cuerpo">
+        <h3>Documentos</h3>
+        <p>Papeles, contratos, títulos. Sin peso ni valor declarado.</p>
+        <ul class="lista">
+          <li>Solo de dónde a dónde</li>
+          <li>Tarifa única</li>
+          <li>Sobre incluido</li>
+        </ul>
+      </div>
+    </article>
+    <article class="tarjeta">
+      <div class="tapa"></div>
+      <div class="cuerpo">
+        <h3>Paquetes</h3>
+        <p>Cajas y encomiendas hasta 50 kilos por pieza.</p>
+        <ul class="lista">
+          <li>Peso y número de piezas</li>
+          <li>Qué va dentro y cuánto vale</li>
+          <li>El precio sale al instante</li>
+        </ul>
+      </div>
+    </article>
+    <article class="tarjeta">
+      <div class="tapa"></div>
+      <div class="cuerpo">
+        <h3>Multienvíos</h3>
+        <p>Varios destinos en un solo trámite. Para quien vende en línea.</p>
+        <ul class="lista">
+          <li>Una guía por cada destino</li>
+          <li>Una sola recolección</li>
+          <li>Un solo pago</li>
+        </ul>
+      </div>
+    </article>
+  </div>
+</div></section>
+
+<!-- ══════════ Cobertura ══════════ -->
+<section class="bloque"><div class="wrap">
+  <div class="titulo">
+    <h2>Llegamos donde tú necesitas</h2>
+    <p class="sub">La misma red de LAARCOURIER que ya mueve el país.</p>
+  </div>
+  <div class="cifras">
+    <div class="cifra"><b>+400</b><span>destinos nacionales</span></div>
+    <div class="cifra"><b>+45</b><span>puntos de recolección y entrega</span></div>
+    <div class="cifra"><b>24/7</b><span>la página no cierra</span></div>
+  </div>
+</div></section>
+
+<!-- ══════════ Preguntas ══════════ -->
+<section class="bloque gris"><div class="wrap">
+  <div class="titulo"><h2>Preguntas que nos hacen</h2></div>
+  <div class="preguntas">
+    <details open>
+      <summary>¿Necesito crear una cuenta?</summary>
+      <p>No. Cotizas, llenas tus datos y pagas. Nada más.</p>
+    </details>
+    <details>
+      <summary>¿Puedo pagar con transferencia?</summary>
+      <p>Por ahora con tarjeta de crédito o débito, y con De Una desde la aplicación de tu banco.</p>
+    </details>
+    <details>
+      <summary>¿Cómo sé cuándo llega mi paquete?</summary>
+      <p>Con tu número de guía, en el rastreo de LAARCOURIER. Lo que nosotros te confirmamos por
+         escrito es la recolección.</p>
+    </details>
+    <details>
+      <summary>¿Y si prefiero que alguien me atienda?</summary>
+      <p>Escríbenos por WhatsApp al 0991344747. El mismo envío se puede hacer por ahí, conversando.</p>
+    </details>
+    <details>
+      <summary>¿Tengo que estar en casa para la recolección?</summary>
+      <p>Alguien tiene que entregar el paquete en la dirección que nos diste. Puede ser cualquier
+         persona, no tienes que ser tú.</p>
+    </details>
+  </div>
+</div></section>
+
+<!-- ══════════ Cierre ══════════ -->
+<section class="cierre"><div class="wrap">
+  <h2>¿Empezamos <em>tu envío</em>?</h2>
+  <div class="acciones">
+    <a class="btn btn-web" href="#"><b>Envía ahora por la web</b><small>Cotiza y paga en línea</small></a>
+    <a class="btn btn-wa" href="#"><b>Escríbenos por WhatsApp</b><small>0991344747 · 24/7</small></a>
+  </div>
+  <p class="nota">Servicio de LAARCOURIER · Grupo LAAR</p>
+</div></section>
+
+<!-- ══════════ Notas · fuera del diseño ══════════ -->
+<section class="notas"><div class="wrap">
+  <h2>Notas de esta propuesta</h2>
+  <ul>
+    <li><b>Identidad:</b> los colores y la tipografía se midieron en laarcourier.com el 25-sep-2026 —
+        Poppins, amarillo #FCE200 y el verde #4DC247 que el sitio ya usa para WhatsApp. No se inventó ninguno.</li>
+    <li><b>Logotipos:</b> los de esta maqueta están dibujados. Hacen falta los archivos reales de
+        LAARCOURIER y de EnvíaFácil en SVG o PNG con fondo transparente.</li>
+    <li><b>Por confirmar:</b> la hora de corte de la recolección («antes de las dos de la tarde») y el
+        texto exacto de los dos botones, que son de la voz de campaña de LAAR.</li>
+    <li><b>La cabecera</b> de arriba es la del sitio actual, sin cambios. Esta página vive dentro de
+        laarcourier.com como página completa, no en un iframe: el pago redirige y un iframe lo rompe.</li>
+    <li><b>Los formularios del proceso</b> no cambian. Ya están construidos, probados y con su diseño
+        aprobado; esta propuesta es solo la página que los presenta y les da entrada.</li>
+    <li><b>Móvil:</b> esta vista es de escritorio. Se replica en teléfono cuando LAAR apruebe el diseño.</li>
+  </ul>
+  <p class="pie">WDB · propuesta de diseño para LAARCOURIER · 25 de septiembre de 2026</p>
+</div></section>
+
+</body>
+</html>
