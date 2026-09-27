@@ -752,7 +752,7 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
       clearTimeout(geoT);geoT=setTimeout(function(){revGeo(c.lat,c.lng);},450);
     }
     function revGeo(lat,lon){
-      fetch('https://enviafacil-geocode.fn.jelou.ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lat:lat,lon:lon})})
+      fetch('https://enviafacil-geocode-osm.fn.jelou.ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lat:lat,lon:lon})})
       .then(function(r){return r.json();}).then(function(d){
         var a=document.getElementById('efAddr'),cov=document.getElementById('efCov');
         if(d&&d.ok){
@@ -790,10 +790,10 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
         }
         window._efForce=false;btn.textContent='Confirmar ubicación';btn.disabled=false;closeM();
       }
-      fetch('https://enviafacil-geocode.fn.jelou.ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lat:c.lat,lon:c.lng})})
+      fetch('https://enviafacil-geocode-osm.fn.jelou.ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lat:c.lat,lon:c.lng})})
         .then(function(r){return r.json();}).then(done).catch(function(){done(null);});
     }
-    var FN='https://enviafacil-geocode.fn.jelou.ai',srchT=null,sess=newSess();
+    var FN='https://enviafacil-geocode-osm.fn.jelou.ai',srchT=null,sess=newSess();
     function newSess(){return 'ef-'+Date.now()+'-'+Math.floor(Math.random()*1e6);}
     function doSearch(q){
       var bias=map?(map.getCenter().lat+','+map.getCenter().lng):'';
