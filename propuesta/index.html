@@ -135,8 +135,8 @@ button:focus-visible,a:focus-visible{outline:3px solid #000000;outline-offset:2p
                 <img src="marca/enviafacil-fondo-oscuro.svg" alt="Envía Fácil" style="height: 20px; width: auto; display: block;">
               </div>
               <span style="display: inline-block; margin-bottom: 10px; border: 1.5px dashed #FCE200; color: #FCE200; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px;">Atención 24/7</span>
-              <p style="margin: 0 0 10px; font-size: 21px; font-weight: 700; line-height: 1.18; color: #FFFFFF;">Tu courier ahora<br>está en <span style="color: #FCE200;">WhatsApp</span> <span style="color: #FCE200; border-bottom: 2px dashed #FCE200;">y en la web.</span></p>
-              <p style="margin: 0 0 16px; font-size: 12px; line-height: 1.5; color: #D1D5DB; max-width: 300px;">Desde un chat, cotiza, solicita y paga tu envío puerta a puerta a nivel nacional.</p>
+              <p style="margin: 0 0 10px; font-size: 21px; font-weight: 700; line-height: 1.18; color: #FFFFFF;">Tu envío empieza <span style="color: #FCE200;">aquí.</span></p>
+              <p style="margin: 0 0 16px; font-size: 12px; line-height: 1.5; color: #D1D5DB; max-width: 300px;">Cotiza, paga y agenda tu recolección puerta a puerta a nivel nacional, por WhatsApp o en la web.</p>
               <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                 <span style="background: #25D366; color: #FFFFFF; font-size: 12px; font-weight: 700; padding: 10px 16px; border-radius: 999px;">Escríbenos por WhatsApp</span>
                 <span style="background: #FCE200; color: #000000; font-size: 12px; font-weight: 700; padding: 10px 16px; border-radius: 999px; box-shadow: 0 0 0 3px rgba(252,226,0,.35);">Envía ahora por la web</span>
@@ -153,7 +153,7 @@ button:focus-visible,a:focus-visible{outline:3px solid #000000;outline-offset:2p
                 <p style="margin: 0 0 8px; font-size: 12px; font-weight: 700;">Titular de la portada</p>
                 <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;">
                   <div style="background: #F3F4F6; border-radius: 8px; padding: 8px 10px;"><p style="font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin: 0 0 4px; color: rgba(0,0,0,.6);">Hoy</p><p style="margin: 0; font-size: 12px; line-height: 1.45; color: rgba(0,0,0,.72);">Tu courier ahora está en WhatsApp.</p></div>
-                  <div style="background: #FFFBD1; border: 1.5px solid #FCE200; border-radius: 8px; padding: 8px 10px;"><p style="font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin: 0 0 4px; color: #000000;">Propuesto</p><p style="margin: 0; font-size: 12px; line-height: 1.45; font-weight: 600;">Tu courier ahora está en WhatsApp <b>y en la web.</b></p></div>
+                  <div style="background: #FFFBD1; border: 1.5px solid #FCE200; border-radius: 8px; padding: 8px 10px;"><p style="font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin: 0 0 4px; color: #000000;">Propuesto</p><p style="margin: 0; font-size: 12px; line-height: 1.45; font-weight: 600;"><b>Tu envío empieza aquí.</b> Cotiza, paga y agenda tu recolección puerta a puerta a nivel nacional, por WhatsApp o en la web.</p></div>
                 </div>
               </div>
               <div style="padding: 12px 18px; border-top: 1px solid #E5E7EB;">
@@ -772,7 +772,7 @@ button:focus-visible,a:focus-visible{outline:3px solid #000000;outline-offset:2p
                   <sc-if value="{{payNormal}}" hint-placeholder-val="{{yes}}">
                     <div role="group" aria-label="Método de pago" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;">
                       <button type="button" onClick="{{pickTc}}" aria-pressed="{{tcPressed}}" style="min-height: 64px; border-radius: 12px; border: 1.5px solid #000000; background: {{tcBg}}; color: {{tcFg}}; font-size: 15px; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;">💳 TC / TD<span style="font-size: 12px; font-weight: 500;">Tarjeta de crédito o débito</span></button>
-                      <button type="button" onClick="{{pickDu}}" aria-pressed="{{duPressed}}" style="min-height: 64px; border-radius: 12px; border: 1.5px solid #000000; background: {{duBg}}; color: {{duFg}}; font-size: 15px; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;">📲 DEUNA<span style="font-size: 12px; font-weight: 500;">App o código</span></button>
+                      <button type="button" onClick="{{pickDu}}" aria-pressed="{{duPressed}}" style="min-height: 64px; border-radius: 12px; border: 1.5px solid #000000; background: {{duBg}}; color: {{duFg}}; font-size: 15px; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;"><img src="marca/deuna-fondo-morado.webp" alt="DeUna" style="height: 24px; width: auto; display: block; border-radius: 4px;"><span style="font-size: 12px; font-weight: 500;">App o código</span></button>
                     </div>
                     <sc-if value="{{pmTc}}" hint-placeholder-val="{{yes}}">
                       <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 6px;">
@@ -785,7 +785,7 @@ button:focus-visible,a:focus-visible{outline:3px solid #000000;outline-offset:2p
                     <sc-if value="{{pmDu}}" hint-placeholder-val="{{yes}}">
                       <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 6px;">
                         <button type="button" onClick="{{pickDuApp}}" aria-pressed="{{duAppPressed}}" style="display: flex; flex-direction: column; gap: 4px; text-align: left; padding: 14px; border-radius: 12px; border: {{duAppBorder}}; background: #FFFFFF; color: #000000;">
-                          <span style="font-size: 15px; font-weight: 700;">1️⃣ Pago por la app DeUna 📲</span>
+                          <span style="font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 6px;">1️⃣ Pago por la app DeUna <img src="marca/deuna-fondo-morado.webp" alt="" style="height: 18px; width: auto; border-radius: 3px;"></span>
                           <span style="font-size: 13px; font-weight: 500; color: rgba(0,0,0,.72);">Puedes transferir directamente desde tu celular de forma rápida y segura.</span>
                         </button>
                         <button type="button" onClick="{{pickDuCod}}" aria-pressed="{{duCodPressed}}" style="display: flex; flex-direction: column; gap: 4px; text-align: left; padding: 14px; border-radius: 12px; border: {{duCodBorder}}; background: #FFFFFF; color: #000000;">
@@ -1016,7 +1016,7 @@ button:focus-visible,a:focus-visible{outline:3px solid #000000;outline-offset:2p
 
       <div style="margin-top: 48px; padding: 24px 28px; border-radius: 16px; background: #E5E7EB;">
         <h3 style="margin: 0 0 10px; font-size: 17px; font-weight: 700;">Por confirmar con LAAR antes de construir</h3>
-        <p style="margin: 0; font-size: 14px; line-height: 1.7;">Logotipo oficial de DEUNA para la pantalla de pago (lo pide JC a DeUna) · Lo que DeUna necesita para cobrar desde la web · Tarifas reales: los precios de esta propuesta son de ejemplo · Lista de ciudades con cobertura para el mensaje de “aún no llegamos”.</p>
+        <p style="margin: 0; font-size: 14px; line-height: 1.7;">Lo que DeUna necesita para cobrar desde la web · Tarifas reales: los precios de esta propuesta son de ejemplo · Lista de ciudades con cobertura para el mensaje de “aún no llegamos”.</p>
       </div>
     </div>
   </section>
