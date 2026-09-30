@@ -304,6 +304,7 @@ button:focus-visible,a:focus-visible{outline:3px solid #000000;outline-offset:2p
 
               <!-- ============ 1. ENTRADA ============ -->
               <sc-if value="{{s1}}" hint-placeholder-val="{{yes}}">
+                <sc-if value="{{s1Hero}}" hint-placeholder-val="{{yes}}">
                 <section style="background: #000000; color: #FFFFFF;">
                   <div style="display: flex; {{heroStyle}}">
                     <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 18px;">
@@ -346,6 +347,34 @@ button:focus-visible,a:focus-visible{outline:3px solid #000000;outline-offset:2p
                     <div><p style="margin: 0; font-size: 15px; font-weight: 700;">Cotiza, paga y envía</p><p class="hint" style="margin-top: 2px;">Pagas con tarjeta o DeUna y recibes tu guía al instante.</p></div>
                   </div>
                 </div>
+                </sc-if>
+                <!-- 1b. AUTORIZACIÓN DE DATOS (igual a ef2-inicio-pdp del bot; cada canal guarda su propia aceptación) -->
+                <sc-if value="{{s1Pdp}}" hint-placeholder-val="{{yes}}">
+                  <section style="{{pdpStyle}}">
+                    <div style="max-width: 520px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px;">
+                      <span style="align-self: flex-start; background: #FCE200; color: #000000; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px;">Protección de datos</span>
+                      <p style="margin: 0; font-size: 16px; line-height: 1.55;">Antes de continuar, necesitamos tu autorización para el uso de tus datos personales conforme a la normativa vigente en Ecuador. Solo debes aceptar. 😉</p>
+                      <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <a href="https://www.laarcourier.com/pagina/terminos-y-condiciones-envia-facil" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 10px 14px; border: 1.5px solid #D1D5DB; border-radius: 12px; color: #000000; font-size: 15px; font-weight: 600; text-decoration: none;">✅ Ver términos y condiciones</a>
+                        <a href="https://www.laarcourier.com/pagina/proteccion-de-datos" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 10px 14px; border: 1.5px solid #D1D5DB; border-radius: 12px; color: #000000; font-size: 15px; font-weight: 600; text-decoration: none;">✅ Protección de Datos</a>
+                      </div>
+                      <p style="margin: 6px 0 0; font-size: 16px; font-weight: 700;">¿Aceptas continuar?</p>
+                      <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button type="button" class="bp" onClick="{{pdpSi}}">✅ Sí, Acepto</button>
+                        <button type="button" class="bs" onClick="{{pdpNo}}">🚫 No acepto</button>
+                      </div>
+                    </div>
+                  </section>
+                </sc-if>
+                <sc-if value="{{s1NoPdp}}" hint-placeholder-val="{{yes}}">
+                  <section style="{{pdpStyle}}">
+                    <div style="max-width: 520px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px;">
+                      <p style="margin: 0; font-size: 16px; line-height: 1.55;">Para continuar con la gestión de envíos, es necesario aceptar el uso de tus datos personales conforme a la normativa vigente en Ecuador.</p>
+                      <p style="margin: 0; font-size: 16px; line-height: 1.55;">Si deseas continuar más adelante, estaremos disponibles para ayudarte.</p>
+                      <button type="button" class="bs" onClick="{{pdpVolver}}">Volver al inicio</button>
+                    </div>
+                  </section>
+                </sc-if>
               </sc-if>
 
               <!-- ============ 2. COTIZADOR ============ -->
@@ -1039,7 +1068,7 @@ class Component extends DCLogic {
 
     const names = ['Entrada', 'Cotizador', 'Precio', 'Tipo de envío', 'Remitente', 'Destinatario', 'Confirmación', 'Pago', 'Listo'];
     const caps = [
-      'Llega desde el anuncio. Dos caminos, uno por intención: saber el precio o enviar ya.',
+      'Llega desde el anuncio. Dos caminos, uno por intención: saber el precio o enviar ya. Antes de pedir cualquier dato, la misma autorización de datos personales que en WhatsApp (mira «Ver estado»).',
       'Los mismos datos que pide el bot, en el mismo orden. Prueba los estados de error, sin cobertura y cargando.',
       'El precio primero y en grande. Lo cotizado sigue contigo.',
       'Un destino o varios. Con un destino, se elige entrega a domicilio u oficina LAAR, como en WhatsApp.',
@@ -1055,6 +1084,7 @@ class Component extends DCLogic {
     });
 
     const VB = {
+      1: [['normal', 'Entrada'], ['pdp', 'Autorización de datos'], ['nopdp', 'No acepta']],
       2: [['normal', 'Normal'], ['err', 'Campo con error'], ['nocov', 'Ciudad sin cobertura'], ['load', 'Botón cargando']],
       5: [['normal', 'Normal'], ['err', 'Campo con error']],
       8: st.nv ? [['normal', 'Normal'], ['load', 'Procesando']] : [['normal', 'Normal'], ['rej', 'Tarjeta no aprobada'], ['pend', 'Pago en confirmación']]
@@ -1092,6 +1122,9 @@ class Component extends DCLogic {
 
     return {
       yes: true,
+      s1Hero: s === 1 && v !== 'pdp' && v !== 'nopdp', s1Pdp: s === 1 && v === 'pdp', s1NoPdp: s === 1 && v === 'nopdp',
+      pdpStyle: isD ? 'padding: 72px 40px 88px; background: #FFFFFF; color: #000000;' : 'padding: 32px 20px 40px; background: #FFFFFF; color: #000000;',
+      pdpSi: () => this.setState({ s: 2, v: 'normal' }), pdpNo: () => this.setState({ v: 'nopdp' }), pdpVolver: () => this.setState({ v: 'normal' }),
       s1: s === 1, s2: s === 2, s3: s === 3, s4: s === 4, s5: s === 5, s6: s === 6, s7: s === 7, s8: s === 8, s9: s === 9,
       isM: isM, isD: isD,
       chips: chips,
@@ -1123,8 +1156,8 @@ class Component extends DCLogic {
       gateStyle: isD ? 'min-height: 820px; padding: 64px 40px;' : 'min-height: 780px; padding: 28px 14px;',
       heroH1: isD ? '60px' : '40px',
       h1: isD ? '30px' : '24px',
-      startEnv: () => this.setState({ s: 2, v: 'normal', entry: 'env' }),
-      startCot: () => this.setState({ s: 2, v: 'normal', entry: 'cot' }),
+      startEnv: () => this.setState({ s: 1, v: 'pdp', entry: 'env' }),
+      startCot: () => this.setState({ s: 1, v: 'pdp', entry: 'cot' }),
       showProg: inFlow,
       stepLabel: cur ? ('Paso ' + cur + ' de 6 · ' + SN[cur - 1]) : '',
       segs: segs,
