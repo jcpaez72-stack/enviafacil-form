@@ -835,8 +835,8 @@ PANTALLAS.listo = function () {
       '<p style="margin:0 4px;font-size:14px;font-weight:500">📧 Recibirás tu factura en: <strong>' + esc(E.rem.correo) + "</strong></p>" +
       '<p style="margin:0 4px;font-size:14px;font-weight:500">Nosotros nos encargamos del proceso. Tú solo espera la entrega.</p></div>' +
       (s.estado === "emitido_con_fallas" ? '<div class="nota" role="note" style="margin-bottom:16px"><span>Tu pago está registrado. Si falta algún dato de los de arriba, guarda esta referencia: <strong>' + esc(E.envioRef) + "</strong></span></div>" : "") +
-      '<div class="nota" role="note" style="margin-bottom:16px;font-size:14px;display:block"><p style="margin:0 0 6px"><strong>Importante:</strong> Embala tu paquete correctamente siguiendo estos pasos 👉🏽 <a href="https://www.youtube.com/shorts/PsMoJksKRRc" target="_blank" rel="noopener" style="font-weight:700">ver video</a></p>' +
-      '<p style="margin:0">Si tu envío es grande, mira también este video 📦 <a href="https://www.youtube.com/watch?v=_HLwTGJaMnI" target="_blank" rel="noopener" style="font-weight:700">ver video</a></p></div>' +
+      '<div class="nota" role="note" style="margin-bottom:16px;font-size:14px"><div><p style="margin:0 0 6px"><strong>Importante:</strong> Embala tu paquete correctamente siguiendo estos pasos 👉🏽 <a href="https://www.youtube.com/shorts/PsMoJksKRRc" target="_blank" rel="noopener" style="font-weight:700">ver video</a></p>' +
+      '<p style="margin:0">Si tu envío es grande, mira también este video 📦 <a href="https://www.youtube.com/watch?v=_HLwTGJaMnI" target="_blank" rel="noopener" style="font-weight:700">ver video</a></p></div></div>' +
       '<div class="pila10" style="margin-bottom:16px">' +
       (fac ? '<a class="bp" href="' + esc(fac) + '" target="_blank" rel="noopener">' + ICONO_BAJAR + "Descargar factura (PDF)</a>" : "") +
       (etq ? '<a class="bs" href="' + esc(etq) + '" target="_blank" rel="noopener">' + ICONO_BAJAR + "Descargar guía (PDF)</a>" : "") + "</div>" +
