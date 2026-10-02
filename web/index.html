@@ -559,18 +559,20 @@ function formPersona(p, pre, destino, ofi) {
 // después de solicitar envío»; sin mapa). LAAR recibe la dirección en 4 campos: calle principal, número, calle secundaria y
 // referencia. Lo de la vivienda se junta en el campo «número» (≤ 100 caracteres, el tope de la recolección).
 var VIVIENDAS = ["Casa", "Departamento", "Urbanización o conjunto"];
+// JC, 2-oct: en los campos que se activan, si un dato no aplica el cliente escribe 0.
+var NOTA_0 = '<p class="hint" style="margin:-8px 0 0">Si algún dato no aplica, escribe 0.</p>';
 function bloqueVivienda(p, pre) {
   var v = p.viv || "";
   function chico(id, et, valor, max, ph, opc) { return campo(pre + id, et, valor || "", 'maxlength="' + max + '" placeholder="' + ph + '"', "", opc); }
   return '<div><label class="lb" for="' + pre + '-viv">Tipo de vivienda</label><select id="' + pre + '-viv" class="in" aria-describedby="' + pre + '-viv-msg">' +
     '<option value="">Elige…</option>' + VIVIENDAS.map(function (x) { return "<option" + (x === v ? " selected" : "") + ">" + x + "</option>"; }).join("") + "</select>" +
     '<p id="' + pre + '-viv-msg" class="hint" data-hint="Estos datos le sirven al courier para llegar sin llamar.">Estos datos le sirven al courier para llegar sin llamar.</p></div>' +
-    '<div id="' + pre + '-b-casa"' + (v === "Casa" ? "" : " hidden") + ">" + chico("-numCasa", "Número de casa", p.numCasa, 20, "Ej.: 12 · Mz. 4 solar 7") + "</div>" +
+    '<div id="' + pre + '-b-casa"' + (v === "Casa" ? "" : " hidden") + ">" + chico("-numCasa", "Número de casa", p.numCasa, 20, "Ej.: 12 · Mz. 4 solar 7") + '<p class="hint">Si no tiene número, escribe 0.</p>' + "</div>" +
     '<div id="' + pre + '-b-depto" class="pila"' + (v === "Departamento" ? "" : " hidden") + ">" + chico("-edificio", "Edificio", p.edificio, 40, "Ej.: Torres del Río", true) +
-    '<div class="dos">' + chico("-piso", "Piso", p.piso, 5, "Ej.: 3") + chico("-numDepto", "N.º de departamento", p.numDepto, 10, "Ej.: 4B") + "</div></div>" +
+    '<div class="dos">' + chico("-piso", "Piso", p.piso, 5, "Ej.: 3") + chico("-numDepto", "N.º de departamento", p.numDepto, 10, "Ej.: 4B") + "</div>" + NOTA_0 + "</div>" +
     '<div id="' + pre + '-b-urb" class="pila"' + (v === "Urbanización o conjunto" ? "" : " hidden") + ">" + chico("-urbNombre", "Nombre de la urbanización o conjunto", p.urbNombre, 40, "Ej.: Villa Club") +
     '<div class="dos" style="grid-template-columns:repeat(3,minmax(0,1fr));align-items:end">' + chico("-urbEtapa", "Etapa", p.urbEtapa, 5, "Ej.: 3", true) + chico("-urbManzana", "Manzana", p.urbManzana, 10, "Ej.: 14") +
-    chico("-urbVilla", "Villa", p.urbVilla, 10, "Ej.: 7") + "</div></div>";
+    chico("-urbVilla", "Villa", p.urbVilla, 10, "Ej.: 7") + "</div>" + NOTA_0 + "</div>";
 }
 function activarVivienda(pre) {
   var sel = $(pre + "-viv"); if (!sel) return;
@@ -592,14 +594,14 @@ function leerPersona(pre, destino, ofi) {
     ["numCasa", "edificio", "piso", "numDepto", "urbNombre", "urbEtapa", "urbManzana", "urbVilla"].forEach(function (k) { p[k] = val(pre + "-" + k); });
     f(pre + "-calle", p.calle.length < 2, "Escribe la calle principal.");
     f(pre + "-viv", !p.viv, "Elige el tipo de vivienda.");
-    if (p.viv === "Casa") { f(pre + "-numCasa", p.numCasa.length < 1, "Escribe el número de casa (si no tiene, escribe S/N)."); p.num = p.numCasa; }
+    if (p.viv === "Casa") { f(pre + "-numCasa", p.numCasa.length < 1, "Escribe el número de casa (si no tiene, escribe 0)."); p.num = p.numCasa; }
     if (p.viv === "Departamento") {
-      f(pre + "-piso", p.piso.length < 1, "Falta el piso."); f(pre + "-numDepto", p.numDepto.length < 1, "Falta el departamento.");
+      f(pre + "-piso", p.piso.length < 1, "Falta el piso (si no aplica, escribe 0)."); f(pre + "-numDepto", p.numDepto.length < 1, "Falta el departamento (si no aplica, escribe 0).");
       p.num = [p.edificio ? "Edif. " + p.edificio : "", "piso " + p.piso, "dpto. " + p.numDepto].filter(Boolean).join(", ");
     }
     if (p.viv === "Urbanización o conjunto") {
       f(pre + "-urbNombre", p.urbNombre.length < 2, "Escribe el nombre de la urbanización o conjunto.");
-      f(pre + "-urbManzana", p.urbManzana.length < 1, "Falta la manzana."); f(pre + "-urbVilla", p.urbVilla.length < 1, "Falta la villa.");
+      f(pre + "-urbManzana", p.urbManzana.length < 1, "Falta la manzana (si no aplica, escribe 0)."); f(pre + "-urbVilla", p.urbVilla.length < 1, "Falta la villa (si no aplica, escribe 0).");
       p.num = ["Urb. " + p.urbNombre, p.urbEtapa ? "etapa " + p.urbEtapa : "", "Mz. " + p.urbManzana, "villa " + p.urbVilla].filter(Boolean).join(", ");
     }
     f(pre + "-sec", p.sec.length < 1, "Escribe la calle secundaria.");
