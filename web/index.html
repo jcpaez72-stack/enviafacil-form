@@ -551,9 +551,33 @@ function formPersona(p, pre, destino, ofi) {
     campo(pre + "-cel", "Celular", p.celular || "", 'inputmode="numeric" maxlength="10" autocomplete="' + (destino ? "off" : "tel-national") + '" placeholder="09XXXXXXXX"', destino ? "" : "Lo trajimos de tu cotización.") +
     (ofi ? "" :
       campo(pre + "-calle", "Calle principal", p.calle || "", 'maxlength="100" placeholder="Av. / Calle principal"', "") +
-      '<div class="dos">' + campo(pre + "-num", "Número de casa", p.num || "", 'maxlength="20" placeholder="N° de casa"', "") +
-      campo(pre + "-sec", "Calle secundaria", p.sec || "", 'maxlength="100" placeholder="Calle secundaria"', "") + "</div>" +
-      campo(pre + "-ref", "Referencia", p.ref || "", 'maxlength="100" placeholder="Punto de referencia"', "")) + "</div>";
+      bloqueVivienda(p, pre) +
+      campo(pre + "-sec", "Calle secundaria", p.sec || "", 'maxlength="100" placeholder="Calle secundaria"', "") +
+      campo(pre + "-ref", "Referencia", p.ref || "", 'maxlength="100" placeholder="Punto de referencia (ej.: portón blanco, frente a la tienda)"', "")) + "</div>";
+}
+// Tipo de vivienda: tomado del formulario de Servicio a Domicilio de InterLAB (JC, 2-oct-2026: «en todos los formularios
+// después de solicitar envío»; sin mapa). LAAR recibe la dirección en 4 campos: calle principal, número, calle secundaria y
+// referencia. Lo de la vivienda se junta en el campo «número» (≤ 100 caracteres, el tope de la recolección).
+var VIVIENDAS = ["Casa", "Departamento", "Urbanización o conjunto"];
+function bloqueVivienda(p, pre) {
+  var v = p.viv || "";
+  function chico(id, et, valor, max, ph, opc) { return campo(pre + id, et, valor || "", 'maxlength="' + max + '" placeholder="' + ph + '"', "", opc); }
+  return '<div><label class="lb" for="' + pre + '-viv">Tipo de vivienda</label><select id="' + pre + '-viv" class="in" aria-describedby="' + pre + '-viv-msg">' +
+    '<option value="">Elige…</option>' + VIVIENDAS.map(function (x) { return "<option" + (x === v ? " selected" : "") + ">" + x + "</option>"; }).join("") + "</select>" +
+    '<p id="' + pre + '-viv-msg" class="hint" data-hint="Estos datos le sirven al courier para llegar sin llamar.">Estos datos le sirven al courier para llegar sin llamar.</p></div>' +
+    '<div id="' + pre + '-b-casa"' + (v === "Casa" ? "" : " hidden") + ">" + chico("-numCasa", "Número de casa", p.numCasa, 20, "Ej.: 12 · Mz. 4 solar 7") + "</div>" +
+    '<div id="' + pre + '-b-depto" class="pila"' + (v === "Departamento" ? "" : " hidden") + ">" + chico("-edificio", "Edificio", p.edificio, 40, "Ej.: Torres del Río", true) +
+    '<div class="dos">' + chico("-piso", "Piso", p.piso, 5, "Ej.: 3") + chico("-numDepto", "N.º de departamento", p.numDepto, 10, "Ej.: 4B") + "</div></div>" +
+    '<div id="' + pre + '-b-urb" class="pila"' + (v === "Urbanización o conjunto" ? "" : " hidden") + ">" + chico("-urbNombre", "Nombre de la urbanización o conjunto", p.urbNombre, 40, "Ej.: Villa Club") +
+    '<div class="dos" style="grid-template-columns:repeat(3,minmax(0,1fr));align-items:end">' + chico("-urbEtapa", "Etapa", p.urbEtapa, 5, "Ej.: 3", true) + chico("-urbManzana", "Manzana", p.urbManzana, 10, "Ej.: 14") +
+    chico("-urbVilla", "Villa", p.urbVilla, 10, "Ej.: 7") + "</div></div>";
+}
+function activarVivienda(pre) {
+  var sel = $(pre + "-viv"); if (!sel) return;
+  sel.addEventListener("change", function () {
+    marcar(pre + "-viv", "");
+    $(pre + "-b-casa").hidden = sel.value !== "Casa"; $(pre + "-b-depto").hidden = sel.value !== "Departamento"; $(pre + "-b-urb").hidden = sel.value !== "Urbanización o conjunto";
+  });
 }
 function leerPersona(pre, destino, ofi) {
   var p = { cedula: dig(val(pre + "-id")), nombre: val(pre + "-nom").replace(/\s+/g, " "), correo: val(pre + "-mail").replace(/\s+/g, ""), celular: dig(val(pre + "-cel")) };
@@ -564,16 +588,27 @@ function leerPersona(pre, destino, ofi) {
   f(pre + "-mail", !(destino && !p.correo) && !correoOk(p.correo), "Revisa el correo. Por ejemplo: nombre@gmail.com");
   f(pre + "-cel", destino ? !/^\d{10}$/.test(p.celular) : !celularOk(p.celular), "El celular tiene 10 dígitos y empieza con 09.");
   if (!ofi) {
-    p.calle = val(pre + "-calle"); p.num = val(pre + "-num"); p.sec = val(pre + "-sec"); p.ref = val(pre + "-ref");
+    p.calle = val(pre + "-calle"); p.sec = val(pre + "-sec"); p.ref = val(pre + "-ref"); p.viv = val(pre + "-viv");
+    ["numCasa", "edificio", "piso", "numDepto", "urbNombre", "urbEtapa", "urbManzana", "urbVilla"].forEach(function (k) { p[k] = val(pre + "-" + k); });
     f(pre + "-calle", p.calle.length < 2, "Escribe la calle principal.");
-    f(pre + "-num", p.num.length < 1, "Escribe el número de casa (si no tiene, escribe S/N).");
+    f(pre + "-viv", !p.viv, "Elige el tipo de vivienda.");
+    if (p.viv === "Casa") { f(pre + "-numCasa", p.numCasa.length < 1, "Escribe el número de casa (si no tiene, escribe S/N)."); p.num = p.numCasa; }
+    if (p.viv === "Departamento") {
+      f(pre + "-piso", p.piso.length < 1, "Falta el piso."); f(pre + "-numDepto", p.numDepto.length < 1, "Falta el departamento.");
+      p.num = [p.edificio ? "Edif. " + p.edificio : "", "piso " + p.piso, "dpto. " + p.numDepto].filter(Boolean).join(", ");
+    }
+    if (p.viv === "Urbanización o conjunto") {
+      f(pre + "-urbNombre", p.urbNombre.length < 2, "Escribe el nombre de la urbanización o conjunto.");
+      f(pre + "-urbManzana", p.urbManzana.length < 1, "Falta la manzana."); f(pre + "-urbVilla", p.urbVilla.length < 1, "Falta la villa.");
+      p.num = ["Urb. " + p.urbNombre, p.urbEtapa ? "etapa " + p.urbEtapa : "", "Mz. " + p.urbManzana, "villa " + p.urbVilla].filter(Boolean).join(", ");
+    }
     f(pre + "-sec", p.sec.length < 1, "Escribe la calle secundaria.");
     f(pre + "-ref", p.ref.length < 3, "Escribe una referencia para encontrar la dirección.");
   }
   if (!ok) { var x = app.querySelector(".err"); if (x) x.focus(); }
   return ok ? p : null;
 }
-function limpiarAlEscribir() { app.querySelectorAll(".in").forEach(function (el) { el.addEventListener("input", function () { marcar(el.id, ""); }); }); }
+function limpiarAlEscribir() { app.querySelectorAll(".in").forEach(function (el) { el.addEventListener("input", function () { marcar(el.id, ""); }); }); activarVivienda("r"); activarVivienda("d"); }
 
 PANTALLAS.remitente = function () {
   if (!E.ori) return ir("cotizar");
@@ -619,7 +654,7 @@ PANTALLAS.destinatario = function () {
 
 // ---------- 7. Confirmación (mismo contenido que el mensaje «Revisar datos» del bot) ----------
 function fila(k, v) { return '<div class="fila"><span>' + k + "</span><span>" + esc(v || "—") + "</span></div>"; }
-function direccion(p) { return [p.calle, p.num].filter(Boolean).join(" ") + (p.sec ? ", " + p.sec : ""); }
+function direccion(p) { return [p.calle, p.num].filter(Boolean).join(", ") + (p.sec ? " y " + p.sec : ""); }
 PANTALLAS.confirmar = function () {
   if (!E.envioRef) return ir("destinatario");
   var r = E.rem, d = E.dst, ofi = E.entrega === "oficina" && E.oficina, paq = esPaq();
