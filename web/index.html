@@ -777,7 +777,9 @@ var vigilando = null;
 function vigilarDeUna() {
   if (vigilando) return;
   vigilando = setInterval(async function () {
-    if (E.paso !== "pago" || !(E.duRefs || []).length) { clearInterval(vigilando); vigilando = null; return; }
+    // Se deja de preguntar 2 min después de que vence el último cobro abierto (enlace 30 min, código 3 min).
+    var vence = Math.max.apply(null, Object.keys(E.duCobros || {}).map(function (k) { return E.duCobros[k].vence || 0; }).concat([0]));
+    if (E.paso !== "pago" || !(E.duRefs || []).length || Date.now() > vence + 120000) { clearInterval(vigilando); vigilando = null; return; }
     for (var k = 0; k < E.duRefs.length; k++) {
       var r = await api("/deuna/estado", { referencia: E.duRefs[k] });
       if (r.ok && r.estado === "pagado") { clearInterval(vigilando); vigilando = null; E.pagadoCon = "du"; guardar(); ir("listo"); return; }
@@ -793,8 +795,10 @@ function esperarNuvei() {
     if (r.ok && r.estado === "pagado") { limpiarTimers(); E.pagadoCon = "tc"; E.vista = ""; guardar(); ir("listo"); return; }
     var s = await api("/envio/estado", { referencia: E.envioRef });
     if (s.ok && s.estado && s.estado !== "cotizado") { limpiarTimers(); E.pagadoCon = "tc"; E.vista = ""; guardar(); ir("listo"); return; }
-    if (Date.now() - inicio > 90000 && $("nv")) {
-      $("nv").innerHTML = '<div role="status" class="caja" style="border:2px solid var(--negro);font-size:14px;line-height:1.55;gap:6px"><p style="margin:0;font-weight:700">⏳ Estamos confirmando tu pago.</p>' +
+    // A los 10 min deja de preguntar; el mensaje queda fijo (el servicio igual emite si llega el aviso de Nuvei).
+    if (Date.now() - inicio > 600000) limpiarTimers();
+    if (Date.now() - inicio > 90000 && $("nv") && !$("nv-fijo")) {
+      $("nv").innerHTML = '<div role="status" id="nv-fijo" class="caja" style="border:2px solid var(--negro);font-size:14px;line-height:1.55;gap:6px"><p style="margin:0;font-weight:700">⏳ Estamos confirmando tu pago.</p>' +
         '<p style="margin:0">Tu transacción aún se está procesando, así que <strong>no vuelvas a pagar.</strong> Un asesor de LAAR lo verifica y te confirma en un momento.</p>' +
         '<p class="hint" style="margin:0">Referencia: ' + esc(E.envioRef) + "</p></div>";
     }
