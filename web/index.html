@@ -205,7 +205,7 @@ var ANTERIOR = { cotizar: "entrada", precio: "cotizar", entrega: "precio", remit
 
 // ---------- Estado ----------
 function nuevo() { return { paso: "entrada", vista: "", entrada: "env", tipo: "paquete", ori: null, des: null, piezas: "1", peso: "", valor: "", contenido: "", celular: "", precio: 0,
-  entrega: "domicilio", oficina: null, rem: {}, dst: {}, envioRef: "", total: 0, pdpRegistrado: false, metodo: "", duModo: "", duCobros: {}, duRefs: [], nuveiRef: "", pagadoCon: "" }; }
+  entrega: "domicilio", oficina: null, rem: {}, dst: {}, envioRef: "", envioClave: "", total: 0, pdpRegistrado: false, metodo: "", duModo: "", duCobros: {}, duRefs: [], nuveiRef: "", pagadoCon: "" }; }
 var E = nuevo();
 try { var g0 = JSON.parse(localStorage.getItem(CLAVE) || "null"); if (g0 && g0.paso) E = Object.assign(nuevo(), g0); } catch (e) {}
 function guardar() { try { localStorage.setItem(CLAVE, JSON.stringify(E)); } catch (e) {} }
@@ -432,7 +432,7 @@ PANTALLAS.cotizar = function () {
     if (!celularOk(cel)) { marcar("c-cel", cel.length && cel.length < 10 ? "Te falta un número. Tu celular tiene 10 dígitos y empieza con 09." : "Tu celular tiene 10 dígitos y empieza con 09."); ok = false; }
     if (!ok) { var p = app.querySelector(".err"); if (p) p.focus(); return; }
     E.piezas = paqA ? String(piezas) : "1"; E.peso = paqA ? String(peso) : ""; E.valor = paqA ? String(valor) : ""; E.contenido = paqA ? cont : "";
-    E.celular = cel; E.envioRef = ""; E.total = 0; guardar();
+    E.celular = cel; E.envioRef = ""; E.envioClave = ""; E.total = 0; guardar();
     var b = this; b.disabled = true; b.setAttribute("aria-busy", "true"); b.innerHTML = '<span class="spin"></span>Calculando tu precio…';
     var r = await api("/envio/precio", { envio: armarEnvio(true) });
     b.disabled = false; b.removeAttribute("aria-busy"); b.textContent = "Ver precio";
@@ -643,7 +643,7 @@ PANTALLAS.destinatario = function () {
     var r = await api("/envio/cotizar", { envio: armarEnvio(false) });
     b.disabled = false; b.removeAttribute("aria-busy"); b.textContent = "Continuar";
     if (r.ok && r.referencia && r.total > 0) {
-      E.envioRef = r.referencia; E.total = r.total; E.metodo = ""; E.duModo = ""; E.duCobros = {}; E.duRefs = []; E.nuveiRef = ""; guardar();
+      E.envioRef = r.referencia; E.envioClave = r.clave || ""; E.total = r.total; E.metodo = ""; E.duModo = ""; E.duCobros = {}; E.duRefs = []; E.nuveiRef = ""; guardar();
       if (!E.pdpRegistrado) api("/pdp/aceptar", { celular: E.rem.celular, cedula: E.rem.cedula, version: PDP_VERSION, envioRef: r.referencia }).then(function (x) { if (x.ok) { E.pdpRegistrado = true; guardar(); } });
       ir("confirmar"); return;
     }
@@ -723,7 +723,7 @@ function errorPago(r) {
   if (r.error === "envio_no_disponible") revisarSiYaPago();
 }
 async function revisarSiYaPago() {
-  var s = await api("/envio/estado", { referencia: E.envioRef });
+  var s = await api("/envio/estado", { referencia: E.envioRef, clave: E.envioClave });
   if (s.ok && s.estado && s.estado !== "cotizado") { E.pagadoCon = E.pagadoCon || E.metodo; guardar(); ir("listo"); }
 }
 async function cobroDeUna(modo, otro) {
@@ -793,7 +793,7 @@ function esperarNuvei() {
   async function revisar() {
     var r = await api("/nuvei/estado", { referencia: E.nuveiRef || E.envioRef });
     if (r.ok && r.estado === "pagado") { limpiarTimers(); E.pagadoCon = "tc"; E.vista = ""; guardar(); ir("listo"); return; }
-    var s = await api("/envio/estado", { referencia: E.envioRef });
+    var s = await api("/envio/estado", { referencia: E.envioRef, clave: E.envioClave });
     if (s.ok && s.estado && s.estado !== "cotizado") { limpiarTimers(); E.pagadoCon = "tc"; E.vista = ""; guardar(); ir("listo"); return; }
     // A los 10 min deja de preguntar; el mensaje queda fijo (el servicio igual emite si llega el aviso de Nuvei).
     if (Date.now() - inicio > 600000) limpiarTimers();
@@ -813,7 +813,7 @@ PANTALLAS.listo = function () {
   var inicio = Date.now();
   app.innerHTML = '<div class="wrap" id="listo"><p class="hint" style="display:flex;gap:8px;align-items:center;font-size:14px"><span class="spin"></span>Estamos generando tu guía, factura y recolección…</p></div>';
   async function revisar() {
-    var s = await api("/envio/estado", { referencia: E.envioRef });
+    var s = await api("/envio/estado", { referencia: E.envioRef, clave: E.envioClave });
     if (s.ok && (s.estado === "emitido" || s.estado === "emitido_con_fallas")) { limpiarTimers(); pintar(s); return; }
     if (Date.now() - inicio > 180000) {
       limpiarTimers();
@@ -828,8 +828,8 @@ PANTALLAS.listo = function () {
   function pintar(s) {
     var res = s.resultado || {}, guias = (res.guias || []).filter(function (g) { return g && g.guia; });
     var rec = res.recoleccion && res.recoleccion.ok ? res.recoleccion.id : "";
-    var fac = res.factura && res.factura.ok && res.factura.pdf ? API + res.factura.pdf : "";
-    var etq = guias.length ? API + "/etiqueta/" + E.envioRef + ".pdf" : "";
+    var fac = res.factura && res.factura.ok && res.factura.pdf ? API + res.factura.pdf + "?k=" + encodeURIComponent(E.envioClave) : "";
+    var etq = guias.length ? API + "/etiqueta/" + E.envioRef + ".pdf?k=" + encodeURIComponent(E.envioClave) : "";
     $("listo").innerHTML = '<div class="listo-top"><span class="ok"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>' +
       '<p style="margin-top:4px;font-weight:600">' + (E.pagadoCon === "du" ? "💳 Tu pago ha sido registrado exitosamente." : "💳 Tu pago se ha completado exitosamente.") + "</p>" +
       '<p style="font-weight:500">✨ Gracias por confiar en <strong>LAARCOURIER</strong>.</p>' +
