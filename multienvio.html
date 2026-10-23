@@ -51,6 +51,10 @@
     .tipo{flex:1;border:2px solid #ddd;border-radius:14px;padding:16px 8px;
           text-align:center;cursor:pointer;transition:.15s;background:#fff}
     .tipo.sel{border-color:#E4C201;background:#FFFBE0;box-shadow:0 0 0 3px rgba(252,226,0,.3)}
+  /* 23-oct-2026 · Datos de factura */
+  .facop{ display:flex; align-items:center; gap:10px; padding:12px 14px; border:1.5px solid var(--borde); border-radius:10px; background:#fff; margin-bottom:8px; font-weight:600; font-size:15px; cursor:pointer; }
+  .facop input{ width:20px; height:20px; padding:0; margin:0; flex-shrink:0; accent-color:var(--negro); }
+  .facop .hint{ display:block; font-weight:400; margin-top:2px; }
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -176,6 +180,43 @@
         <input id="referencia_recoleccion" placeholder="Punto de referencia" />
         <div class="errmsg" id="e_referencia_recoleccion">Ingresa un punto de referencia (ej. edificio, color de casa, junto a…).</div>
         <div class="hint">Ej: edificio azul, junto al parque, casa de dos pisos…</div>
+      </div>
+    </div>
+
+    <!-- 23-oct-2026 (JC) · DATOS DE FACTURA: solo en el remitente. «Los mismos» viene marcada: no cambia nada. -->
+    <div id="bloque_fac" class="hidden">
+      <div class="seccion">🧾 Datos de factura</div>
+      <div class="grp">
+        <label class="facop"><input type="radio" name="fac_op" id="fac_op1" value="1" checked /><span>Los mismos del remitente</span></label>
+        <label class="facop"><input type="radio" name="fac_op" id="fac_op0" value="0" /><span>Otros datos<span class="hint">A nombre de otra persona o empresa</span></span></label>
+      </div>
+      <div id="fac_campos" class="hidden">
+        <div class="grp">
+          <label>Cédula (10) o RUC (13) <span class="req">*</span></label>
+          <input id="fac_cedula" inputmode="numeric" maxlength="13" placeholder="10 dígitos (cédula) o 13 (RUC)" />
+          <div class="errmsg" id="e_fac_cedula">Ingresa una cédula (10 dígitos) o RUC (13 dígitos) válido.</div>
+        </div>
+        <div class="grp">
+          <label>Nombre o razón social <span class="req">*</span></label>
+          <input id="fac_nombre" maxlength="100" placeholder="Nombre o razón social" />
+          <div class="errmsg" id="e_fac_nombre">Ingresa el nombre o la razón social.</div>
+        </div>
+        <div class="grp">
+          <label>Correo electrónico <span class="req">*</span></label>
+          <input id="fac_correo" type="email" inputmode="email" maxlength="100" placeholder="correo@ejemplo.com" />
+          <div class="hint">La factura llega a este correo.</div>
+          <div class="errmsg" id="e_fac_correo">Correo no válido.</div>
+        </div>
+        <div class="grp">
+          <label>Teléfono <span class="req">*</span></label>
+          <input id="fac_telefono" inputmode="numeric" maxlength="10" placeholder="09XXXXXXXX o 04XXXXXXX" />
+          <div class="errmsg" id="e_fac_telefono">Ingresa un teléfono de 9 o 10 dígitos.</div>
+        </div>
+        <div class="grp">
+          <label>Dirección <span class="req">*</span></label>
+          <input id="fac_direccion" maxlength="150" placeholder="Calle, número y ciudad" />
+          <div class="errmsg" id="e_fac_direccion">Ingresa la dirección de facturación.</div>
+        </div>
       </div>
     </div>
   </div>
@@ -397,6 +438,14 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
       var _rq=document.getElementById("req_cedula"); if(_rq) _rq.style.display="none";
     }
 
+    // 23-oct-2026: datos de factura solo para el remitente.
+    if (!esDestino){
+      document.getElementById("bloque_fac").classList.remove("hidden");
+      var _fo=function(){ document.getElementById("fac_campos").classList.toggle("hidden", !document.getElementById("fac_op0").checked); };
+      document.getElementById("fac_op1").addEventListener("change",_fo); document.getElementById("fac_op0").addEventListener("change",_fo);
+      if (qs.get("fac_mismos")==="0"){ document.getElementById("fac_op0").checked=true; _fo(); }
+    }
+
     // ---- PREFILL (cuando viene del pin/geocode o datos previos) ----
     function pf(id, keys){ for (var i=0;i<keys.length;i++){ var v=qs.get(keys[i]); if(v){ var el=document.getElementById(id); if(el) el.value=v; return; } } }
     pf("cedula",["cedula"]); pf("nombre",["nombre"]); pf("correo",["correo"]);
@@ -404,6 +453,7 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
     pf("calle_principal",["calle_principal","calle"]); pf("numero_casa",["numero_casa","numero"]);
     pf("calle_secundaria",["calle_secundaria","calle2"]); pf("referencia_recoleccion",["referencia_recoleccion","referencia"]);
     pf("ef_lat",["lat","preLat"]); pf("ef_lon",["lon","preLon"]);
+    pf("fac_cedula",["fac_cedula"]); pf("fac_nombre",["fac_nombre"]); pf("fac_correo",["fac_correo"]); pf("fac_telefono",["fac_telefono"]); pf("fac_direccion",["fac_direccion"]);
 
     // ---- Validación ----
     function val(id){ var el=document.getElementById(id); return el ? el.value.trim() : ""; }
@@ -433,6 +483,7 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
       return false;                                                                     // tercer dígito 7/8 no válido
     }
     function correoOk(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+    function facOtros(){ var o=document.getElementById("fac_op0"); return !esDestino && !!(o&&o.checked); }
     function validate(){
       var ok=true;
       var cVal=val("cedula"), cOk;
@@ -456,6 +507,13 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
         var c2Ok=val("calle_secundaria").length>=1; setErr("calle_secundaria",!c2Ok); ok=ok&&c2Ok;
         var rfOk=val("referencia_recoleccion").length>=3; setErr("referencia_recoleccion",!rfOk); ok=ok&&rfOk;  // referencia OBLIGATORIA
       }
+      if (facOtros()){
+        var fc=cedulaOk(val("fac_cedula")); setErr("fac_cedula",!fc); ok=ok&&fc;
+        var fn=val("fac_nombre").length>=3; setErr("fac_nombre",!fn); ok=ok&&fn;
+        var fe=correoOk(val("fac_correo")); setErr("fac_correo",!fe); ok=ok&&fe;
+        var ft=/^\d{9,10}$/.test(val("fac_telefono").replace(/\D/g,"")); setErr("fac_telefono",!ft); ok=ok&&ft;
+        var fd=val("fac_direccion").length>=5; setErr("fac_direccion",!fd); ok=ok&&fd;
+      }
       return ok;
     }
 
@@ -475,6 +533,11 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
          ⛔ `idServicio` NO lo lee nadie: el bot deduce documento/paquete de
             `tipo` (busca "docu", en minusculas). */
       p.referencia = val("referencia_recoleccion");
+      /* 23-oct-2026 (JC): datos de factura, solo en el paso remitente. */
+      if (!esDestino){
+        p.fac_mismos = facOtros() ? "0" : "1";
+        if (facOtros()){ p.fac_cedula=val("fac_cedula").replace(/\D/g,""); p.fac_nombre=val("fac_nombre").replace(/\s+/g," "); p.fac_correo=val("fac_correo").replace(/\s+/g,""); p.fac_telefono=val("fac_telefono").replace(/\D/g,""); p.fac_direccion=val("fac_direccion").replace(/\s+/g," "); }
+      }
       if (selCiudad){
         p.ciudad = selCiudad.nombre; p.ciudadCodigo = selCiudad.codigo; p.provincia = selCiudad.provincia;
       }
@@ -505,6 +568,9 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
       var dir = !esOficina ? (p.calle_principal+" "+p.numero_casa+(p.calle_secundaria?" y "+p.calle_secundaria:"")) : "";
       var html = itm("Cédula / RUC",p.cedula)+itm("Nombres completos",p.nombre)+itm("Correo",p.correo)+itm("Celular",p.celular);
       if (!esOficina){ html += itm(esDestino?"Dirección de entrega":"Dirección de recolección",dir)+itm(esDestino?"Referencia de entrega":"Referencia de recolección",p.referencia_recoleccion); }
+      if (!esDestino){ html += p.fac_mismos==="0"
+        ? itm("Factura a nombre de",p.fac_nombre)+itm(p.fac_cedula.length===13?"RUC de la factura":"Cédula de la factura",p.fac_cedula)+itm("Correo de la factura",p.fac_correo)+itm("Teléfono de la factura",p.fac_telefono)+itm("Dirección de la factura",p.fac_direccion)
+        : itm("Factura","A nombre del remitente"); }
       document.getElementById("conf_body").innerHTML = html;
     }
 
