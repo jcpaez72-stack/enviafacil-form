@@ -457,7 +457,11 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
 
     // ---- Validación ----
     function val(id){ var el=document.getElementById(id); return el ? el.value.trim() : ""; }
-    function setErr(id, bad){ var el=document.getElementById(id); if(!el) return; el.classList.toggle("invalid",bad); var e=document.getElementById("e_"+id); if(e) e.style.display=bad?"block":"none"; }
+    /* 23-oct-2026: la ciudad se valida con id "ciudad" pero el campo es "qCiu": sin esto el error no se veía y el formulario
+       no avanzaba en silencio. Ahora el campo se marca y el mensaje «Elige una ciudad de la lista» aparece. */
+    function setErr(id, bad){ var el=document.getElementById(id==="ciudad"?"qCiu":id); var e=document.getElementById("e_"+id); if(e){ e.style.display=bad?"block":"none"; if(bad&&id==="ciudad"){ e.style.color=""; e.textContent="Elige tu ciudad de la lista."; } } if(!el) return; el.classList.toggle("invalid",bad); }
+    // 23-oct-2026: si algo falta, la pantalla va al primer campo con error (antes no se veía y parecía que el botón no respondía).
+    function efIrAlError(){ try{ var x=document.querySelector(".invalid"); if(!x){ var m=Array.prototype.filter.call(document.querySelectorAll(".errmsg"),function(e){return e.style.display==="block";}); x=m[0]; } if(x){ x.scrollIntoView({block:"center"}); if(x.focus) x.focus({preventScroll:true}); } }catch(e){} }
     // Cédula (10, módulo 10) o RUC (13)
     function cedulaOk(v){
       v=(v||"").replace(/\D/g,"");
@@ -585,7 +589,7 @@ function efLocked(){if(!EF_LOCK)return null;try{return localStorage.getItem(EF_L
          pagina 2 = quien recibe + direccion (era index.html)
          pagina 3 = confirmar */
       if (mnPagina === 1){ if(!validarEnvio()) return; irDatos(); return; }
-      if (!enConf){ if(!validate()) return; irConf(); return; }
+      if (!enConf){ if(!validate()){ efIrAlError(); return; } irConf(); return; }
       // pantalla 2 -> enviar
       btn.disabled=true; btn.textContent="Enviando…";var _tEsp=setTimeout(function(){ if(btn.disabled) btn.textContent="Enviando… no cierres esta ventana"; },5000);
       var PROXY="https://enviafacil-callback.fn.jelou.ai";var body=Object.assign({ executionId:executionId, success:true }, payloadDatos());
